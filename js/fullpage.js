@@ -1,9 +1,8 @@
 // Initialize the fullpage object
 var myFullpage = new fullpage('#fullpage', {
-    anchors: ['firstPage', 'secondPage', '3rdPage'],
-
+    //anchors: ['firstPage', 'secondPage', '3rdPage', '4thPage'],
     // you can also use the HTML attribute data-tooltip on each section instead
-    navigationTooltips: ['First Section', 'Second Section', 'Third Section'],
+    //navigationTooltips: ['First Section', 'Second Section', 'Third Section'],
     navigation: true,
 
     // Navigation for horizontal slides
