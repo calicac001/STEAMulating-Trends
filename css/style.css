@@ -4,9 +4,12 @@
     font-size: 1.65em;
 }
 
+.intro {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
 .section {
-    padding-left: 100px;
-    padding-right: 100px;
     text-align: center;
 }
 
