@@ -18,3 +18,9 @@
 .fp-slidesNav ul li a span {
     background: #00ffd2;
 }
+
+.chart-container {
+    border: 1px solid #00ffd2;
+    width: 100vw;
+    height: 50vh;
+}
