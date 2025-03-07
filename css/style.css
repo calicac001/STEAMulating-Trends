@@ -13,16 +13,24 @@
     text-align: center;
 }
 
+.content {
+    padding-right: 10vw;
+    padding-left: 10vw;
+}
+
 /* Overwriting styles for the navigation dots */
 #fp-nav ul li a span,
 .fp-slidesNav ul li a span {
     background: #00ffd2;
 }
 
+#fp-nav ul li .fp-tooltip{
+    color: #00ffd2;
+}
+
 .chart-container {
-    border: 1px solid #00ffd2;
-    width: 100vw;
-    height: 50vh;
+    width: 80vw;
+    height: 20vh;
 }
 
 /* Styles for Diverging barchart*/

@@ -8,7 +8,8 @@ var myFullpage = new fullpage('#fullpage', {
     // Navigation for horizontal slides
     slidesNavigation: true,
 
-    controlArrows: false
+    controlArrows: false,
+    licenseKey: ""
 });
 
 // Create the navigation bar see on the right side of the page
