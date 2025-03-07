@@ -25,7 +25,84 @@ Promise.all([
         value: count
     }));
     
-    console.log(releaseData);
+    //console.log(releaseData);
+    console.log("what")
     
     //calendarPlot = new CalendarPlot("calendar-plot", releaseData);
-})
+
+    createDivergingBarChart(genres, reviews);
+});
+
+// process data for review sentiment
+function createDivergingBarChart(genresData, reviewsData) {
+    // AppID -> reviews
+    const reviewsMap = new Map();
+    reviewsData.forEach(review => {
+
+        const positive = +review.Positive || 0;
+        const negative = +review.Negative || 0;
+        
+        if (positive > 0 || negative > 0) {
+            reviewsMap.set(review.AppID, {
+                positive: positive,
+                negative: negative,
+                total: positive + negative,
+                positivePercentage: positive / (positive + negative) * 100
+            });
+        }
+    });
+    
+    // genre -> games
+    const genreGamesMap = new Map();
+    genresData.forEach(genreEntry => {
+        const genre = genreEntry.Genres;
+        if (!genre) return; 
+        
+        if (!genreGamesMap.has(genre)) {
+            genreGamesMap.set(genre, []);
+        }
+        genreGamesMap.get(genre).push(genreEntry.AppID);
+    });
+    
+    // calculate review statistics
+    const genreStats = [];
+
+    console.log("helo")
+    
+    genreGamesMap.forEach((gameIds, genre) => {
+        let totalPositive = 0;
+        let totalNegative = 0;
+        let gamesWithReviews = 0;
+        
+        gameIds.forEach(gameId => {
+            const review = reviewsMap.get(gameId);
+            if (review) {
+                totalPositive += review.positive;
+                totalNegative += review.negative;
+                gamesWithReviews++;
+            }
+        });
+        
+        // Only include genres with sufficient data
+        if (gamesWithReviews > 0 && (totalPositive + totalNegative) >= 100) {
+            genreStats.push({
+                genre: genre,
+                positive: totalPositive,
+                negative: totalNegative,
+                gameCount: gameIds.length,
+                gamesWithReviews: gamesWithReviews,
+                positivePercentage: (totalPositive / (totalPositive + totalNegative)) * 100
+            });
+        }
+    });
+    
+    genreStats.sort((a, b) => (b.positive + b.negative) - (a.positive + a.negative));
+    const topGenres = genreStats.slice(0, 15);
+
+    console.log(topGenres)
+    
+    // Create the diverging bar chart
+    divergingBarChart = new DivergingBarChart("diverging-bar-plot", topGenres);
+    
+    console.log("Diverging bar chart created");
+}
