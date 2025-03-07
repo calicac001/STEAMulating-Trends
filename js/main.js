@@ -25,9 +25,6 @@ Promise.all([
         value: count
     }));
     
-    //console.log(releaseData);
-    console.log("what")
-    
     //calendarPlot = new CalendarPlot("calendar-plot", releaseData);
 
     createDivergingBarChart(genres, reviews);
@@ -97,7 +94,7 @@ function createDivergingBarChart(genresData, reviewsData) {
     });
     
     genreStats.sort((a, b) => (b.positive + b.negative) - (a.positive + a.negative));
-    const topGenres = genreStats.slice(0, 15);
+    const topGenres = genreStats.slice(0, 10);
 
     console.log(topGenres)
     
