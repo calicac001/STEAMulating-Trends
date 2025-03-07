@@ -17,10 +17,10 @@
 	<!-- fullPage.js HTML -->
 	<div id="fullpage" class="fullpage-wrapper " style="height: 100%; position: relative; touch-action: none;">
 		<div class="section fp-section fp-table active fp-is-overflow fp-loaded fp-completely" data-anchor="firstPage">
-			<div class="fp-overflow" tabindex="-1">
+			<div class="fp-overflow oxanium-font" tabindex="-1">
 
 				<div class="intro bg-black fg-white cyber-razor-bottom">
-					<h1 class="oxanium-font cyber-glitch-4">STEAMulating Trends</h1>
+					<h1 class="cyber-h">STEAMulating Trends</h1>
 					<p>What Data Reveals About Game Success</p>
 				</div>
 			</div>
@@ -28,7 +28,9 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="secondPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">Overview</h1>
+				<h1 class="cyber-h">
+					Overview<span class="cyber-glitch-3">...</span>
+				</h1>
 				<br>
 				<p>Steam is the largest digital distribution platform for PC gaming, with millions of active users and
 					a vast library of games spanning every genre. As the go-to marketplace for both indie developers
@@ -39,56 +41,98 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="3rdPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Seasonal Trends</h1>  <!--Chloe-->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Seasonal Trends<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Chloe-->
 				<!-- Calendar Plot: Are there seasonal patterns in game releases? -->
 				<div class="chart-container" id="calendar-plot"></div>
+
+				<p> Still need to fix base code. For some reason, Dec label is missing. Will also add labels for
+					days of the week. The tooltip right now is also not that accurate. It displays the year as 2025
+					but the data is actually summed up for all the years. Just had to add the year to create a date
+					instance. Additional stuff to add is filtering by year (maybe thru a brush component like we did
+					in the lab?)
+				</p>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="4thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Review Sentiment</h1>  <!--Runce-->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Review Sentiment<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Runce-->
 				<!-- Diverging Stacked Bar Chart: Are certain genres more likely to receive positive or negative reviews? -->
 				<div id="diverging-bar-plot"></div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="5thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Highest Reviews</h1>  <!--Chloe-->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Reviews by Genres<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Chloe-->
 				<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
-				<div id="beehive-plot"></div>
+				<div id="beehive-plot">
+					<div class="row">
+						<div class="col-md-6">
+							<img src="img/beehive_gradient.png" width="500px" height="300px">
+						</div>
+
+						<div class="col-md-6">
+							<p>On second thought, might change this plot to a sunburst since we have about 90k games and
+								displaying each one as an individual cell is not very efficient. By using a sunburst graph
+								instead, we can still use the gradient coloring for reviews while also having the ability to
+								subdivide each genre by category.
+							</p>
+
+							<p>The initial sunburst plot will only include the genres, colored by number of reviews.
+								Clicking in a genre, opens up the sunburst plot for that genre which is then subdivided
+								into the categories (or maybe tags, but there's a lot for each one so will have to see)
+								within the genre.
+							</p>
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="6thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Player Engagement</h1>  <!--Sridhar-->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Player Engagement<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Sridhar-->
 				<!-- Bubble Chart: Do multiplayer games maintain more interest than single-player? -->
 				<div id="bubble-plot-engagement"></div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="7thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Achievements vs. Playtime</h1>  <!--Runce-->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Achievements vs. Playtime<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Runce-->
 				<!-- Bubble Chart: How do achievements help with player engagement? -->
 				<div id="bubble-plot-playtime"></div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="8thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Niche Genres</h1>  <!--Sridhar-->
-				<!-- Distribution Plot?Which niche genres have shown surprising growth or player interest? -->
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Niche Genres<span class="cyber-glitch-3">...</span>
+				</h1>  <!--Sridhar-->
+				<!-- Distribution Plot: Which niche genres have shown surprising growth or player interest? -->
 				<div id="distribution-plot"></div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="9thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Main Message</h1>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Main Message<span class="cyber-glitch-3">...</span>
+				</h1>
 				<h2>The Complexity of Game Success</h2>
 				<p>While trends give us insight, they don’t tell the full story. The gaming industry is full of
 					outliers—games that defy expectations, proving that success often depends on the right mix of
@@ -97,8 +141,10 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="10thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Solution</h1>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Solution<span class="cyber-glitch-3">...</span>
+				</h1>
 				<h2>Key Takeaways for Developers</h2>
 				<p> While patterns can guide decision-making, engaging with the player community is crucial for success. </p>
 				<p> We conclude by summarizing key findings while emphasizing the presence of outliers, reinforcing the
@@ -109,8 +155,10 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="11thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Our Team</h1>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Our Team<span class="cyber-glitch-3">...</span>
+				</h1>
 
 				<div class="container">
 					<div class="row">
@@ -123,8 +171,10 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="lastPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Sources</h1>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Sources<span class="cyber-glitch-3">...</span>
+				</h1>
 			</div>
 			<div class="fp-watermark" style="right: 0;">
 				<a href="https://alvarotrigo.com/fullPage/" rel="nofollow noopener" target="_blank" style="text-decoration:none; color: #000;">
