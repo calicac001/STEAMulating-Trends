@@ -47,6 +47,13 @@
 				</h1>  <!--Chloe-->
 				<!-- Calendar Plot: Are there seasonal patterns in game releases? -->
 				<div class="chart-container" id="calendar-plot"></div>
+
+				<p> Still need to fix base code. For some reason, Dec label is missing. Will also add labels for
+					days of the week. The tooltip right now is also not that accurate. It displays the year as 2025
+					but the data is actually summed up for all the years. Just had to add the year to create a date
+					instance. Additional stuff to add is filtering by year (maybe thru a brush component like we did
+					in the lab?)
+				</p>
 			</div>
 		</div>
 
@@ -63,10 +70,31 @@
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="5thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
 				<h1 class="cyber-h">
-					Highest Reviews<span class="cyber-glitch-3">...</span>
+					Reviews by Genres<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Chloe-->
 				<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
-				<div id="beehive-plot"></div>
+				<div id="beehive-plot">
+					<div class="row">
+						<div class="col-md-6">
+							<img src="img/beehive_gradient.png" width="500px" height="300px">
+						</div>
+
+						<div class="col-md-6">
+							<p>On second thought, might change this plot to a sunburst since we have about 90k games and
+								displaying each one as an individual cell is not very efficient. By using a sunburst graph
+								instead, we can still use the gradient coloring for reviews while also having the ability to
+								subdivide each genre by category.
+							</p>
+
+							<p>The initial sunburst plot will only include the genres, colored by number of reviews.
+								Clicking in a genre, opens up the sunburst plot for that genre which is then subdivided
+								into the categories (or maybe tags, but there's a lot for each one so will have to see)
+								within the genre.
+							</p>
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div>
 
