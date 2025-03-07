@@ -27,5 +27,5 @@ Promise.all([
     
     console.log(releaseData);
     
-    //calendarPlot = new CalendarPlot("calendar-plot", releaseData);
+    calendarPlot = new CalendarPlot("calendar-plot", releaseData);
 })
