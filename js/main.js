@@ -21,14 +21,14 @@ Promise.all([
 
     // Convert to array format
     let releaseData = Array.from(releasesByDay, ([date, count]) => ({
-        date: new Date(date), // Convert back to Date object
+        date: new Date(date), // Convert backs to Date object
         value: count
     }));
     
     console.log(releaseData);
     
     calendarPlot = new CalendarPlot("calendar-plot", releaseData);
-
+    
     createDivergingBarChart(genres, reviews);
     const processedPopularity = processPopularity(games, popularity);
 
@@ -37,6 +37,12 @@ Promise.all([
     // TODO: this isnt working, to be fixed
     setupGenreFilter(processedPopularity, trendsChart);
 
+    console.log("Sridhar's Vizs");
+    let ngd = new NicheGenresDistribution(
+        "#distribution-plot",
+        popularity, genres, games
+    );
+    
 })
 
 // process data for review sentiment
