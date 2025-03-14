@@ -34,7 +34,8 @@ class NicheGenresDistribution {
             .attr("length", 500)
         ;
 
-        console.log(popularity, genres, basicInfo);
+        // console.log(popularity, genres, basicInfo);
+        aggregatedData(popularity, genres, basicInfo);
 
     }
 
@@ -169,18 +170,34 @@ class NicheGenresDistribution {
     static aggregatedData(popularity, genres, basicInfo) {
         // now we actually need to use the "final data" and then get our distribution bar graph data,
         // when THEN needs to be plot, but ig that'll be easier since I've plotted these kinda things before...
-        // but it'll still be a bit time consuming, ugh...
+        // but it'll still be a bit time consumaxg, ugh...
         // data manipulation moment
 
         let fData = finalData(popularity, genres, basicInfo);
-        let metric = "AverageMetric"
+        let metric = "AverageMetric";
         // let metric = "MedianMetric";
         let lowerBound = d3.min(
             fData.keys().map(k => {
                 let currArray = fData[k];
-                // now we find the min of the currArray, which is an array of objects
+                return d3.min(currArray, elem => elem[metric]);
             })
-        )
+        );  // so convoluted... not very demure... not very readable... :3
+        let upperBound = d3.max(
+            fData.keys().map(k => {
+                let currArray = fData[k];
+                return d3.max(currArray, elem => elem[metric]);
+            })
+        );
+
+        console.log(lowerBound, upperBound)
+        // The endpoints of the data range are: [lowerBound, upperBound]
+        // we might as well make a scale and an axis to help out with buckets and whatnot
+
+        // i hate making design decisions... i need to practice getting over this blocker...
+
+        let 
+
+
 
 
     }

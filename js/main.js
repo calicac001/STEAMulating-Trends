@@ -37,11 +37,14 @@ Promise.all([
     // TODO: this isnt working, to be fixed
     setupGenreFilter(processedPopularity, trendsChart);
 
-    console.log("Sridhar's Vizs");
-    let ngd = new NicheGenresDistribution(
-        "#distribution-plot",
-        popularity, genres, games
-    );
+
+
+    // sridhar goes insane trying to get this scoping issue working
+    const p = popularity;
+    const g = genres;
+    const gg = games;
+    distributionViz(p, g, gg);
+    // distributionViz(popularity, genres, games)
     
 })
 
@@ -207,3 +210,12 @@ function setupGenreFilter(data, chart) {
         .attr("value", d => d)
         .text(d => d);
 }
+
+function distributionViz(popularity, genres, games) {
+    console.log("Sridhar's Vizs");
+    let ngd = new NicheGenresDistribution(
+        "#distribution-plot",
+        popularity, genres, games
+    );
+}
+
