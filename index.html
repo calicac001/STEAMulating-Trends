@@ -58,10 +58,18 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="4thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Review Sentiment</h1>
-				<p>Analyzing which genres tend to receive more positive or negative reviews</p>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h">
+					Review Sentiment<span class="cyber-glitch-3">...</span>
+				</h1>
 				<div id="diverging-bar-plot"></div>
+					
+				<p>The playerbase of indie, simulation and casual games seem to be more chill 
+					when leaving a comment or review, possibly due to the non-competitive 
+					nature of these generes. On the other hand, people tend to be less 
+					lenient on reviews for multiplayer games, possibly because there are more 
+					chances a multipler game could go wrong: bad balance with champions/guns, 
+					lagging issues with the server, or pay-to-win microtransactions.</p>
 			</div>
 		</div>
 
@@ -107,9 +115,27 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="7thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Game Genre Growths Over Years</h1>
-				<div id="playtime-trends-chart"></div>
+			<div class="content fp-overflow oxanium-font tabindex="-1">
+				<div class="visualization-container">
+					<h1 class="cyber-h">
+						Game Genre Growths Over Years<span class="cyber-glitch-3">...</span>
+					</h1>
+
+					<div class="filter-container">
+						<label for="genre-filter">Filter by Genre: </label>
+						<div id="genre-filter"></div>
+					</div>
+
+					<div id="playtime-trends-chart"></div>
+
+					<div class="chart-legend">
+						<div class="legend-item">
+							<span class="dot"></span>
+							<span>Data point (hover for details)</span>
+						</div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 
