@@ -1,6 +1,8 @@
 /******** DISTRIBUTION VIZ ********/
 // distribution-plot
 
+console.log("AJWEFOIJAWEFJAOIWEFJOIAWJEFPOAWEJEOFJAPWOIEFJOIAWJEFOIAEWJF");
+
 let parentDiv = d3.select("#distribution-plot");
 let parentCont = parentDiv.append("div")
 .attr("class", "container")
@@ -35,7 +37,7 @@ class NicheGenresDistribution {
         ;
 
         // console.log(popularity, genres, basicInfo);
-        aggregatedData(popularity, genres, basicInfo);
+        NicheGenresDistribution.aggregatedData(popularity, genres, basicInfo);
 
     }
 
@@ -63,7 +65,7 @@ class NicheGenresDistribution {
         //     // TODO: see if i wanna use these as the metrics, or their inverses
         // }))
 
-        popularityMapping = {}
+        let popularityMapping = {};
         popularity.forEach(d => {
             popularityMapping[d["AppID"]] = {
                 "AverageMetric": d["Average playtime forever"] / d["Average playtime two weeks"],
@@ -89,7 +91,7 @@ class NicheGenresDistribution {
         // so for ex {"AppID": 2525, "Genres": "Casual"} and {"AppID": 2525, "Genres": "Indie"}
         // both can be entries in the array genres
         
-        genresMapping = {}
+        let genresMapping = {}
         genres.forEach(d => {
             if (d["AppID"] in genresMapping) {
                 genresMapping[d["AppID"]].push(d["Genre"]);
@@ -124,7 +126,7 @@ class NicheGenresDistribution {
         //     })
         // );
 
-        basicInfoMapping = {};
+        let basicInfoMapping = {};
         basicInfo.forEach(d => {
             basicInfoMapping["AppID"] = d["Name"]
         })
@@ -133,7 +135,7 @@ class NicheGenresDistribution {
     }
 
     static finalData(popularity, genres, basicInfo) {
-        let genresList = [...Set(
+        let genresList = [... new Set(
             genres.map(d => d["Genres"])
         )];
 
@@ -147,10 +149,19 @@ class NicheGenresDistribution {
         });
 
         // does each game have both at least one genre and popularity data...? idk, ill just take the intersection of the AppIDs just to be safe... 
-        let keysPop = new Set(...Object.keys(crunchedPopularity));
-        let keysGen = new Set(...Object.keys(crunchedGenres));
-        let keysBas = new Set(...Object.keys(crunchedBasicInfo));
-        let appIDs = keysPop.intersection(keysGen).intersection(keysBas);
+        // console.log("we here ");
+        // console.log(Object.keys(crunchedPopularity), Object.keys(crunchedGenres), Object.keys(crunchedBasicInfo));  // 97400, 97400, 97401  :ROFL:  ... no wonder these keys thingies are giving an error... Maximum call stack size exceeded
+
+        // TODO: find a better way of finding the intersection of these sets lol
+        // let keysPop = new Set(...Object.keys(crunchedPopularity));
+        // let keysGen = new Set(...Object.keys(crunchedGenres));
+        // let keysBas = new Set(...Object.keys(crunchedBasicInfo));
+        // let appIDs = keysPop.intersection(keysGen).intersection(keysBas);
+
+        // sort the keys and then merge thhem together? this would "flatten" the work (rather than stacking more and more on the stack, i just iterate more)
+        // can i just make a hashmap using the array indices to the values...? isn't it just the numbers going up...? probably not ngl...
+        // ugh, the merging seems difficult... cuz you have to check and see if the number is in all 3 of the lists... 
+
 
         appIDs.forEach(d => {
             let currGenre = crunchedGenres[d];
@@ -173,9 +184,10 @@ class NicheGenresDistribution {
         // but it'll still be a bit time consumaxg, ugh...
         // data manipulation moment
 
-        let fData = finalData(popularity, genres, basicInfo);
+        let fData = NicheGenresDistribution.finalData(popularity, genres, basicInfo);
         let metric = "AverageMetric";
         // let metric = "MedianMetric";
+
         let lowerBound = d3.min(
             fData.keys().map(k => {
                 let currArray = fData[k];
@@ -195,7 +207,7 @@ class NicheGenresDistribution {
 
         // i hate making design decisions... i need to practice getting over this blocker...
 
-        let 
+        // let 
 
 
 

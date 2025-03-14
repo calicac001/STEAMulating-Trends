@@ -37,12 +37,7 @@ Promise.all([
     // TODO: this isnt working, to be fixed
     setupGenreFilter(processedPopularity, trendsChart);
 
-    // sridhar goes insane trying to get this scoping issue working
-    const p = popularity;
-    const g = genres;
-    const gg = games;
-    distributionViz(p, g, gg);
-    // distributionViz(popularity, genres, games)
+    new distributionViz(popularity, genres, games);
     
 })
 
