@@ -1,21 +1,6 @@
 /******** DISTRIBUTION VIZ ********/
 // distribution-plot
 
-console.log("AJWEFOIJAWEFJAOIWEFJOIAWJEFPOAWEJEOFJAPWOIEFJOIAWJEFOIAEWJF");
-
-let parentDiv = d3.select("#distribution-plot");
-let parentCont = parentDiv.append("div")
-.attr("class", "container")
-;
-
-// Placeholder
-parentCont.append("img")
-    .attr("src", "img/distribution-plot.jpg")
-    .attr("width", 500)
-    .attr("height", 500)
-    .attr("display", "block")
-;
-
 // popularity.csv -> for metric of 2-week playtime / lifetime playtime
 // genres.csv -> the buckets are the genres
 // basic_info.csv -> i could add a tooltip so that when you scroll through, you can see which games are there...?
@@ -39,6 +24,23 @@ class NicheGenresDistribution {
         // console.log(popularity, genres, basicInfo);
         NicheGenresDistribution.aggregatedData(popularity, genres, basicInfo);
 
+    }
+
+    static tempViz() {
+        console.log("AJWEFOIJAWEFJAOIWEFJOIAWJEFPOAWEJEOFJAPWOIEFJOIAWJEFOIAEWJF");
+
+        let parentDiv = d3.select("#distribution-plot");
+        let parentCont = parentDiv.append("div")
+        .attr("class", "container")
+        ;
+        
+        // Placeholder
+        parentCont.append("img")
+            .attr("src", "img/distribution-plot.jpg")
+            .attr("width", 500)
+            .attr("height", 500)
+            .attr("display", "block")
+        ;
     }
 
     static popularityCruncher(popularity) {
@@ -67,9 +69,9 @@ class NicheGenresDistribution {
 
         let popularityMapping = {};
         popularity.forEach(d => {
-            popularityMapping[d["AppID"]] = {
-                "AverageMetric": d["Average playtime forever"] / d["Average playtime two weeks"],
-                "MedianMetric": d["Median playtime forever"] / d["Median playtime two weeks"]
+            popularityMapping[+d["AppID"]] = {
+                "AverageMetric": (+d["Average playtime forever"]) / (+d["Average playtime two weeks"]),
+                "MedianMetric": (+d["Median playtime forever"]) / (+d["Median playtime two weeks"])
             }
         })
         return popularityMapping;
@@ -93,12 +95,13 @@ class NicheGenresDistribution {
         
         let genresMapping = {}
         genres.forEach(d => {
-            if (d["AppID"] in genresMapping) {
-                genresMapping[d["AppID"]].push(d["Genre"]);
+            if (+d["AppID"] in genresMapping) {
+                genresMapping[+d["AppID"]].push(d["Genre"]);
             } else {
-                genresMapping[d["AppID"]] = [d["Genre"]];
+                genresMapping[+d["AppID"]] = [d["Genre"]];
             }
-        })
+        });
+
         return genresMapping;
     }
 
@@ -128,10 +131,10 @@ class NicheGenresDistribution {
 
         let basicInfoMapping = {};
         basicInfo.forEach(d => {
-            basicInfoMapping["AppID"] = d["Name"]
-        })
-        return basicInfo;
-
+            basicInfoMapping[+d["AppID"]] = d["Name"]
+        });
+    
+        return basicInfoMapping;
     }
 
     static finalData(popularity, genres, basicInfo) {
@@ -142,6 +145,7 @@ class NicheGenresDistribution {
         let crunchedPopularity = NicheGenresDistribution.popularityCruncher(popularity);
         let crunchedGenres = NicheGenresDistribution.genresCruncher(genres);
         let crunchedBasicInfo = NicheGenresDistribution.basicInfoCruncher(basicInfo);
+
         let finalData = {};
 
         genresList.forEach(d => {
@@ -158,10 +162,57 @@ class NicheGenresDistribution {
         // let keysBas = new Set(...Object.keys(crunchedBasicInfo));
         // let appIDs = keysPop.intersection(keysGen).intersection(keysBas);
 
-        // sort the keys and then merge thhem together? this would "flatten" the work (rather than stacking more and more on the stack, i just iterate more)
+        // sort the keys and then merge them together? this would "flatten" the work (rather than stacking more and more on the stack, i just iterate more)
         // can i just make a hashmap using the array indices to the values...? isn't it just the numbers going up...? probably not ngl...
         // ugh, the merging seems difficult... cuz you have to check and see if the number is in all 3 of the lists... 
 
+        let appIDs = []; let n = -1;
+        let keysPopSorted = Object.keys(crunchedPopularity).sort(); let i = 0;
+        let keysGenSorted = Object.keys(crunchedGenres).sort(); let j = 0;
+        let keysBasSorted = Object.keys(crunchedBasicInfo).sort(); let k = 0;
+        let popDone = i < keysPopSorted.length;
+        let genDone = j < keysGenSorted.length;
+        let basDone = k < keysBasSorted.length;
+
+        // console.log(appIDs);
+        // console.log(Object.keys(crunchedPopularity));
+        console.log(crunchedGenres);
+        console.log(crunchedBasicInfo);
+
+        while (!popDone || !genDone || !basDone) {
+            // merging the 3 arrays into 1 -- issue: they may or may not be distinct!
+            // but, when merging we can detect for duplicates and skip adding them
+
+            popDone = i < keysPopSorted.length;
+            genDone = j < keysGenSorted.length;
+            basDone = k < keysBasSorted.length;
+            let currMin = [];
+            if (!popDone) {
+                currMin.push([keysPopSorted, i]);
+            } else if (!genDone) {
+                currMin.push([keysGenSorted, j]);
+            } else if (!basDone) {
+                currMin.push([keysBasSorted, k]);
+            }
+
+            currMin.sort(
+                (a, b) => (b[0][b[1]]- a[0][a[1]])  // checks the value of the array at the respective index i/j/k
+            )[0];  // takes the minimum
+            
+            if (n == -1 || appIDs[n] != currMin[0][currMin[1]]) {  // if the original array is empty, or we don't have a duplicate value, we push
+                appIDs.push(
+                    currMin[0][currMin[1]]
+                );
+                n += 1;
+            }  // no pushing values otherwise
+
+            switch (currMin[0]) {
+                case keysPopSorted: i += 1; break;
+                case keysGenSorted: j += 1; break;
+                case keysBasSorted: k += 1; break;
+            };  // always going to get through one element of the to-be-merged arrays
+
+        }
 
         appIDs.forEach(d => {
             let currGenre = crunchedGenres[d];
@@ -189,13 +240,13 @@ class NicheGenresDistribution {
         // let metric = "MedianMetric";
 
         let lowerBound = d3.min(
-            fData.keys().map(k => {
+            Object.keys(fData).map(k => {
                 let currArray = fData[k];
                 return d3.min(currArray, elem => elem[metric]);
             })
         );  // so convoluted... not very demure... not very readable... :3
         let upperBound = d3.max(
-            fData.keys().map(k => {
+            Object.keys(fData).map(k => {
                 let currArray = fData[k];
                 return d3.max(currArray, elem => elem[metric]);
             })
