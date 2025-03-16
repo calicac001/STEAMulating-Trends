@@ -149,7 +149,7 @@ class NicheGenresDistribution {
         let finalData = {};
 
         genresList.forEach(d => {
-            finalData[d] = []  // make a new empty arrayfor each genre
+            finalData[d] = []  // make a new empty array for each genre
         });
 
         // does each game have both at least one genre and popularity data...? idk, ill just take the intersection of the AppIDs just to be safe... 
@@ -176,8 +176,6 @@ class NicheGenresDistribution {
         let popDone = i >= keysPopSorted.length;
         let genDone = j >= keysGenSorted.length;
         let basDone = k >= keysBasSorted.length;
-
-        // i'm fucking stupid. this isn't working.
 
         while (!popDone || !genDone || !basDone) {
             // merging the 3 arrays into 1 -- issue: they may or may not be distinct!
@@ -240,6 +238,8 @@ class NicheGenresDistribution {
         return finalData;
         // a mapping from genres, to an array of objects, that contain some info about a game.
     }
+
+
 
     static aggregatedData(popularity, genres, basicInfo) {
         // now we actually need to use the "final data" and then get our distribution bar graph data,
