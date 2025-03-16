@@ -69,7 +69,7 @@ class NicheGenresDistribution {
 
         let popularityMapping = {};
         popularity.forEach(d => {
-            popularityMapping[+d["AppID"]] = {
+            popularityMapping[d["AppID"]] = {
                 "AverageMetric": (+d["Average playtime forever"]) / (+d["Average playtime two weeks"]),
                 "MedianMetric": (+d["Median playtime forever"]) / (+d["Median playtime two weeks"])
             }
@@ -96,9 +96,9 @@ class NicheGenresDistribution {
         let genresMapping = {}
         genres.forEach(d => {
             if (+d["AppID"] in genresMapping) {
-                genresMapping[+d["AppID"]].push(d["Genre"]);
+                genresMapping[d["AppID"]].push(d["Genre"]);
             } else {
-                genresMapping[+d["AppID"]] = [d["Genre"]];
+                genresMapping[d["AppID"]] = [d["Genre"]];
             }
         });
 
@@ -131,7 +131,7 @@ class NicheGenresDistribution {
 
         let basicInfoMapping = {};
         basicInfo.forEach(d => {
-            basicInfoMapping[+d["AppID"]] = d["Name"]
+            basicInfoMapping[d["AppID"]] = d["Name"]
         });
     
         return basicInfoMapping;
@@ -166,6 +166,7 @@ class NicheGenresDistribution {
         // can i just make a hashmap using the array indices to the values...? isn't it just the numbers going up...? probably not ngl...
         // ugh, the merging seems difficult... cuz you have to check and see if the number is in all 3 of the lists... 
 
+        /*
         let appIDs = []; let n = -1;
         let keysPopSorted = Object.keys(crunchedPopularity).map(d => +d).sort((a, b) => a-b); let i = 0;
         let keysGenSorted = Object.keys(crunchedGenres).map(d => +d).sort((a, b) => a-b); let j = 0;
@@ -216,22 +217,33 @@ class NicheGenresDistribution {
 
         }
 
-        console.log(keysPopSorted);
-        console.log(keysGenSorted);
-        console.log(keysBasSorted);
-        console.log(appIDs);
+        */
+        // console.log(keysPopSorted);
+        // console.log(keysGenSorted);
+        // console.log(keysBasSorted);
+        // console.log(appIDs);
 
-        // console.log(crunchedGenres);
-
+        let appIDs = Object.keys(crunchedPopularity)/*.map(d => +d)*/;
+        
         appIDs.forEach(id => {
-            console.log(id);
-            let currGenre = crunchedGenres[id];
-            finalData[currGenre].push(
-                {
-                    "AppID": id,
-                    ...crunchedBasicInfo[id],  // we only have the Name rn, but that's good enough for now
-                    ...crunchedPopularity[id]  // for averageMetric and medianMetric mappings            
-                }
+            // console.log(crunchedBasicInfo[id]);
+            // console.log(crunchedPopularity[id]);
+            let currGenres = crunchedGenres[id];  // THIS IS AN ARRAY OF GENRESLIAMWEO;IFJAOWI;EFJO;IAWEJO;IFE  
+            console.log(crunchedGenres, id);
+            console.log(currGenres);
+            console.log(Object.keys(crunchedGenres));
+            // MAP VS OBJECT????!!? KMS!!!!!!!!!!!!!!!!!
+            let v = {
+                "AppID": id,
+                "Name": crunchedBasicInfo[id],  // we only have the Name rn, but that's good enough for now
+                ...(crunchedPopularity[id])  // for averageMetric and medianMetric mappings  
+            };
+            console.log(v);
+            
+            currGenres.forEach(currGenre =>
+                finalData[currGenre].push(
+                    v
+                )
             )
         })
 
