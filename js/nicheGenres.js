@@ -167,36 +167,33 @@ class NicheGenresDistribution {
         // ugh, the merging seems difficult... cuz you have to check and see if the number is in all 3 of the lists... 
 
         let appIDs = []; let n = -1;
-        let keysPopSorted = Object.keys(crunchedPopularity).sort(); let i = 0;
-        let keysGenSorted = Object.keys(crunchedGenres).sort(); let j = 0;
-        let keysBasSorted = Object.keys(crunchedBasicInfo).sort(); let k = 0;
-        let popDone = i < keysPopSorted.length;
-        let genDone = j < keysGenSorted.length;
-        let basDone = k < keysBasSorted.length;
+        let keysPopSorted = Object.keys(crunchedPopularity).map(d => +d).sort((a, b) => a-b); let i = 0;
+        let keysGenSorted = Object.keys(crunchedGenres).map(d => +d).sort((a, b) => a-b); let j = 0;
+        let keysBasSorted = Object.keys(crunchedBasicInfo).map(d => +d).sort((a, b) => a-b); let k = 0;
+        //  WHY DO THESE THINGS HAPPEN IN JS ??? WTF IS THIS STRING SORTING BULLSHIT
+        //  AND THEN SINCE I CONVERTED IT TO INTS I NEED TO MAKE MY OWN CALLBACK COMPARATOAOWIEJFOIAWEFOIAEWOIFAWEOI
+        // the mapping is there to force the keys to be ints
+        let popDone = i >= keysPopSorted.length;
+        let genDone = j >= keysGenSorted.length;
+        let basDone = k >= keysBasSorted.length;
 
-        // console.log(appIDs);
-        // console.log(Object.keys(crunchedPopularity));
-        console.log(crunchedGenres);
-        console.log(crunchedBasicInfo);
-
-        while (!popDone || !genDone || !basDone) {
+        while (false || !popDone || !genDone || !basDone) {
             // merging the 3 arrays into 1 -- issue: they may or may not be distinct!
             // but, when merging we can detect for duplicates and skip adding them
 
-            popDone = i < keysPopSorted.length;
-            genDone = j < keysGenSorted.length;
-            basDone = k < keysBasSorted.length;
-            let currMin = [];
+            let vals = [];
             if (!popDone) {
-                currMin.push([keysPopSorted, i]);
-            } else if (!genDone) {
-                currMin.push([keysGenSorted, j]);
-            } else if (!basDone) {
-                currMin.push([keysBasSorted, k]);
+                vals.push([keysPopSorted, i]);
+            } if (!genDone) {
+                vals.push([keysGenSorted, j]);
+            } if (!basDone) {
+                vals.push([keysBasSorted, k]);
+            } else {
+                break;  // shouldn't need to get here since i moved the ___Done variables to update at the end
             }
 
-            currMin.sort(
-                (a, b) => (b[0][b[1]]- a[0][a[1]])  // checks the value of the array at the respective index i/j/k
+            let currMin = vals.sort(
+                (a, b) => (b[0][b[1]] - a[0][a[1]])  // checks the value of the array at the respective index i/j/k
             )[0];  // takes the minimum
             
             if (n == -1 || appIDs[n] != currMin[0][currMin[1]]) {  // if the original array is empty, or we don't have a duplicate value, we push
@@ -212,15 +209,27 @@ class NicheGenresDistribution {
                 case keysBasSorted: k += 1; break;
             };  // always going to get through one element of the to-be-merged arrays
 
+            popDone = i >= keysPopSorted.length;
+            genDone = j >= keysGenSorted.length;
+            basDone = k >= keysBasSorted.length;
+
         }
 
-        appIDs.forEach(d => {
-            let currGenre = crunchedGenres[d];
+        console.log(keysPopSorted);
+        console.log(keysGenSorted);
+        console.log(keysBasSorted);
+        console.log(appIDs);
+
+        // console.log(crunchedGenres);
+
+        appIDs.forEach(id => {
+            console.log(id);
+            let currGenre = crunchedGenres[id];
             finalData[currGenre].push(
                 {
-                    "AppID": d,
-                    ...crunchedBasicInfo[d],  // we only have the Name rn, but that's good enough for now
-                    ...crunchedPopularity[d]  // for averageMetric and medianMetric mappings            
+                    "AppID": id,
+                    ...crunchedBasicInfo[id],  // we only have the Name rn, but that's good enough for now
+                    ...crunchedPopularity[id]  // for averageMetric and medianMetric mappings            
                 }
             )
         })
