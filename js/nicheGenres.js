@@ -177,22 +177,25 @@ class NicheGenresDistribution {
         let genDone = j >= keysGenSorted.length;
         let basDone = k >= keysBasSorted.length;
 
-        while (false || !popDone || !genDone || !basDone) {
+        // i'm fucking stupid. this isn't working.
+
+        while (!popDone || !genDone || !basDone) {
             // merging the 3 arrays into 1 -- issue: they may or may not be distinct!
             // but, when merging we can detect for duplicates and skip adding them
 
-            let vals = [];
+            let nextCandidates = [];
             if (!popDone) {
-                vals.push([keysPopSorted, i]);
+                nextCandidates.push([keysPopSorted, i]);
             } if (!genDone) {
-                vals.push([keysGenSorted, j]);
+                nextCandidates.push([keysGenSorted, j]);
             } if (!basDone) {
-                vals.push([keysBasSorted, k]);
+                nextCandidates.push([keysBasSorted, k]);
             } else {
+                console.log("breaking... this probs shouldn't happen...");
                 break;  // shouldn't need to get here since i moved the ___Done variables to update at the end
             }
 
-            let currMin = vals.sort(
+            let currMin = nextCandidates.sort(
                 (a, b) => (b[0][b[1]] - a[0][a[1]])  // checks the value of the array at the respective index i/j/k
             )[0];  // takes the minimum
             
