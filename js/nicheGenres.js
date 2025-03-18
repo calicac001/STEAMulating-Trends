@@ -95,13 +95,13 @@ class NicheGenresDistribution {
         
         let genresMapping = {}
         genres.forEach(d => {
-            if (+d["AppID"] in genresMapping) {
+            if (d["AppID"] in genresMapping) {
                 genresMapping[d["AppID"]].push(d["Genre"]);
             } else {
                 genresMapping[d["AppID"]] = [d["Genre"]];
             }
         });
-
+        
         return genresMapping;
     }
 
@@ -225,6 +225,7 @@ class NicheGenresDistribution {
 
         let appIDs = Object.keys(crunchedPopularity)/*.map(d => +d)*/;
         
+        /*
         appIDs.forEach(id => {
             // console.log(crunchedBasicInfo[id]);
             // console.log(crunchedPopularity[id]);
@@ -239,6 +240,7 @@ class NicheGenresDistribution {
                 ...(crunchedPopularity[id])  // for averageMetric and medianMetric mappings  
             };
             console.log(v);
+            console.log(finalData, currGenres);
             
             currGenres.forEach(currGenre =>
                 finalData[currGenre].push(
@@ -246,12 +248,21 @@ class NicheGenresDistribution {
                 )
             )
         })
+        console.log(finalData);
+        */
+
+        for (const id of appIDs) {
+            console.log(crunchedBasicInfo[id]);
+            console.log(crunchedPopularity[id]);
+            let currGenres = crunchedGenres[id]
+            console.log(currGenres);
+        }
 
         return finalData;
         // a mapping from genres, to an array of objects, that contain some info about a game.
+
+
     }
-
-
 
     static aggregatedData(popularity, genres, basicInfo) {
         // now we actually need to use the "final data" and then get our distribution bar graph data,
@@ -288,7 +299,15 @@ class NicheGenresDistribution {
 
 
     }
+
+    /////////////////////// making new shit, starting from scratch ////////////////////////
+
+
+
 }
+
+
+
 
 // let nicheGenresDistribution = NicheGenresDistribution(
 //     "#distribution-plot", );
