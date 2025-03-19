@@ -8,7 +8,8 @@
 // i need to make buckets... and i need to choose those buckets based on the data... hmph...
 // i have a lotta stuff to do today... gonna kms!!!
 
-
+// TODO: somehow work in the total number of players into the metric that i'm using? somehow normalize the metric
+//       need to play with the metric once i get the visualization working, so i can *see* which metric makes more sense
 
 class NicheGenresDistribution {
     constructor(selector, popularity, genres, basicInfo) {
@@ -22,7 +23,7 @@ class NicheGenresDistribution {
         ;
 
         // console.log(popularity, genres, basicInfo);
-        NicheGenresDistribution.aggregatedData(popularity, genres, basicInfo);
+        NicheGenresDistribution.bob(popularity, genres, basicInfo);
 
     }
 
@@ -301,8 +302,216 @@ class NicheGenresDistribution {
     }
 
     /////////////////////// making new shit, starting from scratch ////////////////////////
+    static bob(popularity, genres, basicInfo) {
+        const cleanedPopularity = NicheGenresDistribution.popularityCleaner(popularity);
+        const cleanedGenres = NicheGenresDistribution.genresCleaner(genres);
+        const cleanedBasicInfo = NicheGenresDistribution.basicInfoCleaner(basicInfo);
+        // console.log(cleanedPopularity);
+        // console.log(cleanedGenres);
+        // console.log(cleanedBasicInfo);
 
+        const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
+        const gameToMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity);
 
+        const minMetric = d3.max(Object.entries(gameToMetric), d => d[1]["medPlaytimeMetric"]);
+        // avg player metric: 0 - 17.8855421686747
+        // med player metric: 0 - 618.0322580645161
+        // what a range...
+        console.log(minMetric);
+        // console.log(genreToGame);
+        // console.log(gameToMetric);
+
+        // TODO: take cleaned data, and make frequency distribution chart with buckets
+        // first gotta process the data into buckets
+        // then i have to graph this distribution (with some sort of bar chart or something)
+        // then play with the axes to see what kinda scale shows the data in an intersting way
+    }
+
+    static popularityCleaner(popularity) {
+        /**
+         * popularity is an array of objects like this:
+            {
+                "AppID": "10",
+                "Recommendations": "122770",
+                "Estimated owners": "10000000 - 20000000",
+                "Average playtime forever": "10524",
+                "Average playtime two weeks": "1733",
+                "Median playtime forever": "228",
+                "Median playtime two weeks": "733",
+                "Peak CCU": "13230"
+            }
+        */
+        return popularity.map(d => ({
+            "appID": d["AppID"],
+            "estimatedOwners": d["Estimated owners"],
+            "avgPlaytimeForever": d["Average playtime forever"],
+            "avgPlaytime2Weeks": d["Average playtime two weeks"],
+            "medPlaytimeForever": d["Median playtime forever"],
+            "medPlaytime2Weeks": d["Median playtime two weeks"]
+        }));
+
+    }
+
+    static genresCleaner(genres) {
+        /**
+         * genres is an array of objects like this:
+            {
+            "AppID": "10",
+            "Genres": "Action"
+            }
+
+        Note: an AppID might have multiple genres, (so, there can be multiple objects with the same AppID but different Genres)
+        Note: although Genres is a plural word, only 1 genre will appear in the string
+         */
+    
+        return genres.map(d => ({
+            "appID": d["AppID"],
+            "genre": d["Genres"]  // note change from plural to singular "Genres" to "genre"
+        }));
+        // TODO: decide whether or not I wanna keep games with the genre ""
+    }
+
+    static basicInfoCleaner(basicInfo) {
+        /**
+         * basicInfo is an array of objects like this:
+            {
+                "AppID": "10",
+                "Name": "Counter-Strike",
+                "Release date": "01-Nov-00",
+                "Required age": "0",
+                "Price": "9.99",
+                "DLC count": "0",
+                "Developers": "Valve",
+                "Publishers": "Valve"
+            }
+         */
+
+        return basicInfo.map(d => ({
+            "appID": d["AppID"],
+            "name": d["Name"]
+        }))
+    }
+
+    static getGenresList(cleanedGenres) {
+        return [
+            ... new Set(cleanedGenres.map(d => d["genre"]))
+        ];
+    }
+
+    static getGenresToGames(cleanedGenres) {
+        const genresList = NicheGenresDistribution.getGenresList(cleanedGenres);
+        // console.log(genresList);
+
+        const genreToGamesMapping = {};
+        for (const genre of genresList) {
+            genreToGamesMapping[genre] = [];
+        }
+        // console.log(genreToGamesMapping);
+
+        for (const game of cleanedGenres) {
+            genreToGamesMapping[game["genre"]].push(game["appID"]);
+        }
+
+        // console.log(genreToGamesMapping);
+
+        // TODO: remove the genre: ""  ?  (the no name genre, which is used for playtests)
+
+        return genreToGamesMapping;
+    }
+
+    static #noGenreGames(cleanedGenres) {
+        /** @private */
+        /** I just wanted to use keep this function for documentation purposes, as it's intersting */
+        // there are a bunch of games that don't have a genre -- their titles all (i haven't properly checked, but a quick skim suggests this)
+        // have the keyword "playtest" in them, so I'm guessing they're beta games or something
+        // i'll filter out these games that don't have a genre
+        // this is a silly little finding
+
+        const noGenres = [];
+        for (const game of cleanedGenres) {
+            if (game["genre"] === "") {
+                console.log(game);
+                noGenres.push(game["appID"]);
+            }
+            // if (game["appID"] == "3193740") {
+            //     console.log(game);
+            // }
+        }
+        // console.log(noGenres);
+
+        for (const game of cleanedBasicInfo) {
+            for (const appID of noGenres) {
+                if (game.appID === appID) {
+                    console.log(game);
+                }
+            }
+        }
+    }
+
+    static getGameToPopularity(cleanedPopularity) {
+        const gameToPopularity = {};
+        for (const game of cleanedPopularity) {
+            gameToPopularity[game["appID"]] = {
+                "estimatedOwners": game["estimatedOwners"],
+                "avgPlaytimeForever": game["avgPlaytimeForever"],
+                "avgPlaytime2Weeks": game["avgPlaytime2Weeks"],
+                "medPlaytimeForever": game["medPlaytimeForever"],
+                "medPlaytime2Weeks": game["medPlaytime2Weeks"]
+            };
+            // console.log(game);
+        }
+        // console.log(gameToPopularity);  // takes a long time to show in the console when u click to expand, since, unlike for big arrays that allow u to see small ranges of the array, objects will expand and show *every* key-value pair (or, property value i think it's called in js)
+        return gameToPopularity;
+    }
+
+    static getGameToMetric(cleanedPopularity) {
+        const gameToPopularity = NicheGenresDistribution.getGameToPopularity(cleanedPopularity);
+        
+        const gameToMetric = {};
+        for (const game of cleanedPopularity) {
+            gameToMetric[game["appID"]] = {
+                "estimatedOwners": game["estimatedOwners"],
+                "avgPlaytimeMetric": (+game["avgPlaytime2Weeks"]) / (+game["avgPlaytimeForever"]),
+                "medPlaytimeMetric": (+game["medPlaytime2Weeks"]) / (+game["medPlaytimeForever"]),
+                // 2week / forever -> gives a bunch of 0s
+                // forever / 2week -> gives a bunch of inftys
+            };
+            // console.log(game);
+        }
+
+        /*
+        const k = "20";
+        console.log(gameToPopularity[k]); 
+        // gametoPopularity["20"]  // bruh. we have shit data. I'm guessing all the infinity metrics are coming from the denominator being 0 :\
+        // {
+        //     "estimatedOwners": "5000000 - 10000000",
+        //     "avgPlaytimeForever": "143",
+        //     "avgPlaytime2Weeks": "0",  // bruh
+        //     "medPlaytimeForever": "23",
+        //     "medPlaytime2Weeks": "0"  // bruh
+        // }
+        console.log(gameToMetric);  // takes a long time to show in the console when u click to expand, since, unlike for big arrays that allow u to see small ranges of the array, objects will expand and show *every* key-value pair (or, property value i think it's called in js)
+        // return gameToMetric;
+
+        let zero = 0;
+        let nonzero = 0
+        for (const game of Object.keys(gameToMetric)) {
+            if (gameToMetric[game]["avgPlaytimeMetric"] === 0) {
+                zero++;
+            } else {
+                nonzero++;
+            }
+        }
+        // zero: 12862
+        // nonzero: 84538
+        // that's... a lot of zeros. bruh. over 10% of the data. a lotta the games have high ownership as well too which is odd!!
+        console.log("zero:", zero);
+        console.log("nonzero:", nonzero);
+        */
+
+        return gameToMetric;
+
+    }
 
 }
 
