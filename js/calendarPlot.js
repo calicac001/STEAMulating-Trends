@@ -38,13 +38,118 @@ class CalendarPlot {
         vis.cellWidth = (vis.cellSize + 1.5) * 53; // Width of the chart
 
         // Define formatting functions
-        vis.formatDate = d3.utcFormat("%x");
+        vis.formatDate = d3.timeFormat("%b %d");
         vis.formatValue = d3.format("+.2%");
         vis.formatClose = d3.format("$,.2f");
         vis.formatDay = i => "SMTWTFS"[i];
         vis.formatMonth = d3.utcFormat("%b");
 
-        // (Filter, aggregate, modify data)
+        // For year filtering
+        vis.allData = vis.preprocessData(vis.data); // Store the complete dataset
+
+        // Make a copy for filtering
+        vis.data = vis.allData.slice();
+
+        // Initialize year range
+        vis.yearRange = [
+            d3.min(vis.allData, d => d.date.getFullYear()),
+            d3.max(vis.allData, d => d.date.getFullYear())
+        ];
+
+
+        // Create year filter controls
+        vis.createYearFilter();
+    }
+
+    createYearFilter() {
+        let vis = this;
+
+        // Get only the years that actually exist in the data
+        const uniqueYears = Array.from(new Set(vis.allData.map(d => d.date.getFullYear())))
+            .sort((a, b) => a - b);
+
+        vis.yearRange = [
+            uniqueYears[0],  // Minimum year in dataset
+            uniqueYears[uniqueYears.length - 1]  // Maximum year in dataset
+        ];
+
+        const filterContainer = d3.select('#calendar-controls')
+            .append('div')
+            .attr('class', 'year-filter-container');
+
+        // Add a heading
+        filterContainer.append('h4')
+            .text('Filter by Year');
+
+        // Create range filter
+        const rangeContainer = filterContainer.append('div')
+            .attr('class', 'range-container');
+
+        // Add "From" year selector
+        rangeContainer.append('span')
+            .text('From: ');
+
+        const fromYearSelect = rangeContainer.append('select')
+            .attr('id', 'from-year-select')
+            .on('change', function() {
+                const fromYear = +this.value;
+                const toYear = +d3.select('#to-year-select').property('value');
+
+                // Ensure "to" year is not less than "from" year
+                if (toYear < fromYear) {
+                    d3.select('#to-year-select').property('value', fromYear);
+                    vis.filterByYearRange(fromYear, fromYear);
+                } else {
+                    vis.filterByYearRange(fromYear, toYear);
+                }
+            });
+
+        // Add "To" year selector
+        rangeContainer.append('span')
+            .text(' To: ');
+
+        const toYearSelect = rangeContainer.append('select')
+            .attr('id', 'to-year-select')
+            .on('change', function() {
+                const toYear = +this.value;
+                const fromYear = +d3.select('#from-year-select').property('value');
+
+                // Ensure "from" year is not greater than "to" year
+                if (fromYear > toYear) {
+                    d3.select('#from-year-select').property('value', toYear);
+                    vis.filterByYearRange(toYear, toYear);
+                } else {
+                    vis.filterByYearRange(fromYear, toYear);
+                }
+            });
+
+        // Populate year options - only using years that exist in the dataset
+        uniqueYears.forEach(year => {
+            fromYearSelect.append('option')
+                .attr('value', year)
+                .text(year);
+
+            toYearSelect.append('option')
+                .attr('value', year)
+                .text(year);
+        });
+
+        // Set default values
+        fromYearSelect.property('value', vis.yearRange[0]);
+        toYearSelect.property('value', vis.yearRange[1]);
+
+        vis.wrangleData()
+    }
+
+    filterByYearRange(fromYear, toYear) {
+        let vis = this;
+
+        // Filter the data based on the selected year range
+        vis.data = vis.allData.filter(d => {
+            const year = d.date.getFullYear();
+            return year >= fromYear && year <= toYear;
+        });
+
         vis.wrangleData();
     }
 
@@ -64,12 +169,23 @@ class CalendarPlot {
             const [month, day] = d[0].split('-').map(Number);
             return {
                 date: new Date(2025, month, day),  // Use a fixed year to group the data
-                value: d[1]
+                value: d[1],
+                yearData: d3.groups(
+                    vis.data.filter(item =>
+                        item.date.getMonth() === month &&
+                        item.date.getDate() === day
+                    ),
+                    item => item.date.getFullYear()
+                ).map(yearGroup => ({
+                    year: yearGroup[0],
+                    count: d3.sum(yearGroup[1], item => item.value)
+                }))
             };
         });
         
         // Sort chronologically
         vis.displayData = vis.displayData.sort((a, b) => a.date - b.date);
+
 
         // Color scale
         let max = d3.max(vis.displayData, d => d.value);
@@ -82,6 +198,11 @@ class CalendarPlot {
     updateVis() {
         let vis = this;
 
+        // Remove existing elements
+        vis.svg.selectAll("rect").remove();
+        vis.svg.selectAll(".month-label").remove();
+        vis.svg.selectAll("path").remove();
+
         // Create calendar heatmap cells
         vis.svg.selectAll("rect")
             .data(vis.displayData)
@@ -91,14 +212,34 @@ class CalendarPlot {
             .attr("x", d => d3.timeWeek.count(d3.utcYear(d.date), d.date) * vis.cellSize)
             .attr("y", d => (d.date.getUTCDay()) * vis.cellSize)
             .attr("fill", d => vis.color(d.value))
+            .attr("stroke", "#e9ecef")  // Add a subtle border
+            .attr("stroke-width", 0.5)  // Thin border
             .append("title")
-            .text(d => `${vis.formatDate(d.date)}: ${d.value} games`);
+            .text(d => {
+                // Enhanced tooltip that shows year breakdown if available
+                let tooltip = `${vis.formatDate(d.date)}: ${d.value} games`;
+
+                // If no games, simplify tooltip
+                if (d.value === 0) {
+                    return `${vis.formatDate(d.date)}: No games`;
+                }
+
+                // Add year breakdown if available
+                if (d.yearData && d.yearData.length > 0) {
+                    tooltip += '\n\nBreakdown by year:';
+                    d.yearData.forEach(y => {
+                        if (y.count > 0) {
+                            tooltip += `\n${y.year}: ${y.count} games`;
+                        }
+                    });
+                }
+                return tooltip;
+            });
 
         // A function that draws a thin white line to the left of each month.
         function pathMonth(t) {
             const d = Math.max(0, Math.min(7, t.getUTCDay()));
             const w = d3.timeWeek.count(d3.utcYear(t), t);
-            console.log('Month:', t, 'Day:', d, 'Week:', w);
 
             let pathData;
             if (d === 0 | d === 7) {
@@ -115,8 +256,7 @@ class CalendarPlot {
             d3.utcMonth(d3.min(vis.displayData, d => d.date)),
             d3.utcMonth(d3.max(vis.displayData, d => d.date)).setUTCMonth(d3.utcMonth(d3.max(vis.displayData, d => d.date)).getUTCMonth() + 1)
         );
-        
-        // TODO: December is missing for some reason 
+
         let month = vis.svg.selectAll(".month-label")
             .data(months)
             .enter();
@@ -132,5 +272,58 @@ class CalendarPlot {
             .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
             .attr("y", -5)
             .text(vis.formatMonth);
+    }
+
+
+    // Function to ensure all days are represented in the dataset using only existing years
+    preprocessData(inputData) {
+        // Extract unique years that are actually in the dataset
+        const uniqueYears = Array.from(new Set(inputData.map(d => d.date.getFullYear())))
+            .sort((a, b) => a - b);
+
+        // Convert existing data to a Map for quick lookup
+        const dataMap = new Map();
+
+        // Process existing data
+        inputData.forEach(d => {
+            // Create a key in format "YYYY-MM-DD" for easy lookup
+            const dateKey = `${d.date.getFullYear()}-${d.date.getMonth()}-${d.date.getDate()}`;
+            dataMap.set(dateKey, d);
+        });
+
+        // Create a complete dataset with all days for only the years that exist
+        const completeData = [];
+
+        // Loop through each unique year that appears in the original data
+        for (let i = 0; i < uniqueYears.length; i++) {
+            const year = uniqueYears[i];
+
+            // Loop through each month (0-11)
+            for (let month = 0; month < 12; month++) {
+                // Get the last day of the month
+                const lastDay = new Date(year, month + 1, 0).getDate();
+
+                // Loop through each day of the month
+                for (let day = 1; day <= lastDay; day++) {
+                    const date = new Date(year, month, day);
+                    const dateKey = `${year}-${month}-${day}`;
+
+                    // Check if this date exists in the original data
+                    if (dataMap.has(dateKey)) {
+                        // Use existing data
+                        completeData.push(dataMap.get(dateKey));
+                    } else {
+                        // Create a new data point with value 0
+                        completeData.push({
+                            date: date,
+                            value: 0
+
+                        });
+                    }
+                }
+            }
+        }
+
+        return completeData;
     }
 }
