@@ -44,10 +44,6 @@ class CalendarPlot {
         vis.formatDay = i => "SMTWTFS"[i];
         vis.formatMonth = d3.utcFormat("%b");
 
-        // Weekday & positioning helpers
-        vis.timeWeek = d3.utcMonday;
-        vis.countDay = i => (i + 6) % 7;
-
         // (Filter, aggregate, modify data)
         vis.wrangleData();
     }
@@ -100,17 +96,24 @@ class CalendarPlot {
 
         // A function that draws a thin white line to the left of each month.
         function pathMonth(t) {
-            const d = Math.max(0, Math.min(7, vis.countDay(t.getUTCDay())));
+            const d = Math.max(0, Math.min(7, t.getUTCDay()));
             const w = d3.timeWeek.count(d3.utcYear(t), t);
-            return `${d === 0 ? `M${w * vis.cellSize},0`
-                : d === 7 ? `M${(w + 1) * vis.cellSize},0`
-                    : `M${(w + 1) * vis.cellSize},0V${d * vis.cellSize}H${w * vis.cellSize}`}V${7 * vis.cellSize}`;
+            console.log('Month:', t, 'Day:', d, 'Week:', w);
+
+            let pathData;
+            if (d === 0 | d === 7) {
+                pathData = `M${(w + 1) * vis.cellSize},0`;
+            } else {
+                pathData = `M${(w + 1) * vis.cellSize},0V${d * vis.cellSize}H${w * vis.cellSize}`;
+            }
+
+            return `${pathData}V${7 * vis.cellSize}`;
         }
 
         // Add month labels
         const months = d3.utcMonths(
             d3.utcMonth(d3.min(vis.displayData, d => d.date)),
-            d3.utcMonth(d3.max(vis.displayData, d => d.date))
+            d3.utcMonth(d3.max(vis.displayData, d => d.date)).setUTCMonth(d3.utcMonth(d3.max(vis.displayData, d => d.date)).getUTCMonth() + 1)
         );
         
         // TODO: December is missing for some reason 
@@ -126,7 +129,7 @@ class CalendarPlot {
 
         month.append("text")
             .attr("class", "month-label")
-            .attr("x", d => vis.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
+            .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
             .attr("y", -5)
             .text(vis.formatMonth);
     }
