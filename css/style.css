@@ -178,3 +178,95 @@ h1 {
     margin-bottom: 50px;
     padding: 20px;
 }
+
+/* formatting for line chart */
+
+.filter-container {
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 80%;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#genre-filter select {
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid #e0c080;
+    background-color: #fffaeb;
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 180px;
+    color: #5a4b00;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='6'><path d='M0 0l6 6 6-6z' fill='%235a4b00'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#genre-filter select:hover {
+    border-color: #d4a72c;
+    background-color: #fff8e0;
+}
+
+#genre-filter select:focus {
+    outline: none;
+    border-color: #c49000;
+    box-shadow: 0 0 0 3px rgba(196, 144, 0, 0.2);
+    background-color: #fff;
+}
+
+label[for="genre-filter"] {
+    font-weight: bold;
+    color: #5a4b00;
+    font-size: 16px;
+}
+
+/* Styling for the chart container with yellow background */
+#playtime-trends-chart {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 90%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Style for axis lines */
+.axis line, .axis path {
+    stroke: #5a4b00;
+    stroke-opacity: 0.3;
+}
+
+/* Style for axis text */
+.axis text {
+    fill: #5a4b00;
+    font-size: 12px;
+}
+
+/* Style for axis labels */
+.x-axis-label, .y-axis-label, .chart-title {
+    fill: #5a4b00;
+    font-weight: 500;
+}
+
+/* Style for data points */
+.data-point {
+    stroke: #fff;
+    stroke-width: 1.5;
+}
+
+/* Style for trend lines */
+.trend-line {
+    stroke: #9e5f00;
+    stroke-width: 2.5;
+}
