@@ -44,6 +44,10 @@ class CalendarPlot {
         vis.formatDay = i => "SMTWTFS"[i];
         vis.formatMonth = d3.utcFormat("%b");
 
+        // Extract unique years that are actually in the dataset
+        vis.uniqueYears = Array.from(new Set(vis.data.map(d => d.date.getFullYear())))
+            .sort((a, b) => a - b);
+
         // For year filtering
         vis.allData = vis.preprocessData(vis.data); // Store the complete dataset
 
@@ -56,22 +60,14 @@ class CalendarPlot {
             d3.max(vis.allData, d => d.date.getFullYear())
         ];
 
+        vis.endYear = vis.yearRange[1];
 
         // Create year filter controls
-        vis.createYearFilter();
+        vis.addHtmlElements();
     }
 
-    createYearFilter() {
+    addHtmlElements() {
         let vis = this;
-
-        // Get only the years that actually exist in the data
-        const uniqueYears = Array.from(new Set(vis.allData.map(d => d.date.getFullYear())))
-            .sort((a, b) => a - b);
-
-        vis.yearRange = [
-            uniqueYears[0],  // Minimum year in dataset
-            uniqueYears[uniqueYears.length - 1]  // Maximum year in dataset
-        ];
 
         const filterContainer = d3.select('#calendar-controls')
             .append('div')
@@ -99,8 +95,10 @@ class CalendarPlot {
                 if (toYear < fromYear) {
                     d3.select('#to-year-select').property('value', fromYear);
                     vis.filterByYearRange(fromYear, fromYear);
+                    vis.endYear = fromYear;
                 } else {
                     vis.filterByYearRange(fromYear, toYear);
+                    vis.endYear = toYear;
                 }
             });
 
@@ -118,13 +116,15 @@ class CalendarPlot {
                 if (fromYear > toYear) {
                     d3.select('#from-year-select').property('value', toYear);
                     vis.filterByYearRange(toYear, toYear);
+                    vis.endYear = toYear;
                 } else {
                     vis.filterByYearRange(fromYear, toYear);
+                    vis.endYear = toYear;
                 }
             });
 
         // Populate year options - only using years that exist in the dataset
-        uniqueYears.forEach(year => {
+        vis.uniqueYears.forEach(year => {
             fromYearSelect.append('option')
                 .attr('value', year)
                 .text(year);
@@ -137,6 +137,17 @@ class CalendarPlot {
         // Set default values
         fromYearSelect.property('value', vis.yearRange[0]);
         toYearSelect.property('value', vis.yearRange[1]);
+
+        const buttonContainer = d3.select('#calendar-controls')
+            .append('div')
+            .attr('class', 'button-container');
+
+        buttonContainer.append('button')
+            .attr('class', 'start-button')
+            .text('Start Animation')
+            .on('click', function() {
+                vis.startAnimation();
+            });
 
         vis.wrangleData()
     }
@@ -168,7 +179,7 @@ class CalendarPlot {
         vis.displayData = counts.map(d => {
             const [month, day] = d[0].split('-').map(Number);
             return {
-                date: new Date(2025, month, day),  // Use a fixed year to group the data
+                date: new Date(vis.endYear, month, day),  // Use a fixed year to group the data
                 value: d[1],
                 yearData: d3.groups(
                     vis.data.filter(item =>
@@ -204,7 +215,7 @@ class CalendarPlot {
         vis.svg.selectAll("path").remove();
 
         // Create calendar heatmap cells
-        vis.svg.selectAll("rect")
+        let cells = vis.svg.selectAll("rect")
             .data(vis.displayData)
             .enter().append("rect")
             .attr("width", vis.cellSize - 1)
@@ -213,8 +224,10 @@ class CalendarPlot {
             .attr("y", d => (d.date.getUTCDay()) * vis.cellSize)
             .attr("fill", d => vis.color(d.value))
             .attr("stroke", "#e9ecef")  // Add a subtle border
-            .attr("stroke-width", 0.5)  // Thin border
-            .append("title")
+            .attr("stroke-width", 0.5);  // Thin border
+
+
+        cells.append("title")
             .text(d => {
                 // Enhanced tooltip that shows year breakdown if available
                 let tooltip = `${vis.formatDate(d.date)}: ${d.value} games`;
@@ -277,10 +290,7 @@ class CalendarPlot {
 
     // Function to ensure all days are represented in the dataset using only existing years
     preprocessData(inputData) {
-        // Extract unique years that are actually in the dataset
-        const uniqueYears = Array.from(new Set(inputData.map(d => d.date.getFullYear())))
-            .sort((a, b) => a - b);
-
+        let vis = this;
         // Convert existing data to a Map for quick lookup
         const dataMap = new Map();
 
@@ -295,8 +305,8 @@ class CalendarPlot {
         const completeData = [];
 
         // Loop through each unique year that appears in the original data
-        for (let i = 0; i < uniqueYears.length; i++) {
-            const year = uniqueYears[i];
+        for (let i = 0; i < vis.uniqueYears.length; i++) {
+            const year = vis.uniqueYears[i];
 
             // Loop through each month (0-11)
             for (let month = 0; month < 12; month++) {
@@ -325,5 +335,30 @@ class CalendarPlot {
         }
 
         return completeData;
+    }
+
+    startAnimation(){
+        let vis = this;
+        const button = d3.select("#start-button");
+
+        // Disable the button to prevent multiple clicks
+        button.attr("disabled", true);
+
+        let currentIndex = 0;
+
+        // Function to update the graph year by year
+        const interval = setInterval(() => {
+            if (currentIndex >= vis.uniqueYears.length) {
+                clearInterval(interval);
+                button.attr("disabled", false);  // Enable the button again
+                return;
+            } else {
+                const currentYear = vis.uniqueYears[currentIndex];
+                vis.endYear = currentYear;
+                // Filter the data for the current year and update the visualization
+                vis.filterByYearRange(currentYear, currentYear);
+                currentIndex++;  // Move to the next year
+            }
+        }, 1000);  // Adjust the interval for the speed of the animation (1000ms = 1 second per year)
     }
 }
