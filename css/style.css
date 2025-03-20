@@ -1,13 +1,55 @@
+/****************************/
+/**      Intro Section      */
+/****************************/
 .intro p {
     width: 50%;
     margin: 0.5em auto;
     font-size: 1.65em;
 }
 
+/*Source: https://codepen.io/silvia-odwyer/pen/RwKMOpb */
 .intro {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    animation: pulsate 1.5s infinite alternate;
+    border: 0.2rem solid #fff;
+    border-radius: 2rem;
+    width: 75%;
+    align-self: center;
+    padding: 0.4em;
+    box-shadow: 0 0 .2rem #fff,
+        0 0 .2rem #fff,
+        0 0 2rem #00ffd2,
+        0 0 0.8rem #00ffd2,
+        0 0 2.8rem #00ffd2,
+        inset 0 0 1.3rem #00ffd2;
 }
+
+.intro-bg {
+    background-image: url("../img/title_bg.png");
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.7;
+    animation: horizontalScroll 10s linear infinite;
+}
+
+@keyframes horizontalScroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
+
+/****************************/
+/**    Content Sections     */
+/****************************/
 
 .section {
     text-align: center;
