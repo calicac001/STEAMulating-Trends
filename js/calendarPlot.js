@@ -161,6 +161,7 @@ class CalendarPlot {
             return year >= fromYear && year <= toYear;
         });
 
+
         vis.wrangleData();
     }
 
@@ -346,14 +347,21 @@ class CalendarPlot {
 
         let currentIndex = 0;
 
+        const toYear = +d3.select('#to-year-select').property('value');
+        const fromYear = +d3.select('#from-year-select').property('value');
+
+        const filterUnique = vis.uniqueYears.filter(d => {
+            return d >= fromYear && d <= toYear;
+        })
+
         // Function to update the graph year by year
         const interval = setInterval(() => {
-            if (currentIndex >= vis.uniqueYears.length) {
+            if (currentIndex >= filterUnique.length) {
                 clearInterval(interval);
                 button.attr("disabled", false);  // Enable the button again
                 return;
             } else {
-                const currentYear = vis.uniqueYears[currentIndex];
+                const currentYear = filterUnique[currentIndex];
                 vis.endYear = currentYear;
                 // Filter the data for the current year and update the visualization
                 vis.filterByYearRange(currentYear, currentYear);
