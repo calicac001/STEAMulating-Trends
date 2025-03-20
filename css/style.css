@@ -26,6 +26,9 @@
 
 #fp-nav ul li .fp-tooltip{
     color: #00ffd2;
+    background: black;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .chart-container {
