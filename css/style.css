@@ -1,13 +1,67 @@
+/****************************/
+/**      Intro Section      */
+/****************************/
 .intro p {
     width: 50%;
     margin: 0.5em auto;
     font-size: 1.65em;
 }
 
+/*Source: https://codepen.io/silvia-odwyer/pen/RwKMOpb */
 .intro {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    border: 0.2rem solid #fff;
+    border-radius: 2rem;
+    width: 75%;
+    align-self: center;
+    padding: 0.4em;
+    box-shadow: 0 0 .2rem #fff,
+        0 0 .2rem #fff,
+        0 0 2rem #00ffd2,
+        0 0 0.8rem #00ffd2,
+        0 0 2.8rem #00ffd2,
+        inset 0 0 1.3rem #00ffd2;
 }
+
+.intro-bg {
+    background-image: url("../img/title_bg.png");
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.7;
+    animation: horizontalScroll 10s linear infinite;
+}
+
+@keyframes horizontalScroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+#title-font{
+    font-size: 5em;
+    /*color: #fff;*/
+    /*text-shadow:*/
+    /*        0 0 7px #fff,*/
+    /*        0 0 10px #fff,*/
+    /*        0 0 21px #fff,*/
+    /*        0 0 42px #bc13fe,*/
+    /*        0 0 82px #bc13fe,*/
+    /*        0 0 92px #bc13fe,*/
+    /*        0 0 102px #bc13fe,*/
+    /*        0 0 151px #bc13fe;*/
+}
+
+
+/****************************/
+/**    Content Sections     */
+/****************************/
 
 .section {
     text-align: center;
@@ -18,7 +72,14 @@
     padding-left: 10vw;
 }
 
-/* Overwriting styles for the navigation dots */
+.chart-container {
+    width: 80vw;
+    height: 50vh;
+}
+
+/****************************/
+/**     Navigation Dots    **/
+/****************************/
 #fp-nav ul li a span,
 .fp-slidesNav ul li a span {
     background: #00ffd2;
@@ -26,11 +87,19 @@
 
 #fp-nav ul li .fp-tooltip{
     color: #00ffd2;
+    background: black;
+    padding: 5px;
+    border-radius: 5px;
 }
 
-.chart-container {
+/****************************/
+/**     Calendar Plot      **/
+/****************************/
+#calendar-plot {
     width: 80vw;
-    height: 20vh;
+    height: 27vh;
+    align-self: center;
+    padding-left: 20px;
 }
 
 /* Styles for Diverging barchart*/

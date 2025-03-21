@@ -640,7 +640,7 @@ body
 /*Overriding the values*/
 .cyber-tile-big
 {
-    --tile-width: 480px;
+    --tile-width: 80%;
     --tile-edges: 26px;
 }
 
