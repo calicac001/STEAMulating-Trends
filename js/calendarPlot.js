@@ -201,7 +201,8 @@ class CalendarPlot {
 
         // Color scale
         let max = d3.max(vis.displayData, d => d.value);
-        vis.color = d3.scaleSequential(d3.interpolateBlues).domain([0, max]);
+        vis.color = d3.scaleSequential(d3.interpolateYlGnBu)
+            .domain([0, max]);
 
 
         vis.updateVis();
@@ -277,8 +278,8 @@ class CalendarPlot {
 
         month.filter((d, i) => i).append("path")
             .attr("fill", "none")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 3)
+            .attr("stroke", "white")
+            .attr("stroke-width", 5)
             .attr("d", pathMonth);
 
         month.append("text")

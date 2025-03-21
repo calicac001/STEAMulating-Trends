@@ -9,17 +9,9 @@
 
 /*Source: https://codepen.io/silvia-odwyer/pen/RwKMOpb */
 .intro {
-    border: 0.2rem solid #fff;
-    border-radius: 2rem;
     width: 75%;
     align-self: center;
     padding: 0.4em;
-    box-shadow: 0 0 .2rem #fff,
-        0 0 .2rem #fff,
-        0 0 2rem #00ffd2,
-        0 0 0.8rem #00ffd2,
-        0 0 2.8rem #00ffd2,
-        inset 0 0 1.3rem #00ffd2;
 }
 
 .intro-bg {
@@ -46,18 +38,18 @@
 
 #title-font{
     font-size: 5em;
-    /*color: #fff;*/
-    /*text-shadow:*/
-    /*        0 0 7px #fff,*/
-    /*        0 0 10px #fff,*/
-    /*        0 0 21px #fff,*/
-    /*        0 0 42px #bc13fe,*/
-    /*        0 0 82px #bc13fe,*/
-    /*        0 0 92px #bc13fe,*/
-    /*        0 0 102px #bc13fe,*/
-    /*        0 0 151px #bc13fe;*/
 }
 
+.neon-border {
+    border: 0.2rem solid #fff;
+    border-radius: 2rem;
+    box-shadow: 0 0 .2rem #fff,
+    0 0 .2rem #fff,
+    0 0 2rem #00ffd2,
+    0 0 0.8rem #00ffd2,
+    0 0 2.8rem #00ffd2,
+    inset 0 0 1.3rem #00ffd2;
+}
 
 /****************************/
 /**    Content Sections     */
@@ -68,8 +60,14 @@
 }
 
 .content {
-    padding-right: 10vw;
-    padding-left: 10vw;
+    padding: 1vw 5vw;
+    width: 90%;
+    align-self: center;
+}
+
+p {
+    text-align: left;
+    font-size: 1.5em;
 }
 
 .chart-container {
@@ -82,12 +80,12 @@
 /****************************/
 #fp-nav ul li a span,
 .fp-slidesNav ul li a span {
-    background: #00ffd2;
+    background: #f2e905;
 }
 
 #fp-nav ul li .fp-tooltip{
-    color: #00ffd2;
-    background: black;
+    color: #f2e905;
+    background: dimgray;
     padding: 5px;
     border-radius: 5px;
 }
@@ -97,7 +95,7 @@
 /****************************/
 #calendar-plot {
     width: 80vw;
-    height: 27vh;
+    height: 30vh;
     align-self: center;
     padding-left: 20px;
 }
