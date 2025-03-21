@@ -16,12 +16,13 @@
 <body class="fp-scroll-mac" style="height: 100%; position: relative; overflow: hidden;">
 	<!-- fullPage.js HTML -->
 	<div id="fullpage" class="fullpage-wrapper " style="height: 100%; position: relative; touch-action: none;">
-		<div class="section fp-section fp-table active fp-is-overflow fp-loaded fp-completely" data-anchor="firstPage">
+		<div class="section bg-white fp-table active fp-is-overflow fp-loaded fp-completely" data-anchor="firstPage">
 			<div class="intro-bg fp-overflow" tabindex="-1">
 			</div>
 
-			<div class="intro bg-black fg-white cyber-glitch-2 oxanium-font neon-border">
-				<h1 class="cyber-h">STEAMulating Trends</h1>
+			<div class="intro bg-black fg-white cyber-glitch-0 oxanium-font neon-border">
+				<div id="title-font">STEAMulating Trends</div>
+				<img src="img/steam_logo.png" width="200" height="200" alt="steam-logo">
 				<p>What Data Reveals About Game Success</p>
 			</div>
 		</div>
@@ -46,9 +47,9 @@
 					Seasonal Trends<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Chloe-->
 				<!-- Calendar Plot: Are there seasonal patterns in game releases? -->
-				<div class="chart-container" id="calendar-plot"></div>
-				<div id="calendar-controls" class="controls-container"></div>
 
+				<div class="chart-container cyber-tile-big bg-white" id="calendar-plot"></div>
+				<div id="calendar-controls" class="controls-container"></div>
 			</div>
 		</div>
 
@@ -212,11 +213,11 @@
 
 	<!-- Your implementation -->
 	<script src="js/fullpage.js"></script>
-	<script src="js/main.js"></script>
 	<script src="js/divergingBar.js"></script>
 	<script src="js/lineChart.js"></script>
 	<script src="js/calendarPlot.js"></script>
 	<script src="js/sridharViz.js"></script>
+	<script src="js/main.js"></script>
 
 </body>
 </html>

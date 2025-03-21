@@ -9,7 +9,6 @@
 
 /*Source: https://codepen.io/silvia-odwyer/pen/RwKMOpb */
 .intro {
-    animation: pulsate 1.5s infinite alternate;
     border: 0.2rem solid #fff;
     border-radius: 2rem;
     width: 75%;
@@ -45,6 +44,19 @@
     }
 }
 
+#title-font{
+    font-size: 5em;
+    /*color: #fff;*/
+    /*text-shadow:*/
+    /*        0 0 7px #fff,*/
+    /*        0 0 10px #fff,*/
+    /*        0 0 21px #fff,*/
+    /*        0 0 42px #bc13fe,*/
+    /*        0 0 82px #bc13fe,*/
+    /*        0 0 92px #bc13fe,*/
+    /*        0 0 102px #bc13fe,*/
+    /*        0 0 151px #bc13fe;*/
+}
 
 
 /****************************/
@@ -60,7 +72,14 @@
     padding-left: 10vw;
 }
 
-/* Overwriting styles for the navigation dots */
+.chart-container {
+    width: 80vw;
+    height: 50vh;
+}
+
+/****************************/
+/**     Navigation Dots    **/
+/****************************/
 #fp-nav ul li a span,
 .fp-slidesNav ul li a span {
     background: #00ffd2;
@@ -73,9 +92,14 @@
     border-radius: 5px;
 }
 
-.chart-container {
+/****************************/
+/**     Calendar Plot      **/
+/****************************/
+#calendar-plot {
     width: 80vw;
-    height: 20vh;
+    height: 27vh;
+    align-self: center;
+    padding-left: 20px;
 }
 
 /* Styles for Diverging barchart*/

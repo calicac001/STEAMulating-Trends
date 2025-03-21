@@ -16,7 +16,7 @@ class CalendarPlot {
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 50, right: 0, bottom: 30, left: 50};
+        vis.margin = {top: 30, right: 10, bottom: 10, left: 10};
 
         // Dimensions
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
@@ -33,7 +33,7 @@ class CalendarPlot {
         // Code derived from https://observablehq.com/@d3/calendar/2
 
         // Define constants for cells
-        vis.cellSize = 16; // Height of a day
+        vis.cellSize = vis.width / 55; // Height of a day
         vis.cellHeight = vis.cellSize * 7; // Height of a week (5 days + padding)
         vis.cellWidth = (vis.cellSize + 1.5) * 53; // Width of the chart
 
@@ -143,7 +143,7 @@ class CalendarPlot {
             .attr('class', 'button-container');
 
         buttonContainer.append('button')
-            .attr('class', 'start-button')
+            .attr('class', 'start-button cyber-button bg-red fg-white')
             .text('Start Animation')
             .on('click', function() {
                 vis.startAnimation();
