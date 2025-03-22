@@ -101,6 +101,24 @@ p {
     padding-left: 20px;
 }
 
+/****************************/
+/**     Hexbin Plot        **/
+/****************************/
+#hexbin-plot {
+    width: 70vw;
+    height: 50vh;
+    color: white;
+}
+
+.legend-item {
+    font-size: 0.9em;
+}
+
+.axis-label {
+    font-size: 1em;
+    fill: white;
+}
+
 /* Styles for Diverging barchart*/
 
 #diverging-bar-plot {

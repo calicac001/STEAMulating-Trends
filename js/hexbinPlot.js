@@ -19,12 +19,11 @@ class HexbinPlot {
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 30, right: 30, bottom: 50, left: 50};
+        vis.margin = {top: 30, right: 30, bottom: 50, left: 60};
 
         // Dimensions
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().height - vis.margin.top - vis.margin.bottom;
-
 
         // SVG drawing area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
@@ -33,24 +32,18 @@ class HexbinPlot {
             .append("g")
             .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
+        // Account for legend when creating the scale for x-axis
+        vis.legendWidth = 150;
+
         // Define scales
         vis.xScale = d3.scaleLog() // Genres mapped to evenly spaced positions
-            .range([0, vis.width-200]);
+            .range([0, vis.width - vis.legendWidth - 50]);
 
         vis.yScale = d3.scaleLog() // Reviews mapped to log scale
             .range([vis.height, 0]);
 
-        // Get unique genres from your data (adjust this if you already have a list of genres)
-        const genres = Array.from(new Set(vis.data.map(d => d.genre)));
-
-        // Generate as many colors as needed using interpolation
-        // const genreCount = genres.length;
-        // const colorRange = d3.quantize(d3.interpolateRainbow, genreCount);
-
         // Create a color scale for genres
-        vis.genreColor = d3.scaleOrdinal(d3.schemeCategory10);
-
-        //vis.genreColor = d3.scaleOrdinal(d3.schemePaired);
+        //vis.genreColor = d3.scaleOrdinal(d3.schemeCategory10);
 
         // Create axes groups
         vis.xAxisGroup = vis.svg.append("g")
@@ -60,15 +53,27 @@ class HexbinPlot {
         vis.yAxisGroup = vis.svg.append("g")
             .attr("class", "y-axis");
 
-        // Create color legend for the genre
-        vis.legendWidth = 200;
-        vis.legendHeight = 20;
-        vis.legendSpacing = 25;
+        // X-Axis Label
+        vis.svg.append("text")
+            .attr("class", "axis-label")
+            .attr("x", vis.width / 2 - 75)
+            .attr("y", vis.height + vis.margin.bottom - 5) // Adjust based on margin
+            .attr("text-anchor", "middle")
+            .text("Number of Recommendations (Log Scale)");
+
+        // Y-Axis Label
+        vis.svg.append("text")
+            .attr("class", "axis-label")
+            .attr("x", -vis.height / 2)
+            .attr("y", -vis.margin.left + 20) // Adjust based on margin
+            .attr("transform", "rotate(-90)")
+            .attr("text-anchor", "middle")
+            .text("Number of Reviews (Log Scale)");
 
         // Create a group for the legend
         vis.legend = vis.svg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${vis.width-100}, 0)`);
+            .attr("transform", `translate(${vis.width - vis.legendWidth}, 0)`);
 
         // Load & process data
         vis.wrangleData();
@@ -98,6 +103,8 @@ class HexbinPlot {
         // Bin the data
         vis.bins = vis.hexbin(vis.data); //.filter(d => d.genre === "Casual")
 
+        vis.genreColorScale = vis.createGenreColorScale(vis.bins);
+
         vis.updateVis();
     }
 
@@ -106,13 +113,12 @@ class HexbinPlot {
 
         // Draw X-axis
         vis.xAxisGroup.call(d3.axisBottom(vis.xScale)
-            .ticks(5, ".1s"));
+            .ticks(10, ".1s"));
 
         // Draw Y-axis
         vis.yAxisGroup.call(d3.axisLeft(vis.yScale)
             .ticks(5, ".1s")); // Log scale formatting
 
-        const displayedGenres = new Set();
 
         // Append the hexagons with the most represented genre color
         vis.svg.selectAll("path")
@@ -121,46 +127,76 @@ class HexbinPlot {
             .attr("transform", d => `translate(${d.x},${d.y})`)
             .attr("d", vis.hexbin.hexagon())
             .attr("fill", d => {
-                // Handle empty bins
-                if (!d || d.length === 0) return "#eee"; // Default color for empty bins
-
-                // Count genre occurrences in this bin
-                const genreCounts = {};
-                d.forEach(point => {
-                    if (!genreCounts[point.genre]) genreCounts[point.genre] = 0;
-                    genreCounts[point.genre]++;
-                });
-
-                // Find the most common genre
-                let maxCount = 0;
-                let dominantGenre = null;
-                Object.entries(genreCounts).forEach(([genre, count]) => {
-                    if (count > maxCount) {
-                        maxCount = count;
-                        dominantGenre = genre;
-                    }
-                });
-
-                if (!displayedGenres.has(dominantGenre)) {
-                    displayedGenres.add(dominantGenre);
-                }
-
-                // Return color for the dominant genre
-                return vis.genreColor(dominantGenre);
+                const dominantGenre = vis.findDominantGenre(d);
+                return vis.genreColorScale(dominantGenre);
             })
             .attr("stroke", "black");
 
-        vis.updateLegend(displayedGenres);
+        vis.updateLegend();
     }
 
-    updateLegend(displayedGenres) {
+    findDominantGenre(bin){
+        if (!bin || bin.length === 0) return;
+
+        // Count genres in this bin
+        const genreCounts = {};
+        bin.forEach(point => {
+            if (!genreCounts[point.genre]) genreCounts[point.genre] = 0;
+            genreCounts[point.genre]++;
+        });
+
+        // Find dominant genre
+        let maxCount = 0;
+        let dominantGenre = null;
+        Object.entries(genreCounts).forEach(([genre, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                dominantGenre = genre;
+            }
+        });
+
+        return dominantGenre;
+    }
+
+    createGenreColorScale(bins){
+        let vis = this;
+
+        // First, extract all dominant genres from the bins
+        vis.displayedGenres = new Set();
+
+        // Analyze all bins to find dominant genres without coloring yet
+        bins.forEach(bin => {
+            const dominantGenre = vis.findDominantGenre(bin);
+            if (dominantGenre) vis.displayedGenres.add(dominantGenre);
+        })
+
+        // Convert to sorted array
+        const displayedGenreArray = Array.from(vis.displayedGenres).sort();
+
+        // To avoid similar colors at the beginning and end of the range
+        // Use a partial section of the rainbow instead of the full circle
+        function customRainbow(t) {
+            // Use a range from 0.1 to 0.9 instead of 0 to 1
+            // This avoids the full circle and prevents the red overlap
+            return d3.interpolateRainbow(0.1 + t * 0.8);
+        }
+
+        // NOW create your color scale using only the displayed genres
+        const genreColorScale = d3.scaleOrdinal()
+            .domain(displayedGenreArray)
+            .range(d3.quantize(customRainbow, displayedGenreArray.length));
+
+        return genreColorScale;
+    }
+
+    updateLegend() {
         let vis = this;
 
         const legendItemHeight = 20;
         const legendSpacing = 5;
 
         // Create the legend using only the displayed genres
-        const displayedGenreArray = Array.from(displayedGenres).sort();
+        const displayedGenreArray = Array.from(vis.displayedGenres).sort();
 
         // Create legend items
         const legendItems = vis.legend.selectAll(".legend-item")
@@ -171,16 +207,17 @@ class HexbinPlot {
 
         // Add colored rectangles
         legendItems.append("rect")
-            .attr("width", vis.legendHeight)
-            .attr("height", vis.legendHeight)
-            .attr("fill", d => vis.genreColor(d))
+            .attr("width", legendItemHeight)
+            .attr("height", legendItemHeight)
+            .attr("fill", d => vis.genreColorScale(d))
             .attr("stroke", "black")
             .attr("stroke-width", 0.5);
 
         // Add text labels
         legendItems.append("text")
-            .attr("x", vis.legendHeight + 5)
-            .attr("y", vis.legendHeight / 2)
+            .attr("class", "legend-item")
+            .attr("x", legendItemHeight + 5)
+            .attr("y", legendItemHeight / 2)
             .attr("dy", "0.35em") // Vertical centering
             .attr("fill", "white")
             .text(d => d);
