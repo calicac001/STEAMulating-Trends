@@ -137,7 +137,27 @@ class HexbinPlot {
 
             .merge(hexbins)
             .transition()
-            .duration(1000)
+            .duration(150)
+            .attr("fill", () => vis.genreColorScale(
+                (vis.colorBy === "genre") ? Math.random() : Math.random()*100
+            )) .attr("opacity", 0.5)
+
+            .transition()
+            .duration(150)
+            .attr("fill", () => vis.genreColorScale(
+                (vis.colorBy === "genre") ? Math.random() : Math.random()*100
+            )) .attr("opacity", 0.5)
+
+            .transition()
+            .duration(150)
+            .attr("fill", () => vis.genreColorScale(
+                (vis.colorBy === "genre") ? Math.random() : Math.random()*100
+            ))   // Temporary flicker color
+            .attr("opacity", 0.5)
+
+            .transition()
+            .duration(500)
+            .attr("opacity", 1)
             .attr("fill", d => {
                 if (vis.colorBy === "genre") {
                     const dominantGenre = vis.findDominantGenre(d);
