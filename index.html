@@ -32,12 +32,22 @@
 				<h1 class="cyber-h fg-white ac-white">
 					Overview<span class="cyber-glitch-3">...</span>
 				</h1>
-				<br>
 				<p>Steam is the largest digital distribution platform for PC gaming, with millions of active users and
 					a vast library of games spanning every genre. As the go-to marketplace for both indie developers
 					and major studios, Steam serves as a crucial indicator of gaming trends and player preferences.</p>
-				<br>
 				<p>But what makes some games thrive while others fade into obscurity?</p>
+			</div>
+		</div>
+
+		<div class="section fp-section fp-table fp-is-overflow" data-anchor="2.5Page">
+			<div class="content-mid fp-overflow oxanium-font neon-border" tabindex="-1">
+				<h1 class="cyber-h fg-white ac-white">
+					A Look Through Time<span class="cyber-glitch-1">&#8987</span>
+				</h1>
+				<p>With nearly 19,000 games released in 2024 (~32.5% &#9650 2023),
+					Steam’s marketplace is expanding faster than ever.</p>
+
+				<p>To identify peak release schedules, let’s take a closer look at how game releases have evolved over time.</p>
 			</div>
 		</div>
 
@@ -75,28 +85,7 @@
 					Reviews by Genres<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Chloe-->
 				<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
-				<div id="beehive-plot">
-					<div class="row">
-						<div class="col-md-6">
-							<img src="img/beehive_gradient.png" width="500px" height="300px">
-						</div>
-
-						<div class="col-md-6">
-							<p>On second thought, might change this plot to a sunburst since we have about 90k games and
-								displaying each one as an individual cell is not very efficient. By using a sunburst graph
-								instead, we can still use the gradient coloring for reviews while also having the ability to
-								subdivide each genre by category.
-							</p>
-
-							<p>The initial sunburst plot will only include the genres, colored by number of reviews.
-								Clicking in a genre, opens up the sunburst plot for that genre which is then subdivided
-								into the categories (or maybe tags, but there's a lot for each one so will have to see)
-								within the genre.
-							</p>
-						</div>
-					</div>
-
-				</div>
+				<div class="chart-container" id="hexbin-plot"></div>
 			</div>
 		</div>
 
@@ -211,11 +200,15 @@
 	<!-- fullPage.js -->
 	<script src="https://www.unpkg.com/fullpage.js/dist/fullpage.min.js"></script>
 
+	<!-- d3-hexbin	-->
+	<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+
 	<!-- Your implementation -->
 	<script src="js/fullpage.js"></script>
 	<script src="js/divergingBar.js"></script>
 	<script src="js/lineChart.js"></script>
 	<script src="js/calendarPlot.js"></script>
+	<script src="js/hexbinPlot.js"></script>
 	<script src="js/sridharViz.js"></script>
 	<script src="js/main.js"></script>
 
