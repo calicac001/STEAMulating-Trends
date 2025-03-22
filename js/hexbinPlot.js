@@ -150,9 +150,9 @@ class HexbinPlot {
         hexbins.exit().remove();
 
         if (vis.colorBy === "genre") {
-            vis.updateLegend();
+            vis.updateGenreLegend();
         } else if (vis.colorBy === "num-games") {
-
+            vis.updateNumGameLegend();
         }
 
         // Draw X-axis
@@ -218,8 +218,10 @@ class HexbinPlot {
         return genreColorScale;
     }
 
-    updateLegend() {
+    updateGenreLegend() {
         let vis = this;
+
+        vis.legend.selectAll(".legend-item").remove();
 
         const legendItemHeight = 20;
         const legendSpacing = 5;
@@ -252,12 +254,50 @@ class HexbinPlot {
             .text(d => d);
 
         // Add legend title
-        vis.legend.append("text")
-            .attr("x", 0)
-            .attr("y", -10)
-            .attr("font-weight", "bold")
-            .attr("fill", "white")
-            .text("Genres");
+        if (vis.legendTitle){
+            vis.legendTitle.text("Genres")
+        } else {
+            vis.legendTitle = vis.legend.append("text")
+                .attr("x", 0)
+                .attr("y", -10)
+                .attr("font-weight", "bold")
+                .attr("fill", "white")
+                .text("Genres");
+        }
     }
 
+    updateNumGameLegend() {
+        let vis = this;
+
+        vis.legend.selectAll(".legend-item").remove();
+
+        // Dimensions for the legend
+        const legendWidth = 20;
+        const legendItemHeight = 10;
+
+        // Create the vertical legend
+        const legendRect = vis.legend.selectAll("rect")
+            .data(vis.genreColorScale.ticks(5))  // Divide the domain into 10 intervals
+            .enter().append("rect")
+            .attr("class", "legend-item")
+            .attr("x", 0)
+            .attr("y", (d, i) => i * legendItemHeight + 5) // Position rectangles vertically
+            .attr("width", legendWidth)
+            .attr("height", legendItemHeight) // Equal height for each color band
+            .attr("fill", d => vis.genreColorScale(d)); // Apply the color scale
+
+        // Add labels to the legend
+        vis.legend.selectAll("text")
+            .data(vis.genreColorScale.ticks(5))
+            .enter().append("text")
+            .attr("x", legendWidth + 10)
+            .attr("y", (d, i) => (i === 1) ? 10 : i * legendItemHeight + 10)
+            .attr("dy", ".35em")  // Vertically align the labels
+            .attr("class", "legend-item")
+            .attr("fill", "white")
+            .style("text-anchor", "start")
+            .text((d, i) => (i % 4 === 0 | i === 1) ? d : ""); // Format the tick labels (you can adjust the formatting)
+
+        vis.legendTitle.text("Number of Games")
+    }
 }
