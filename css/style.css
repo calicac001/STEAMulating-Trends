@@ -119,6 +119,12 @@ p {
     fill: white;
 }
 
+#hexbin-colo-ctrl {
+    width: 100%;
+    height: 20vh;
+    text-align: left;
+}
+
 /* Styles for Diverging barchart*/
 
 #diverging-bar-plot {

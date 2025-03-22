@@ -79,12 +79,32 @@
 			</div>
 		</div>
 
+		<!--Chloe-->
+		<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="5thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
 				<h1 class="cyber-h fg-yellow">
 					Reviews by Genres<span class="cyber-glitch-3">...</span>
-				</h1>  <!--Chloe-->
-				<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
+				</h1>
+
+				<div class="row controls-container">
+					<div class="col-sm-6" id="hexbin-color-ctrl">
+						<span>Color by:</span>
+						<div class="mb-1 mt-1">
+							<input type="radio" id="genre-hexbin" name="hexbin-radio"
+								   class="cyber-radio bg-white ac-blue" value="genre" checked>
+							<label for="genre-hexbin" class="ml-1">Dominating Genre</label>
+						</div>
+						<div class="mb-1 mt-1">
+							<input type="radio" id="num-games-hexbin" name="hexbin-radio"
+								   class="cyber-radio bg-white ac-blue" value="num-games">
+							<label for="num-games-hexbin" class="ml-1">Number of Games</label>
+						</div>
+
+					</div>
+					<div class="col-sm-6" id="hexbin-filter-ctrl"></div>
+				</div>
+
 				<div id="hexbin-plot"></div>
 			</div>
 		</div>

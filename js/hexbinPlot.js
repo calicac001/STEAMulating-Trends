@@ -12,6 +12,7 @@ class HexbinPlot {
         this.data = _data;
 
         this.displayData = [];
+        this.colorBy = "genre";
 
         this.initVis();
     }
@@ -41,9 +42,6 @@ class HexbinPlot {
 
         vis.yScale = d3.scaleLog() // Reviews mapped to log scale
             .range([vis.height, 0]);
-
-        // Create a color scale for genres
-        //vis.genreColor = d3.scaleOrdinal(d3.schemeCategory10);
 
         // Create axes groups
         vis.xAxisGroup = vis.svg.append("g")
@@ -75,6 +73,9 @@ class HexbinPlot {
             .attr("class", "legend")
             .attr("transform", `translate(${vis.width - vis.legendWidth}, 0)`);
 
+        vis.hexbinGroup = vis.svg.append("g")
+            .attr("class", "hexbin-group");
+
         // Load & process data
         vis.wrangleData();
     }
@@ -103,13 +104,56 @@ class HexbinPlot {
         // Bin the data
         vis.bins = vis.hexbin(vis.data); //.filter(d => d.genre === "Casual")
 
-        vis.genreColorScale = vis.createGenreColorScale(vis.bins);
-
+        if (vis.colorBy === "genre") {
+            vis.genreColorScale = vis.createGenreColorScale(vis.bins);
+        } else if (vis.colorBy === "num-games") {
+            vis.genreColorScale = d3.scaleLog()
+                .domain([1, d3.max(vis.bins, d => d.length)])  // Set the domain (min and max values)
+                .range(["white", "blue"]);
+        }
         vis.updateVis();
     }
 
     updateVis() {
         let vis = this;
+
+        // Append the hexagons with the most represented genre color
+        let hexbins = vis.hexbinGroup.selectAll("path")
+            .data(vis.bins);
+
+        // Merge enter and update selections
+        hexbins.enter().append("path")
+            .attr("transform", d => `translate(${d.x},${d.y})`)
+            .attr("d", vis.hexbin.hexagon())
+            .attr("stroke", "black")
+            .attr("fill", d => {
+                if (vis.colorBy === "genre") {
+                    const dominantGenre = vis.findDominantGenre(d);
+                    return vis.genreColorScale(dominantGenre);
+                } else if (vis.colorBy === "num-games") {
+                    return vis.genreColorScale(d.length);
+                }
+            })
+
+            .merge(hexbins)
+            .transition()
+            .duration(1000)
+            .attr("fill", d => {
+                if (vis.colorBy === "genre") {
+                    const dominantGenre = vis.findDominantGenre(d);
+                    return vis.genreColorScale(dominantGenre);
+                } else if (vis.colorBy === "num-games") {
+                    return vis.genreColorScale(d.length);
+                }
+            });
+
+        hexbins.exit().remove();
+
+        if (vis.colorBy === "genre") {
+            vis.updateLegend();
+        } else if (vis.colorBy === "num-games") {
+
+        }
 
         // Draw X-axis
         vis.xAxisGroup.call(d3.axisBottom(vis.xScale)
@@ -118,21 +162,6 @@ class HexbinPlot {
         // Draw Y-axis
         vis.yAxisGroup.call(d3.axisLeft(vis.yScale)
             .ticks(5, ".1s")); // Log scale formatting
-
-
-        // Append the hexagons with the most represented genre color
-        vis.svg.selectAll("path")
-            .data(vis.bins)
-            .enter().append("path")
-            .attr("transform", d => `translate(${d.x},${d.y})`)
-            .attr("d", vis.hexbin.hexagon())
-            .attr("fill", d => {
-                const dominantGenre = vis.findDominantGenre(d);
-                return vis.genreColorScale(dominantGenre);
-            })
-            .attr("stroke", "black");
-
-        vis.updateLegend();
     }
 
     findDominantGenre(bin){

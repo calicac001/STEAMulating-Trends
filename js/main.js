@@ -25,8 +25,18 @@ Promise.all([
 
     // Data for Hexbin Plot
     const hexbinData = processHexbinData(genres, reviews, popularity);
-    console.log(hexbinData);
+
+    // Create hexbin plot
     hexbinPlot = new HexbinPlot("hexbin-plot", hexbinData);
+
+    // Attach event listener to radio buttons after creating hexbinPlot
+    document.querySelectorAll('input[name="hexbin-radio"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+            console.log("Selected:", radio.value);
+            hexbinPlot.colorBy = radio.value;
+            hexbinPlot.wrangleData();
+        });
+    });
 })
 
 function processCalendarData(gamesData){
