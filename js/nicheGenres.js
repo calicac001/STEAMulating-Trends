@@ -313,17 +313,17 @@ class NicheGenresDistribution {
         // const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
         // const gameToMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity);
 
-        const genreToGameMetric = NicheGenresDistribution.getGenreToGameMetric(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
-
+        const genreToGameMetrics = NicheGenresDistribution.getGenreToGameMetrics(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
+        
         const genreToMinMetric = {};
         const genreToMaxMetric = {};
-        const metric = "avgMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
+        const metric = "medMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
         // i'll find the max manually cuz doing the data manipulation *just* do use d3.max/d3.min seems annoying
-        for (const genre of Object.keys(genreToGameMetric)) {
+        for (const genre of Object.keys(genreToGameMetrics)) {
             genreToMinMetric[genre] = Number.POSITIVE_INFINITY;
             genreToMaxMetric[genre] = Number.NEGATIVE_INFINITY;
-            for (const game of genreToGameMetric[genre]) {
-                if (genreToMaxMetric[genre] > game[metric]) {
+            for (const game of genreToGameMetrics[genre]) {
+                if (genreToMaxMetric[genre] < game[metric]) {
                     genreToMaxMetric[genre] = game[metric];
                 }
                 if (genreToMinMetric[genre] > game[metric]) {
@@ -331,11 +331,14 @@ class NicheGenresDistribution {
                 } 
             }
         }
+        // console.log(genreToGameMetrics);
         console.log(genreToMinMetric);
         console.log(genreToMaxMetric);
 
         // avg player metric: 0 - 17.8855421686747
         // med player metric: 0 - 618.0322580645161
+
+        // there might be different benefits to showing the data 
 
         // there's some naming clarifications i could make with "game" vs "appID"
 
@@ -343,6 +346,17 @@ class NicheGenresDistribution {
         // first gotta process the data into buckets
         // then i have to graph this distribution (with some sort of bar chart or something)
         // then play with the axes to see what kinda scale shows the data in an intersting way
+
+        // MAIN DATA PIECES:
+        // genreToMinMetric, genreToMaxMetric, genreToGameMetrics
+
+        // TODO:
+        // make scales according to the mins and maxes for each genre (x-axis)   (atp it might be worth making a class for each genre to organize the data... but that's just a js object, like a dataclass... idk if there's really that much of a difference, idk!!)
+        // do we wanna make all the x-axis the same...?
+        // make buckets for the scales
+        // make make frequency distribution based on the buckets and the scales
+        // make scale for the frequency (y-axis)
+
     }
 
     static popularityCleaner(popularity) {
@@ -482,17 +496,20 @@ class NicheGenresDistribution {
         return gameToPopularity;
     }
 
-    static getGameToMetric(cleanedPopularity) {
+    static getGameToMetrics(cleanedPopularity) {
         const gameToPopularity = NicheGenresDistribution.getGameToPopularity(cleanedPopularity);
         
-        const gameToMetric = {};
+        const gameToMetrics = {};
         for (const game of cleanedPopularity) {
-            gameToMetric[game["appID"]] = {
+            gameToMetrics[game["appID"]] = {
                 "estimatedOwners": game["estimatedOwners"],
-                "avgPlaytimeMetric": (+game["avgPlaytime2Weeks"]) / (+game["avgPlaytimeForever"]),
-                "medPlaytimeMetric": (+game["medPlaytime2Weeks"]) / (+game["medPlaytimeForever"]),
+                "avgMetric": (+game["avgPlaytime2Weeks"]) / (+game["avgPlaytimeForever"]),
+                "medMetric": (+game["medPlaytime2Weeks"]) / (+game["medPlaytimeForever"]),
+                // TODO: this is where to change the metric calculation if i wanna finnik with the formula - involving estimatedOwners is something i might wanna do
                 // 2week / forever -> gives a bunch of 0s
                 // forever / 2week -> gives a bunch of inftys
+
+                // i'm just gonna call them avgMetric and medMetric instead of avgPlaytimeMetric and medPlaytimeMetric
             };
             // console.log(game);
         }
@@ -527,39 +544,51 @@ class NicheGenresDistribution {
         console.log("nonzero:", nonzero);
         */
 
-        return gameToMetric;
+        return gameToMetrics;
 
     }
 
-    static getGenreToGameMetric(cleanedGenres, cleanedPopularity, cleanedBasicInfo) {
+    static getGameToName(cleanedBasicInfo) {
+        const gameToName = {};
+        for (const game of cleanedBasicInfo) {
+            gameToName[game["appID"]] = game["name"];
+        }
+        return gameToName;
+    }
+
+    static getGenreToGameMetrics(cleanedGenres, cleanedPopularity, cleanedBasicInfo) {
         const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
-        const gameToAvgMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity, "avgMetric");
-        const gameToMedMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity, "");
-
+        const gameToMetrics = NicheGenresDistribution.getGameToMetrics(cleanedPopularity);
+        const gameToName = NicheGenresDistribution.getGameToName(cleanedBasicInfo);
         
-        const genreToGameMetric = {};
+        const genreToGameMetrics = {};
         for (const genre of Object.keys(genreToGame)) {
-            console.log(genre);
-            console.log(genreToGame[genre]);  // some genres only have like <5 games lmao -- i should filter those out...
+            // console.log(genre);
+            // console.log(genreToGame[genre]);  // some genres only have like <5 games lmao -- i should filter those out...
 
-            genreToGameMetric[genre] = [];
+            genreToGameMetrics[genre] = [];
 
             for (const appID of genreToGame[genre]) {
-                genreToGameMetric[genre].push({
+                genreToGameMetrics[genre].push({
                     "appID": appID,
-                    "genre": genre,  // cuz why not, i guess we add another layer :shrug:
-                    "avgMetric": gameToAvgMetric[appID], 
-                    "medMetric": gameToMedMetric[appID]
+                    "name": gameToName[appID],
+                    "avgMetric": gameToMetrics[appID]["avgMetric"], 
+                    "medMetric": gameToMetrics[appID]["medMetric"],
+                    "genre": genre  // cuz why not, i guess we add another layer :shrug:
                 })
             }
 
             // TODO: filter out genres that are too small or weird (i should do the filtering here as opposed to another spot so that it's at the very end all of the filtering)
+            // FILTER OUT LIST:
+            // - games that have a NaN metric
+            // - both games have a 0 metric implies that both numerators are 0 (based on how it's currently implemented)
+            // - also filter out for both being infty (if we take the reciprocal)
+            // - genres that have a size of <10 (i think 10 is a good benchmark, could do a bigger number tho honestly) (26 with accounting is the next "small" one, followed by the rest of the genres which are of size 100+)
+            // - (i should honestly have made it easier to finik with the metric tho... it is what it is!!! i'm too lazy to fix that rn, + not enough time)
+
         }
 
-
-
-        return genreToGameMetric;
-
+        return genreToGameMetrics;
     }
 }
 
