@@ -310,16 +310,34 @@ class NicheGenresDistribution {
         // console.log(cleanedGenres);
         // console.log(cleanedBasicInfo);
 
-        const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
-        const gameToMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity);
+        // const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
+        // const gameToMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity);
 
-        const minMetric = d3.max(Object.entries(gameToMetric), d => d[1]["medPlaytimeMetric"]);
+        const genreToGameMetric = NicheGenresDistribution.getGenreToGameMetric(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
+
+        const genreToMinMetric = {};
+        const genreToMaxMetric = {};
+        const metric = "avgMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
+        // i'll find the max manually cuz doing the data manipulation *just* do use d3.max/d3.min seems annoying
+        for (const genre of Object.keys(genreToGameMetric)) {
+            genreToMinMetric[genre] = Number.POSITIVE_INFINITY;
+            genreToMaxMetric[genre] = Number.NEGATIVE_INFINITY;
+            for (const game of genreToGameMetric[genre]) {
+                if (genreToMaxMetric[genre] > game[metric]) {
+                    genreToMaxMetric[genre] = game[metric];
+                }
+                if (genreToMinMetric[genre] > game[metric]) {
+                    genreToMinMetric[genre] = game[metric];
+                } 
+            }
+        }
+        console.log(genreToMinMetric);
+        console.log(genreToMaxMetric);
+
         // avg player metric: 0 - 17.8855421686747
         // med player metric: 0 - 618.0322580645161
-        // what a range...
-        console.log(minMetric);
-        // console.log(genreToGame);
-        // console.log(gameToMetric);
+
+        // there's some naming clarifications i could make with "game" vs "appID"
 
         // TODO: take cleaned data, and make frequency distribution chart with buckets
         // first gotta process the data into buckets
@@ -513,6 +531,36 @@ class NicheGenresDistribution {
 
     }
 
+    static getGenreToGameMetric(cleanedGenres, cleanedPopularity, cleanedBasicInfo) {
+        const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
+        const gameToAvgMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity, "avgMetric");
+        const gameToMedMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity, "");
+
+        
+        const genreToGameMetric = {};
+        for (const genre of Object.keys(genreToGame)) {
+            console.log(genre);
+            console.log(genreToGame[genre]);  // some genres only have like <5 games lmao -- i should filter those out...
+
+            genreToGameMetric[genre] = [];
+
+            for (const appID of genreToGame[genre]) {
+                genreToGameMetric[genre].push({
+                    "appID": appID,
+                    "genre": genre,  // cuz why not, i guess we add another layer :shrug:
+                    "avgMetric": gameToAvgMetric[appID], 
+                    "medMetric": gameToMedMetric[appID]
+                })
+            }
+
+            // TODO: filter out genres that are too small or weird (i should do the filtering here as opposed to another spot so that it's at the very end all of the filtering)
+        }
+
+
+
+        return genreToGameMetric;
+
+    }
 }
 
 
