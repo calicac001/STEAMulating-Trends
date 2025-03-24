@@ -315,28 +315,32 @@ class NicheGenresDistribution {
 
         const genreToGameMetrics = NicheGenresDistribution.getGenreToGameMetrics(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
         
-        const genreToMinMetric = {};
-        const genreToMaxMetric = {};
-        const metric = "medMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
-        // i'll find the max manually cuz doing the data manipulation *just* do use d3.max/d3.min seems annoying
-        for (const genre of Object.keys(genreToGameMetrics)) {
-            genreToMinMetric[genre] = Number.POSITIVE_INFINITY;
-            genreToMaxMetric[genre] = Number.NEGATIVE_INFINITY;
-            for (const game of genreToGameMetrics[genre]) {
-                if (genreToMaxMetric[genre] < game[metric]) {
-                    genreToMaxMetric[genre] = game[metric];
-                }
-                if (genreToMinMetric[genre] > game[metric]) {
-                    genreToMinMetric[genre] = game[metric];
-                } 
-            }
-        }
+        // DESIGN DECISION TO SCRAP THIS AND JUST DO A GLOBAL MIN/MAX
+        // const genreToMinMetric = {};
+        // const genreToMaxMetric = {};
+        // const metric = "avgMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
+        // // i'll find the max manually cuz doing the data manipulation *just* do use d3.max/d3.min seems annoying
+        // for (const genre of Object.keys(genreToGameMetrics)) {
+        //     genreToMinMetric[genre] = Number.POSITIVE_INFINITY;
+        //     genreToMaxMetric[genre] = Number.NEGATIVE_INFINITY;
+        //     for (const game of genreToGameMetrics[genre]) {
+        //         if (genreToMaxMetric[genre] < game[metric]) {
+        //             genreToMaxMetric[genre] = game[metric];
+        //         }
+        //         if (genreToMinMetric[genre] > game[metric]) {
+        //             genreToMinMetric[genre] = game[metric];
+        //         } 
+        //     }
+        // }
         // console.log(genreToGameMetrics);
-        console.log(genreToMinMetric);
-        console.log(genreToMaxMetric);
+        // console.log(genreToMinMetric);
+        // console.log(genreToMaxMetric);
 
-        // avg player metric: 0 - 17.8855421686747
-        // med player metric: 0 - 618.0322580645161
+        const dataRanges = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics)
+        console.log(dataRanges);
+        // {"avgMetric": [0, 17.8855421686747],
+        //  "medMetric": [0, 618.0322580645161]}
+        // i wonder how much the further data filtering will impact this...
 
         // there might be different benefits to showing the data 
 
@@ -348,11 +352,11 @@ class NicheGenresDistribution {
         // then play with the axes to see what kinda scale shows the data in an intersting way
 
         // MAIN DATA PIECES:
-        // genreToMinMetric, genreToMaxMetric, genreToGameMetrics
+        // genreToGameMetrics, dataRanges
 
         // TODO:
         // make scales according to the mins and maxes for each genre (x-axis)   (atp it might be worth making a class for each genre to organize the data... but that's just a js object, like a dataclass... idk if there's really that much of a difference, idk!!)
-        // do we wanna make all the x-axis the same...?
+        // do we wanna make all the x-axis the same...? DESIGN DECISION: YES, THAT'S THE WHOLE POINT (compare genres to other genres: if we have different scales then there's no reference point...) (might want log scale if using median metric...)
         // make buckets for the scales
         // make make frequency distribution based on the buckets and the scales
         // make scale for the frequency (y-axis)
@@ -590,6 +594,21 @@ class NicheGenresDistribution {
 
         return genreToGameMetrics;
     }
+
+    static getDataEndpoints(genreToGameMetrics) {
+        const endpointGetter = (metric, extrema) => extrema(Object.keys(genreToGameMetrics), d => extrema(genreToGameMetrics[d], e => e[metric]));
+        return {
+            "avgMetric": [
+                endpointGetter("avgMetric", d3.min), endpointGetter("avgMetric", d3.max)
+            ],
+            "medMetric": [
+                endpointGetter("medMetric", d3.min), endpointGetter("medMetric", d3.max)
+            ]
+        };
+    }
+
+    
+
 }
 
 
