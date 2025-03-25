@@ -23,8 +23,8 @@ class NicheGenresDistribution {
         ;
 
         // console.log(popularity, genres, basicInfo);
-        NicheGenresDistribution.bob(popularity, genres, basicInfo);
-
+        const freq = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
+        NicheGenresDistribution.graphFrequencies(freq);
     }
 
     static tempViz() {
@@ -302,6 +302,10 @@ class NicheGenresDistribution {
     }
 
     /////////////////////// making new shit, starting from scratch ////////////////////////
+    static getGraphingData(popularity, genres, basicInfo) {
+        return NicheGenresDistribution.bob(popularity, genres, basicInfo);
+    }
+
     static bob(popularity, genres, basicInfo) {
         const cleanedPopularity = NicheGenresDistribution.popularityCleaner(popularity);
         const cleanedGenres = NicheGenresDistribution.genresCleaner(genres);
@@ -361,22 +365,7 @@ class NicheGenresDistribution {
         // make make frequency distribution based on the buckets and the scales
         // make scale for the frequency (y-axis)
 
-        const numBuckets = 100;
-        // const avgMetricData = {}
-        const bucketer = d3.scaleQuantile()
-                .domain(dataRanges["avgMetric"])
-                .range(d3.range(numBuckets));
-        const frequencies = {};
-
-        console.log(Object.keys(genreToGameMetrics));
-        for (const genre of Object.keys(genreToGameMetrics)) {
-            frequencies[genre] = d3.scaleOrdinal()
-                .domain(bucketer.range())
-                .range(
-                    NicheGenresDistribution.getBucketFrequencies(bucketer, genreToGameMetrics[genre], "avgMetric")
-            );
-            // console.log(genreToGameMetrics[genre]);
-        }
+        const frequencies = NicheGenresDistribution.getFrequencies(genreToGameMetrics, dataRanges)
     
         // console.log(bucketer(2));
 
@@ -393,9 +382,13 @@ class NicheGenresDistribution {
         // ok perf..
         // now, we gotta:
             // - pull out the code into another method (i forget the term)
-            // - make the damn visuliazation with all this data!!!
+            // - make the damn visualization with all this data!!!
             // and then do the bubble chart, ugh
         
+        // filteredFrequencies is all we need to graph shit
+        // now i need to go back into prior labs and whatnot to figure out how tf i do that LMFAO
+
+        return filteredFrequencies;
     }
 
     static popularityCleaner(popularity) {
@@ -682,11 +675,43 @@ class NicheGenresDistribution {
             if (numNon0s >= threshold) {  // without this threshold we have a lotta genres that just don't have enough data 
                 // ok, so i'm filtering out all the data here, which is basically the end
                 newFrequencies[key] = frequencies[key];
-                console.log(frequencies[key].range())
+                // console.log(frequencies[key].range())
             }
         }
-        console.log(Object.keys(newFrequencies));
+        // console.log(Object.keys(newFrequencies));
         return newFrequencies;
+    }
+
+    static getFrequencies(genreToGameMetrics, dataRanges, numBuckets = 100) {
+        // const avgMetricData = {}
+        const bucketer = d3.scaleQuantile()
+                .domain(dataRanges["avgMetric"])
+                .range(d3.range(numBuckets));
+        const frequencies = {};
+
+        // console.log(Object.keys(genreToGameMetrics));
+        for (const genre of Object.keys(genreToGameMetrics)) {
+            frequencies[genre] = d3.scaleOrdinal()
+                .domain(bucketer.range())
+                .range(
+                    NicheGenresDistribution.getBucketFrequencies(bucketer, genreToGameMetrics[genre], "avgMetric")
+            );
+            // console.log(genreToGameMetrics[genre]);
+        }
+        return frequencies;
+    }
+
+    static graphFrequencies(freq) {
+        // freq is a dict of genre names to ordinal scales ()
+
+        const numBuckets = Object.values(freq)[0].domain().length;  // all the domains should be the same
+        console.log(numBuckets);
+        const genres = Object.keys(freq);
+        console.log(genres);
+
+        
+
+
     }
 
 }
