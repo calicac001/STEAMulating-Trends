@@ -346,7 +346,7 @@ class NicheGenresDistribution {
 
         // there's some naming clarifications i could make with "game" vs "appID"
 
-        // TODO: take cleaned data, and make frequency distribution chart with buckets
+        // DONE: take cleaned data, and make frequency distribution chart with buckets
         // first gotta process the data into buckets
         // then i have to graph this distribution (with some sort of bar chart or something)
         // then play with the axes to see what kinda scale shows the data in an intersting way
@@ -354,7 +354,7 @@ class NicheGenresDistribution {
         // MAIN DATA PIECES:
         // genreToGameMetrics, dataRanges
 
-        // TODO:
+        // DONE:
         // make scales according to the mins and maxes for each genre (x-axis)   (atp it might be worth making a class for each genre to organize the data... but that's just a js object, like a dataclass... idk if there's really that much of a difference, idk!!)
         // do we wanna make all the x-axis the same...? DESIGN DECISION: YES, THAT'S THE WHOLE POINT (compare genres to other genres: if we have different scales then there's no reference point...) (might want log scale if using median metric...)
         // make buckets for the scales
@@ -362,23 +362,23 @@ class NicheGenresDistribution {
         // make scale for the frequency (y-axis)
 
         const numBuckets = 100;
-        const avgMetricData = {}
-        avgMetricData.bucketer = d3.scaleQuantile()
+        // const avgMetricData = {}
+        const bucketer = d3.scaleQuantile()
                 .domain(dataRanges["avgMetric"])
                 .range(d3.range(numBuckets));
-        avgMetricData.frequencies = {};
+        const frequencies = {};
 
-        // console.log(Object.keys(genreToGameMetrics));
+        console.log(Object.keys(genreToGameMetrics));
         for (const genre of Object.keys(genreToGameMetrics)) {
-            avgMetricData.frequencies[genre] = d3.scaleOrdinal()
-                .domain(avgMetricData.bucketer.range())
+            frequencies[genre] = d3.scaleOrdinal()
+                .domain(bucketer.range())
                 .range(
-                    NicheGenresDistribution.getBucketFrequencies(avgMetricData.bucketer, genreToGameMetrics[genre], "avgMetric")
+                    NicheGenresDistribution.getBucketFrequencies(bucketer, genreToGameMetrics[genre], "avgMetric")
             );
             // console.log(genreToGameMetrics[genre]);
         }
     
-        // console.log(avgMetricData.bucketer(2));
+        // console.log(bucketer(2));
 
         // the median data is kinda lame, it doesn't seem to give much insights, so ill just stick with the average
         // const medMetricData = {
@@ -386,9 +386,15 @@ class NicheGenresDistribution {
             
         // };
 
-        avgMetricData.frequencies = NicheGenresDistribution.filterFrequencies(avgMetricData.frequencies);
+        const filteredFrequencies = NicheGenresDistribution.filterFrequencies(frequencies);
         // some of the genres straight up suck. no real data. do i manually filter them or should i automatically filter them?
         // maybe automatically...
+
+        // ok perf..
+        // now, we gotta:
+            // - pull out the code into another method (i forget the term)
+            // - make the damn visuliazation with all this data!!!
+            // and then do the bubble chart, ugh
         
     }
 
@@ -658,7 +664,7 @@ class NicheGenresDistribution {
         // the distribution sucks...
     }
 
-    static filterFrequencies(frequencies) {
+    static filterFrequencies(frequencies, threshold = 5) {
         // return the object of frequencies, but don't include the objects who's frequency array is just all 0s
         const newFrequencies = {};
         
@@ -667,14 +673,14 @@ class NicheGenresDistribution {
             // console.log(key);
             // console.log(frequencies[key]);
             // prompt("ur mom");
-            let all0s = true;
+            let numNon0s = 0;
             for (const elem of frequencies[key].range()) {
                 if (elem != 0) {
-                    all0s = false;
-                    break;
+                    numNon0s++;
                 }
             }
-            if (!all0s) {
+            if (numNon0s >= threshold) {  // without this threshold we have a lotta genres that just don't have enough data 
+                // ok, so i'm filtering out all the data here, which is basically the end
                 newFrequencies[key] = frequencies[key];
                 console.log(frequencies[key].range())
             }
