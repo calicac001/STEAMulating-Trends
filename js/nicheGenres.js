@@ -337,7 +337,7 @@ class NicheGenresDistribution {
         // console.log(genreToMaxMetric);
 
         const dataRanges = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics)
-        console.log(dataRanges);
+        // console.log(dataRanges);
         // {"avgMetric": [0, 17.8855421686747],
         //  "medMetric": [0, 618.0322580645161]}
         // i wonder how much the further data filtering will impact this...
@@ -361,6 +361,35 @@ class NicheGenresDistribution {
         // make make frequency distribution based on the buckets and the scales
         // make scale for the frequency (y-axis)
 
+        const numBuckets = 100;
+        const avgMetricData = {}
+        avgMetricData.bucketer = d3.scaleQuantile()
+                .domain(dataRanges["avgMetric"])
+                .range(d3.range(numBuckets));
+        avgMetricData.frequencies = {};
+
+        // console.log(Object.keys(genreToGameMetrics));
+        for (const genre of Object.keys(genreToGameMetrics)) {
+            avgMetricData.frequencies[genre] = d3.scaleOrdinal()
+                .domain(avgMetricData.bucketer.range())
+                .range(
+                    NicheGenresDistribution.getBucketFrequencies(avgMetricData.bucketer, genreToGameMetrics[genre], "avgMetric")
+            );
+            // console.log(genreToGameMetrics[genre]);
+        }
+    
+        // console.log(avgMetricData.bucketer(2));
+
+        // the median data is kinda lame, it doesn't seem to give much insights, so ill just stick with the average
+        // const medMetricData = {
+        //     xScale: d3.scaleQuantile(dataRanges["medMetric"]),
+            
+        // };
+
+        avgMetricData.frequencies = NicheGenresDistribution.filterFrequencies(avgMetricData.frequencies);
+        // some of the genres straight up suck. no real data. do i manually filter them or should i automatically filter them?
+        // maybe automatically...
+        
     }
 
     static popularityCleaner(popularity) {
@@ -607,7 +636,52 @@ class NicheGenresDistribution {
         };
     }
 
-    
+    static getBucketFrequencies(bucketer, gameMetrics, metric) {
+        // metricData.frequency is the ordinal scale, going from range(n) to the frequencies
+        // (we don't modify frequency here, we return what we want the range to be)
+        // return an array of the same size as metricData.frequency.domain()
+        
+        const numBuckets = bucketer.range().length;
+        const bucketFrequency = Array(numBuckets).fill(0);
+        // console.log(numBuckets, bucketFrequency);
+        for (const datum of Object.values(gameMetrics)){
+            // console.log(datum);
+            const i = datum[metric];  // AHHH, putting gameMetrics here was causing the freezing...
+            bucketFrequency[bucketer(i)]++;
+            // console.log(i); 
+            // ohhhh, metrics that are NaN are outputting undefined for the bucketer
+        }
+
+        // console.log(bucketFrequency);
+
+        return bucketFrequency;
+        // the distribution sucks...
+    }
+
+    static filterFrequencies(frequencies) {
+        // return the object of frequencies, but don't include the objects who's frequency array is just all 0s
+        const newFrequencies = {};
+        
+        for (const key of Object.keys(frequencies)) {
+            // console.log(frequencies);
+            // console.log(key);
+            // console.log(frequencies[key]);
+            // prompt("ur mom");
+            let all0s = true;
+            for (const elem of frequencies[key].range()) {
+                if (elem != 0) {
+                    all0s = false;
+                    break;
+                }
+            }
+            if (!all0s) {
+                newFrequencies[key] = frequencies[key];
+                console.log(frequencies[key].range())
+            }
+        }
+        console.log(Object.keys(newFrequencies));
+        return newFrequencies;
+    }
 
 }
 
