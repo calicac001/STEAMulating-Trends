@@ -11,7 +11,7 @@
 // nvm: somehow work in the total number of players into the metric that i'm using? somehow normalize the metric
 //       need to play with the metric once i get the visualization working, so i can *see* which metric makes more sense
 
-class NicheGenresDistribution {
+    class NicheGenresDistribution {
     constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
         margins = {top: 75, bottom: 75, left: 75, right: 75}) {
         // this.popularity = popularity;
@@ -629,7 +629,8 @@ class NicheGenresDistribution {
         // make the metric changeable? maybe even use changeable...? (kinda overkill, but maybe alternating beteween med and avg is a start)
         // be able to change the y-axis scale?
         // i should also see if i can change the x-axis scale... that might make the insights more useful...
-        // the linear scale is kinda whack... i should see if that can be changed ngl
+            // the linear scale is kinda whack... i should see if that can be changed ngl
+        // add tooltips
 
     }
 
