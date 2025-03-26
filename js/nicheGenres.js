@@ -623,6 +623,14 @@ class NicheGenresDistribution {
             .attr("font-weight", "bold")
             .text("Does Genre Imply Player-Base Loyalty?");
 
+
+        // TODO: (next steps)
+        // maybe add a line viz rather than a bar viz? (i just did bar cuz it was something i already knew how to do)
+        // make the metric changeable? maybe even use changeable...? (kinda overkill, but maybe alternating beteween med and avg is a start)
+        // be able to change the y-axis scale?
+        // i should also see if i can change the x-axis scale... that might make the insights more useful...
+        // the linear scale is kinda whack... i should see if that can be changed ngl
+
     }
 
 }
