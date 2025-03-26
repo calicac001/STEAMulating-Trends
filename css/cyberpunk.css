@@ -34,7 +34,7 @@
 {
     --root-font-size: 18px;
 
-    --yellow: #f8ef02;
+    --yellow: #f2e905;
     --cyan: #00ffd2;
     --red: #ff003c;
     --blue: #136377;
@@ -640,7 +640,7 @@ body
 /*Overriding the values*/
 .cyber-tile-big
 {
-    --tile-width: 480px;
+    --tile-width: 80%;
     --tile-edges: 26px;
 }
 
@@ -767,7 +767,7 @@ h1.cyber-h
 {
     font-size: 3.0rem;
     margin: 2.0rem 0;
-    width: 100%;
+    width: fit-content;
 }
 
 h2.cyber-h

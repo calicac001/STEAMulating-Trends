@@ -13,22 +13,23 @@
 	<link rel="stylesheet" href="css/cyberpunk.css">
 </head>
 
-<body class="fp-scroll-mac" style="height: 100%; position: relative; overflow: hidden;">
+<body class="fp-scroll-mac bg-dark fg-white ac-yellow" style="height: 100%; position: relative; overflow: hidden;">
 	<!-- fullPage.js HTML -->
-	<div id="fullpage" class="fullpage-wrapper " style="height: 100%; position: relative; touch-action: none;">
-		<div class="section fp-section fp-table active fp-is-overflow fp-loaded fp-completely" data-anchor="firstPage">
-			<div class="fp-overflow oxanium-font" tabindex="-1">
+	<div id="fullpage" class="fullpage-wrapper" style="height: 100%; position: relative; touch-action: none;">
+		<div class="section fp-table active fp-is-overflow fp-loaded fp-completely" data-anchor="firstPage">
+			<div class="intro-bg fp-overflow" tabindex="-1">
+			</div>
 
-				<div class="intro bg-black fg-white cyber-razor-bottom">
-					<h1 class="cyber-h">STEAMulating Trends</h1>
-					<p>What Data Reveals About Game Success</p>
-				</div>
+			<div class="intro bg-black fg-white cyber-glitch-0 oxanium-font neon-border">
+				<div id="title-font">STEAMulating Trends</div>
+				<img src="img/steam_logo.png" width="200" height="200" alt="steam-logo">
+				<p>What Data Reveals About Game Success</p>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="secondPage">
-			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+			<div class="content fp-overflow oxanium-font neon-border" tabindex="-1">
+				<h1 class="cyber-h fg-white ac-white">
 					Overview<span class="cyber-glitch-3">...</span>
 				</h1>
 				<br>
@@ -42,32 +43,35 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="3rdPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Seasonal Trends<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Chloe-->
 				<!-- Calendar Plot: Are there seasonal patterns in game releases? -->
-				<div class="chart-container" id="calendar-plot"></div>
 
-				<p> Still need to fix base code. For some reason, Dec label is missing. Will also add labels for
-					days of the week. The tooltip right now is also not that accurate. It displays the year as 2025
-					but the data is actually summed up for all the years. Just had to add the year to create a date
-					instance. Additional stuff to add is filtering by year (maybe thru a brush component like we did
-					in the lab?)
-				</p>
+				<div class="chart-container cyber-tile-big bg-white" id="calendar-plot"></div>
+				<div id="calendar-controls" class="controls-container"></div>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="4thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Review Sentiment</h1>
-				<p>Analyzing which genres tend to receive more positive or negative reviews</p>
+			<div class="content fp-overflow oxanium-font" tabindex="-1">
+				<h1 class="cyber-h fg-yellow">
+					Review Sentiment<span class="cyber-glitch-3">...</span>
+				</h1>
 				<div id="diverging-bar-plot"></div>
+					
+				<p>The playerbase of indie, simulation and casual games seem to be more chill 
+					when leaving a comment or review, possibly due to the non-competitive 
+					nature of these generes. On the other hand, people tend to be less 
+					lenient on reviews for multiplayer games, possibly because there are more 
+					chances a multipler game could go wrong: bad balance with champions/guns, 
+					lagging issues with the server, or pay-to-win microtransactions.</p>
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="5thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Reviews by Genres<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Chloe-->
 				<!-- Beehive/Gradient Plot: Which genres receive the highest review score? -->
@@ -98,7 +102,7 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="6thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Player Engagement<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Sridhar-->
 				<!-- Bubble Chart: Do multiplayer games maintain more interest than single-player? -->
@@ -107,15 +111,33 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="7thPage">
-			<div class="fp-overflow" tabindex="-1">
-				<h1>Game Genre Growths Over Years</h1>
-				<div id="playtime-trends-chart"></div>
+			<div class="content fp-overflow oxanium-font tabindex=-1">
+				<div class="visualization-container">
+					<h1 class="cyber-h fg-yellow">
+						Game Genre Growths Over Years<span class="cyber-glitch-3">...</span>
+					</h1>
+
+					<div class="filter-container">
+						<label for="genre-filter">Filter by Genre: </label>
+						<div id="genre-filter"></div>
+					</div>
+
+					<div id="playtime-trends-chart"></div>
+
+					<div class="chart-legend">
+						<div class="legend-item">
+							<span class="dot"></span>
+							<span>Data point (hover for details)</span>
+						</div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="8thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Niche Genres<span class="cyber-glitch-3">...</span>
 				</h1>  <!--Sridhar-->
 				<!-- Distribution Plot: Which niche genres have shown surprising growth or player interest? -->
@@ -125,7 +147,7 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="9thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Main Message<span class="cyber-glitch-3">...</span>
 				</h1>
 				<h2>The Complexity of Game Success</h2>
@@ -137,7 +159,7 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="10thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Solution<span class="cyber-glitch-3">...</span>
 				</h1>
 				<h2>Key Takeaways for Developers</h2>
@@ -151,7 +173,7 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="11thPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Our Team<span class="cyber-glitch-3">...</span>
 				</h1>
 
@@ -167,7 +189,7 @@
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="lastPage">
 			<div class="content fp-overflow oxanium-font" tabindex="-1">
-				<h1 class="cyber-h">
+				<h1 class="cyber-h fg-yellow">
 					Sources<span class="cyber-glitch-3">...</span>
 				</h1>
 			</div>
@@ -191,15 +213,12 @@
 
 	<!-- Your implementation -->
 	<script src="js/fullpage.js"></script>
-	<script src="js/main.js"></script>
 	<script src="js/divergingBar.js"></script>
 	<script src="js/lineChart.js"></script>
 	<script src="js/calendarPlot.js"></script>
 	<script src="js/nicheGenres.js"></script>
 	<script src="js/bubblePlotEngagement.js"></script>
-	
-
-
+	<script src="js/main.js"></script>
 
 </body>
 </html>

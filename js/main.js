@@ -30,15 +30,14 @@ Promise.all([
     calendarPlot = new CalendarPlot("calendar-plot", releaseData);
     
     createDivergingBarChart(genres, reviews);
-    const processedPopularity = processPopularity(games, popularity);
+    const processedPopularity = processPopularity(games, popularity, genres);
 
     const trendsChart = new PlaytimeTrendsChart("playtime-trends-chart", processedPopularity);
 
-    // TODO: this isnt working, to be fixed
+    // Create the genre filter dropdown
     setupGenreFilter(processedPopularity, trendsChart);
 
-    new distributionViz(popularity, genres, games);
-    
+    new distributionViz(popularity, genres, games); 
 })
 
 // process data for review sentiment
@@ -75,8 +74,6 @@ function createDivergingBarChart(genresData, reviewsData) {
     // calculate review statistics
     const genreStats = [];
 
-    console.log("helo")
-
     genreGamesMap.forEach((gameIds, genre) => {
         let totalPositive = 0;
         let totalNegative = 0;
@@ -107,15 +104,21 @@ function createDivergingBarChart(genresData, reviewsData) {
     genreStats.sort((a, b) => (b.positive + b.negative) - (a.positive + a.negative));
     const topGenres = genreStats.slice(0, 10);
 
-    console.log(topGenres)
-
     // Create the diverging bar chart
     divergingBarChart = new DivergingBarChart("diverging-bar-plot", topGenres);
 
     console.log("Diverging bar chart created");
 }
 
-function processPopularity(basicInfo, popularity) {
+function processPopularity(basicInfo, popularity, genresData) {
+    // Create AppID to genres mapping
+    const genresByAppId = new Map();
+    genresData.forEach(entry => {
+        if (entry.AppID && entry.Genres) {
+            genresByAppId.set(entry.AppID, entry.Genres);
+        }
+    });
+    
     // combine datasets
     const gameMap = new Map();
 
@@ -132,8 +135,9 @@ function processPopularity(basicInfo, popularity) {
             year: year,
             developers: game.Developers,
             publishers: game.Publishers,
-            avgPlaytime: 0,
-            recommendations: 0
+            medianPlaytime: 0,
+            recommendations: 0,
+            genre: genresByAppId.get(game.AppID) || "Unknown"
         });
     });
 
@@ -141,22 +145,17 @@ function processPopularity(basicInfo, popularity) {
         const gameInfo = gameMap.get(game.AppID);
         if (!gameInfo) return;
 
-        const avgPlaytime = parseFloat(game["Average playtime forever"]) / 60;
+        // Use Median playtime forever instead of Average playtime forever
+        // Convert to hours by dividing by 60
+        const medianPlaytime = parseFloat(game["Median playtime forever"]) / 60;
 
-        gameInfo.avgPlaytime = avgPlaytime;
+        gameInfo.medianPlaytime = medianPlaytime;
         gameInfo.recommendations = parseInt(game.Recommendations) || 0;
     });
 
-    //TODO: change this after prototype v1 to use actual data
-    const genres = ["Action", "Adventure", "RPG", "Strategy", "Simulation", "Sports", "Casual"];
-
     const processedData = Array.from(gameMap.values())
-        .filter(game => game.avgPlaytime > 0)
-        .map(game => {
-            game.genre = genres[Math.floor(Math.random() * genres.length)];
-            return game;
-        });
-
+        .filter(game => game.medianPlaytime > 0);
+        
     return processedData;
 }
 
@@ -171,7 +170,6 @@ function parseDate(dateStr) {
         };
         const month = months[parts[1]];
 
-
         let year = parseInt(parts[2]);
         if (year < 100) {
             year = year < 50 ? 2000 + year : 1900 + year;
@@ -185,30 +183,68 @@ function parseDate(dateStr) {
 }
 
 function setupGenreFilter(data, chart) {
+    // Get unique genres from data
+    const allGenres = data.map(d => d.genre);
+    const uniqueGenres = ["All", ...new Set(allGenres)].filter(g => g); // Remove empty genres
+    
+    console.log("Available genres for filter:", uniqueGenres);
 
-    const genres = ["All", ...new Set(data.map(d => d.genre))];
+    const filterContainer = document.getElementById("genre-filter");
+    if (!filterContainer) {
+        console.error("Genre filter container not found! Creating one...");
+        
+        const chartContainer = document.getElementById("playtime-trends-chart");
+        if (chartContainer) {
+            const filterDiv = document.createElement("div");
+            filterDiv.id = "genre-filter";
+            filterDiv.className = "genre-filter";
+            
+            const label = document.createElement("label");
+            label.textContent = "Filter by Genre: ";
+            
+            const filterContainer = document.createElement("div");
+            filterContainer.className = "filter-container";
+            
+            filterContainer.appendChild(label);
+            filterContainer.appendChild(filterDiv);
+            
+            // Insert before the chart
+            chartContainer.parentNode.insertBefore(filterContainer, chartContainer);
+            
+            console.log("Created filter container programmatically");
+        } else {
+            console.error("Could not find chart container either. Cannot create filter.");
+            return;
+        }
+    }
 
+    d3.select("#genre-filter").html("");
+    
     const dropdown = d3.select("#genre-filter")
         .append("select")
         .attr("class", "genre-select")
-        .on("change", function () {
+        .attr("id", "genre-dropdown")
+        .attr("aria-label", "Select genre")
+        .on("change", function() {
             const selectedGenre = d3.select(this).property("value");
+            console.log("Genre selected:", selectedGenre);
             chart.filterData(selectedGenre);
         });
 
     dropdown.selectAll("option")
-        .data(genres)
+        .data(uniqueGenres)
         .enter()
         .append("option")
         .attr("value", d => d)
         .text(d => d);
-}
+      console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
 
-function distributionViz(popularity, genres, games) {
-    console.log("Sridhar's Vizs");
-    let ngd = new NicheGenresDistribution(
-        "#distribution-plot",
-        popularity, genres, games
-    );
-}
+  function distributionViz(popularity, genres, games) {
+      console.log("Sridhar's Vizs");
+      let ngd = new NicheGenresDistribution(
+          "#distribution-plot",
+          popularity, genres, games
+      );
+  }
 
+}

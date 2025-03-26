@@ -49,7 +49,7 @@ class PlaytimeTrendsChart {
             .attr("x", -vis.height / 2)
             .attr("y", -40)
             .attr("text-anchor", "middle")
-            .text("Average Playtime (hours)");
+            .text("Median Playtime (hours)");
             
         vis.svg.append("text")
             .attr("class", "chart-title")
@@ -58,7 +58,7 @@ class PlaytimeTrendsChart {
             .attr("text-anchor", "middle")
             .attr("font-size", 16)
             .attr("font-weight", "bold")
-            .text("Average Playtime Trends Over Time");
+            .text("Median Playtime Trends Over Time");
         
         vis.tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
@@ -69,17 +69,10 @@ class PlaytimeTrendsChart {
             .style("padding", "10px")
             .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
             .style("opacity", 0);
-            
-        vis.line = d3.line()
-            .x(d => vis.x(d.year))
-            .y(d => vis.y(d.avgPlaytime))
-            .curve(d3.curveMonotoneX);
-            
-        vis.path = vis.svg.append("path")
-            .attr("class", "trend-line")
-            .attr("fill", "none")
-            .attr("stroke", "#4682b4")
-            .attr("stroke-width", 2);
+        
+        // Create multiple line groups to handle gaps in data
+        vis.linesContainer = vis.svg.append("g")
+            .attr("class", "lines-container");
             
         vis.dots = vis.svg.append("g")
             .attr("class", "dots");
@@ -103,18 +96,38 @@ class PlaytimeTrendsChart {
     updateVis() {
         const vis = this;
         
+        // Calculate data points per year
         const yearlyData = Array.from(d3.group(vis.filteredData, d => d.year), ([year, games]) => {
             return {
                 year: new Date(year, 0), 
-                avgPlaytime: d3.mean(games, d => d.avgPlaytime),
+                medianPlaytime: d3.median(games, d => d.medianPlaytime),
                 count: games.length
             };
         });
 
         yearlyData.sort((a, b) => a.year - b.year);
         
+        // Handle case with no data
+        if (yearlyData.length === 0) {
+            vis.svg.select(".no-data-message").remove();
+            vis.svg.append("text")
+                .attr("class", "no-data-message")
+                .attr("x", vis.width / 2)
+                .attr("y", vis.height / 2)
+                .attr("text-anchor", "middle")
+                .attr("font-size", 14)
+                .text(`No data available for ${vis.selectedGenre} genre`);
+                
+            // Clear existing visualization
+            vis.linesContainer.selectAll("*").remove();
+            vis.dots.selectAll("*").remove();
+            return;
+        } else {
+            vis.svg.select(".no-data-message").remove();
+        }
+        
         vis.x.domain(d3.extent(yearlyData, d => d.year));
-        vis.y.domain([0, d3.max(yearlyData, d => d.avgPlaytime) * 1.1]);
+        vis.y.domain([0, d3.max(yearlyData, d => d.medianPlaytime) * 1.1]);
         
         vis.xAxis.call(d3.axisBottom(vis.x)
             .tickFormat(d3.timeFormat("%Y")));
@@ -122,9 +135,52 @@ class PlaytimeTrendsChart {
         vis.yAxis.call(d3.axisLeft(vis.y)
             .ticks(5)
             .tickFormat(d => `${d}h`));
+        
+        vis.linesContainer.selectAll("*").remove();
+        
+        const segments = [];
+        let currentSegment = [];
+        // TODO: sometimes the segments are still disconnected
+        for (let i = 0; i < yearlyData.length; i++) {
+            const current = yearlyData[i];
             
-        vis.path.datum(yearlyData)
-            .attr("d", vis.line);
+            if (currentSegment.length === 0) {
+                currentSegment.push(current);
+                continue;
+            }
+            
+            const lastPoint = currentSegment[currentSegment.length - 1];
+            const yearDiff = current.year.getFullYear() - lastPoint.year.getFullYear();
+            
+            // If gap is 1 year or less, continue segment
+            if (yearDiff <= 1) {
+                currentSegment.push(current);
+            } else {
+                // Gap is too large, end segment and start new one
+                segments.push([...currentSegment]);
+                currentSegment = [current];
+            }
+        }
+        
+        // Add the last segment if it has points
+        if (currentSegment.length > 0) {
+            segments.push(currentSegment);
+        }
+
+        const line = d3.line()
+            .x(d => vis.x(d.year))
+            .y(d => vis.y(d.medianPlaytime))
+            .curve(d3.curveMonotoneX);
+            
+        segments.forEach((segment, i) => {
+            vis.linesContainer.append("path")
+                .datum(segment)
+                .attr("class", "trend-line")
+                .attr("fill", "none")
+                .attr("stroke", "#4682b4")
+                .attr("stroke-width", 2)
+                .attr("d", line);
+        });
             
         const dots = vis.dots.selectAll(".data-point")
             .data(yearlyData);
@@ -136,7 +192,7 @@ class PlaytimeTrendsChart {
             .attr("class", "data-point")
             .merge(dots)
             .attr("cx", d => vis.x(d.year))
-            .attr("cy", d => vis.y(d.avgPlaytime))
+            .attr("cy", d => vis.y(d.medianPlaytime))
             .attr("r", 5)
             .attr("fill", "#4682b4")
             .on("mouseover", function(event, d) {
@@ -150,7 +206,7 @@ class PlaytimeTrendsChart {
                     
                 vis.tooltip.html(`
                     <strong>Year:</strong> ${d.year.getFullYear()}<br>
-                    <strong>Average Playtime:</strong> ${d.avgPlaytime.toFixed(1)} hours<br>
+                    <strong>Median Playtime:</strong> ${d.medianPlaytime.toFixed(1)} hours<br>
                     <strong>Games:</strong> ${d.count}
                 `)
                     .style("left", (event.pageX + 10) + "px")
