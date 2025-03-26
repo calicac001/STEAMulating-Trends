@@ -13,7 +13,7 @@
 
 class NicheGenresDistribution {
     constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
-        margins = {top: 25, bottom: 25, left: 25, right: 25}) {
+        margins = {top: 75, bottom: 75, left: 75, right: 75}) {
         // this.popularity = popularity;
     
         // this.popularity = popularity;
@@ -30,12 +30,12 @@ class NicheGenresDistribution {
         this.svgWidth = width;
         this.svgHeight = height;
         this.margins = margins;
-        this.visWidth = this.svgWidth - this.margins.left - this.margins.right;
-        this.visHeight = this.svgHeight - this.margins.top - this.margins.bottom;
+        this.vizWidth = this.svgWidth - this.margins.left - this.margins.right;
+        this.vizHeight = this.svgHeight - this.margins.top - this.margins.bottom;
         // console.log(popularity, genres, basicInfo);
         const graphingData = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
-        this.dataRanges = graphingData.dataRanges;
-        this.freqRanges = graphingData.freqRanges;
+        this.dataRange = graphingData.dataRange;
+        this.freqRange = graphingData.freqRange;
         this.freq = graphingData.frequencies;
         this.graphFrequencies();
     }
@@ -80,7 +80,7 @@ class NicheGenresDistribution {
         // console.log(genreToMinMetric);
         // console.log(genreToMaxMetric);
 
-        const dataRanges = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics);
+        const dataRange = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics);
         // console.log(dataRanges);
         // {"avgMetric": [0, 17.8855421686747],
         //  "medMetric": [0, 618.0322580645161]}
@@ -105,8 +105,8 @@ class NicheGenresDistribution {
         // make make frequency distribution based on the buckets and the scales
         // make scale for the frequency (y-axis)
 
-        const frequencies = NicheGenresDistribution.getFrequencies(genreToGameMetrics, dataRanges);
-        const freqRanges = NicheGenresDistribution.getFreqEndpoints(frequencies);
+        const frequencies = NicheGenresDistribution.getFrequencies(genreToGameMetrics, dataRange);
+        const freqRange = NicheGenresDistribution.getFreqEndpoints(frequencies);
         // console.log(freqRanges);
         // console.log(bucketer(2));
 
@@ -129,7 +129,7 @@ class NicheGenresDistribution {
         // filteredFrequencies is all we need to graph shit
         // now i need to go back into prior labs and whatnot to figure out how tf i do that LMFAO
 
-        return {frequencies: filteredFrequencies, dataRanges: dataRanges, freqRanges: freqRanges};
+        return {frequencies: filteredFrequencies, dataRange: dataRange, freqRange: freqRange};
     }
 
     static popularityCleaner(popularity) {
@@ -423,7 +423,7 @@ class NicheGenresDistribution {
         return newFrequencies;
     }
 
-    static getFrequencies(genreToGameMetrics, dataRanges, numBuckets = 100) {
+    static getFrequencies(genreToGameMetrics, dataRanges, numBuckets = 25) {
         // const avgMetricData = {}
         const bucketer = d3.scaleQuantile()
                 .domain(dataRanges["avgMetric"])
@@ -457,9 +457,9 @@ class NicheGenresDistribution {
         // freq is a dict of genre names to ordinal scales ()
 
         this.numBuckets = Object.values(this.freq)[0].domain().length;  // all the domains should be the same
-        console.log(this.numBuckets);
+        // console.log(this.numBuckets);
         this.genres = Object.keys(this.freq);
-        console.log(this.genres);
+        // console.log(this.genres);
 
         this.dropdown.selectAll("option")
             .data(this.genres)
@@ -471,8 +471,9 @@ class NicheGenresDistribution {
         // console.log("kys");
 
         this.svg.style("background-color", "#fffcb5");
-        const g = this.svg.append("g")
-            .attr("transform", `translate(${this.margins.left}, ${this.margins.top})`);
+        this.g = this.svg.append("g")
+            .attr("transform", `translate(${(this.svgWidth - this.vizWidth) / 2}, ${(this.svgHeight - this.vizHeight) / 2})`)
+        ;
 
         // make visualization within the group g
         this.updateVisualization(this.dropdown.property("value"));
@@ -491,20 +492,65 @@ class NicheGenresDistribution {
         // Modify the existing D3 visualization based on the selected genre
         console.log("Updating visualization for:", genre);
 
-        const cf = this.freq[genre];  // *c*urrent *f*requency
+        // THE DATA WE NEED TO GRAPH: cf, this.dataRanges, and this.freqRanges
+        this.cf = this.freq[genre];  // *c*urrent *f*requency
         // console.log(cf);
+        // this.dataRanges
+        // this.freqRanges
 
         // TODO:
             // make x, y axes, 
             // draw bars
             // (draw line chart as well?)
             // label axes (need to figure out label for x-axis...)
-        console.log(cf.domain());
+        // console.log(cf.domain());  it's \mathbb{Z}[0, 100)
 
-        this.xScale = d3.scaleOrdinal()
-            .domain(cf.domain())
-            .range()
+        this.xScaleBars = d3.scaleLinear()
+            .domain(d3.extent(this.cf.domain()))  // [0, 99]
+            .range([0, this.vizWidth])
+        ;
+        this.xScaleData = d3.scaleLinear()
+            .domain(this.dataRange)
+        ;
+        this.yScale = d3.scalePow().exponent(0.4)  // I SEEEEE, POWER SCALE SEEMS TO BE THE WAY TO GO? WITH A <1 BASE   // good enough for now
+            .domain(this.freqRange)
+            .range([this.vizHeight, 0])
+        ;
 
+        this.bars = this.g.selectAll("rect")
+            .data(this.cf.domain())
+        ;
+        console.log("cf updated", genre);
+        
+        console.log(this.cf.domain().map(
+            (d) => this.cf(d)
+        ))
+        
+        this.bars.enter()
+            .append("rect")
+            .attr("class", "bar").attr("class", "sridhar-viz")
+            .attr("x", (d) => this.xScaleBars(d))
+            .attr("y", (d) => this.yScale(this.cf(d)))
+            .attr("height", (d) => this.vizHeight - this.yScale(this.cf(d)))
+            .attr("width", this.vizWidth / this.numBuckets)
+            .attr("fill", "steelblue")
+        ;
+
+        this.bars.merge(this.bars)                     // **MERGE Update + Enter selections**
+            .transition()                     // Smooth transition for updates
+            .duration(500)
+            .attr("x", (d) => this.xScaleBars(d))
+            .attr("y", (d) => this.yScale(this.cf(d)))
+            .attr("height", (d) => this.vizHeight - this.yScale(this.cf(d)))
+        ;
+        
+        this.bars.exit()
+            .transition()
+            .duration(500)
+            .attr("y", 0)   // Animate falling effect before removal
+            .attr("height", 0)
+            .remove()
+        ;
 
     }
 
