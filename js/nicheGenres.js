@@ -19,9 +19,9 @@ class NicheGenresDistribution {
         // this.popularity = popularity;
         // this.genre = genres;
         // this.basicInfo = basicInfo;
-        this.parentDiv = d3.select("#distribution-plot");
+        this.parentDiv = d3.select(selector);
         this.parentCont = this.parentDiv.append("div").attr("class", "container");
-        this.yap = this.parentDiv.append("p")
+        this.yap = this.parentDiv.append("div").append("p")
             .html("This graph uses a metric for each game:<br>\
                     &nbsp;&nbsp;&nbsp;&nbsp; (Metric = 2 Week Average Playtime / Forever Average Playtime).<br><br>\
                 For each genre, the frequency of the metric is plotted, giving us some idea as to how long people stick to playing games in a certain genre.<br>\
