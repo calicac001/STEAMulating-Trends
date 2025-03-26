@@ -8,23 +8,29 @@
 // i need to make buckets... and i need to choose those buckets based on the data... hmph...
 // i have a lotta stuff to do today... gonna kms!!!
 
-// TODO: somehow work in the total number of players into the metric that i'm using? somehow normalize the metric
+// nvm: somehow work in the total number of players into the metric that i'm using? somehow normalize the metric
 //       need to play with the metric once i get the visualization working, so i can *see* which metric makes more sense
 
 class NicheGenresDistribution {
-    constructor(selector, popularity, genres, basicInfo) {
+    constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
+        margins = {top: 25, bottom: 25, left: 25, right: 25}) {
         // this.popularity = popularity;
-
-        let parentDiv = d3.select("#distribution-plot");
+    
+        // this.popularity = popularity;
+        // this.genre = genres;
+        // this.basicInfo = basicInfo;
+        this.parentDiv = d3.select("#distribution-plot");
         this.parentCont = parentDiv.append("div").attr("class", "container");
         this.svg = parentCont.append("svg")
-            .attr("width", 500)
-            .attr("length", 500)
+            .attr("width", width)
+            .attr("length", height)
         ;
-
+        this.width = width;
+        this.height = height;
+        this.margins = margins;
         // console.log(popularity, genres, basicInfo);
-        const freq = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
-        NicheGenresDistribution.graphFrequencies(freq);
+        this.freq = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
+        this.graphFrequencies();
     }
 
     /////////////////////// making new shit, starting from scratch ////////////////////////
@@ -427,14 +433,17 @@ class NicheGenresDistribution {
         return frequencies;
     }
 
-    static graphFrequencies(freq) {
+    graphFrequencies() {
         // freq is a dict of genre names to ordinal scales ()
 
-        const numBuckets = Object.values(freq)[0].domain().length;  // all the domains should be the same
-        console.log(numBuckets);
-        const genres = Object.keys(freq);
-        console.log(genres);
+        this.numBuckets = Object.values(this.freq)[0].domain().length;  // all the domains should be the same
+        console.log(this.numBuckets);
+        this.genres = Object.keys(this.freq);
+        console.log(this.genres);
 
+        // console.log("kys");
+        const g = this.svg.append("g")
+            // .attr("transform", )
         
 
 
