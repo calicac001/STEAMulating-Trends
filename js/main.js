@@ -239,12 +239,12 @@ function setupGenreFilter(data, chart) {
         .text(d => d);
       console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
 
-  function distributionViz(popularity, genres, games) {
-      console.log("Sridhar's Vizs");
-      let ngd = new NicheGenresDistribution(
-          "#distribution-plot",
-          popularity, genres, games
-      );
-  }
+}
 
+function distributionViz(popularity, genres, games) {
+    console.log("Sridhar's Vizs");
+    let ngd = new NicheGenresDistribution(
+        "#distribution-plot",
+        popularity, genres, games
+    );
 }

@@ -21,7 +21,7 @@ class NicheGenresDistribution {
         // this.basicInfo = basicInfo;
         this.parentDiv = d3.select("#distribution-plot");
         this.parentCont = this.parentDiv.append("div").attr("class", "container");
-        this.yap = this.parentCont.append("p")
+        this.yap = this.parentDiv.append("p")
             .html("This graph uses a metric for each game:<br>\
                     &nbsp;&nbsp;&nbsp;&nbsp; (Metric = 2 Week Average Playtime / Forever Average Playtime).<br><br>\
                 For each genre, the frequency of the metric is plotted, giving us some idea as to how long people stick to playing games in a certain genre.<br>\
@@ -32,7 +32,7 @@ class NicheGenresDistribution {
                 Here, we try to look for games with a smaller metric, as that would imply the game is being played for a long duration of time, implying a more loyal fan-base.<br>\
                 This graph helps us see if there are any trends with player-base loyalty, and the game's genre.")
             .style("text-align", "left")
-        this.dropdown = this.parentCont.append("select")
+        this.dropdown = this.parentCont.append("div").append("select")
             .attr("id", "genre-dropdown");
         this.svg = this.parentCont.append("svg")
             .attr("width", width)
