@@ -487,8 +487,6 @@ class NicheGenresDistribution {
             .attr("transform", `translate(${(this.svgWidth - this.vizWidth) / 2}, ${(this.svgHeight - this.vizHeight) / 2})`)
         ;
 
-
-
         // tq sam altman <3
         this.g.append("g")
             .attr("class", "x-axis")

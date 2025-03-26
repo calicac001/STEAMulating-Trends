@@ -1,30 +1,32 @@
 /******** BUBBLE PLOT ENGAGEMENT VIZ ********/
 // bubble-plot-engagement
 
-let parentDiv = d3.select("#bubble-plot-engagement");
-let parentCont = parentDiv.append("div")
-.attr("class", "container")
-;
+// let parentDiv = d3.select("#bubble-plot-engagement");
+// let parentCont = parentDiv.append("div")
+// .attr("class", "container")
+// ;
 
-// Placeholder
-parentCont.append("img")
-    .attr("src", "img/bubble-plot-engagement.jpg")
-    .attr("width", 500)
-    .attr("height", 500)
-    .attr("display", "block")
-;
+// // Placeholder
+// parentCont.append("img")
+//     .attr("src", "img/bubble-plot-engagement.jpg")
+//     .attr("width", 500)
+//     .attr("height", 500)
+//     .attr("display", "block")
+// ;
 
 
 
 class BubblePlotChart {
-    constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
-        margins = {top: 75, bottom: 75, left: 75, right: 75}) {
+    constructor(selector, popularity, genres, basicInfo, tags, width = 1250, height = 1000,
+        margins = {top: 150, bottom: 150, left: 150, right: 150}) {
         // this.popularity = popularity;
     
+        // console.log(tags);
+
         // this.popularity = popularity;
         // this.genre = genres;
         // this.basicInfo = basicInfo;
-        this.parentDiv = d3.select("#distribution-plot");
+        this.parentDiv = d3.select(selector);
         this.parentCont = this.parentDiv.append("div").attr("class", "container");
         this.dropdown = this.parentCont.append("div").append("select")
             .attr("id", "genre-dropdown");
@@ -39,103 +41,33 @@ class BubblePlotChart {
         this.vizWidth = this.svgWidth - this.margins.left - this.margins.right;
         this.vizHeight = this.svgHeight - this.margins.top - this.margins.bottom;
         // console.log(popularity, genres, basicInfo);
-        const graphingData = BubblePlotChart.getGraphingData(popularity, genres, basicInfo);
-        this.dataRange = graphingData.dataRange;
-        this.freqRange = graphingData.freqRange;
-        this.freq = graphingData.frequencies;
-        this.graphFrequencies();
+        const graphingData = BubblePlotChart.getGraphingData(popularity, genres, basicInfo, tags);
+        this.genreToAppIDs = graphingData.genreToAppIDs;
+        this.appIDToInfo = graphingData.gameToInfo;
+        this.graphData();
     }
 
     /////////////////////// making new shit, starting from scratch ////////////////////////
-    static getGraphingData(popularity, genres, basicInfo) {
-        return BubblePlotChart.bob(popularity, genres, basicInfo);
+    static getGraphingData(popularity, genres, basicInfo, tags) {
+        return BubblePlotChart.bob(popularity, genres, basicInfo, tags);
         // idk, i just liked to keep bob (i was scared of breaking things by renaming, but honestly i don't think anythoing would have happened :3)
     }
 
-    static bob(popularity, genres, basicInfo) {
+    static bob(popularity, genres, basicInfo, tags) {
         const cleanedPopularity = BubblePlotChart.popularityCleaner(popularity);
         const cleanedGenres = BubblePlotChart.genresCleaner(genres);
         const cleanedBasicInfo = BubblePlotChart.basicInfoCleaner(basicInfo);
-        // console.log(cleanedPopularity);
-        // console.log(cleanedGenres);
-        // console.log(cleanedBasicInfo);
-
-        // const genreToGame = BubblePlotChart.getGenresToGames(cleanedGenres);
-        // const gameToMetric = BubblePlotChart.getGameToMetric(cleanedPopularity);
-
-        const genreToGameMetrics = BubblePlotChart.getGenreToGameMetrics(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
         
-        // DESIGN DECISION TO SCRAP THIS AND JUST DO A GLOBAL MIN/MAX
-        // const genreToMinMetric = {};
-        // const genreToMaxMetric = {};
-        // const metric = "avgMetric";  // or "medMetric"  -- idk if i'll keep both, but for now i'll switch manually and see from there
-        // // i'll find the max manually cuz doing the data manipulation *just* do use d3.max/d3.min seems annoying
-        // for (const genre of Object.keys(genreToGameMetrics)) {
-        //     genreToMinMetric[genre] = Number.POSITIVE_INFINITY;
-        //     genreToMaxMetric[genre] = Number.NEGATIVE_INFINITY;
-        //     for (const game of genreToGameMetrics[genre]) {
-        //         if (genreToMaxMetric[genre] < game[metric]) {
-        //             genreToMaxMetric[genre] = game[metric];
-        //         }
-        //         if (genreToMinMetric[genre] > game[metric]) {
-        //             genreToMinMetric[genre] = game[metric];
-        //         } 
-        //     }
-        // }
-        // console.log(genreToGameMetrics);
-        // console.log(genreToMinMetric);
-        // console.log(genreToMaxMetric);
+        const appIDToName = BubblePlotChart.getAppIDToName(cleanedBasicInfo);
+        const appIDToPopularity = BubblePlotChart.getAppIDToPopularity(cleanedPopularity);
+        const appIDToIsMultiplayer = BubblePlotChart.getAppIDToIsMultiplayer(tags);
 
-        const dataRange = BubblePlotChart.getDataEndpoints(genreToGameMetrics);
-        // console.log(dataRanges);
-        // {"avgMetric": [0, 17.8855421686747],
-        //  "medMetric": [0, 618.0322580645161]}
-        // i wonder how much the further data filtering will impact this...
-
-        // there might be different benefits to showing the data 
-
-        // there's some naming clarifications i could make with "game" vs "appID"
-
-        // DONE: take cleaned data, and make frequency distribution chart with buckets
-        // first gotta process the data into buckets
-        // then i have to graph this distribution (with some sort of bar chart or something)
-        // then play with the axes to see what kinda scale shows the data in an intersting way
-
-        // MAIN DATA PIECES:
-        // genreToGameMetrics, dataRanges
-
-        // DONE:
-        // make scales according to the mins and maxes for each genre (x-axis)   (atp it might be worth making a class for each genre to organize the data... but that's just a js object, like a dataclass... idk if there's really that much of a difference, idk!!)
-        // do we wanna make all the x-axis the same...? DESIGN DECISION: YES, THAT'S THE WHOLE POINT (compare genres to other genres: if we have different scales then there's no reference point...) (might want log scale if using median metric...)
-        // make buckets for the scales
-        // make make frequency distribution based on the buckets and the scales
-        // make scale for the frequency (y-axis)
-
-        const frequencies = BubblePlotChart.getFrequencies(genreToGameMetrics, dataRange);
-        const freqRange = BubblePlotChart.getFreqEndpoints(frequencies);
-        // console.log(freqRanges);
-        // console.log(bucketer(2));
-
-        // the median data is kinda lame, it doesn't seem to give much insights, so ill just stick with the average
-        // const medMetricData = {
-        //     xScale: d3.scaleQuantile(dataRanges["medMetric"]),
-            
-        // };
-
-        const filteredFrequencies = BubblePlotChart.filterFrequencies(frequencies);
-        // some of the genres straight up suck. no real data. do i manually filter them or should i automatically filter them?
-        // maybe automatically...
-
-        // ok perf..
-        // now, we gotta:
-            // - pull out the code into another method (i forget the term)
-            // - make the damn visualization with all this data!!!
-            // and then do the bubble chart, ugh
+        const genreToAppIDs = BubblePlotChart.getGenresToAppIDs(cleanedGenres);
+        const gameToInfo = BubblePlotChart.getGameToInfo(appIDToName, appIDToPopularity, appIDToIsMultiplayer);
         
-        // filteredFrequencies is all we need to graph shit
-        // now i need to go back into prior labs and whatnot to figure out how tf i do that LMFAO
+        // console.log(Object.entries(gameToInfo));
 
-        return {frequencies: filteredFrequencies, dataRange: dataRange, freqRange: freqRange};
+        return {genreToAppIDs: genreToAppIDs, gameToInfo: gameToInfo};
     }
 
     static popularityCleaner(popularity) {
@@ -209,7 +141,7 @@ class BubblePlotChart {
         ];
     }
 
-    static getGenresToGames(cleanedGenres) {
+    static getGenresToAppIDs(cleanedGenres) {
         const genresList = BubblePlotChart.getGenresList(cleanedGenres);
         // console.log(genresList);
 
@@ -259,23 +191,7 @@ class BubblePlotChart {
         }
     }
 
-    static getGameToPopularity(cleanedPopularity) {
-        const gameToPopularity = {};
-        for (const game of cleanedPopularity) {
-            gameToPopularity[game["appID"]] = {
-                "estimatedOwners": game["estimatedOwners"],
-                "avgPlaytimeForever": game["avgPlaytimeForever"],
-                "avgPlaytime2Weeks": game["avgPlaytime2Weeks"],
-                "medPlaytimeForever": game["medPlaytimeForever"],
-                "medPlaytime2Weeks": game["medPlaytime2Weeks"]
-            };
-            // console.log(game);
-        }
-        // console.log(gameToPopularity);  // takes a long time to show in the console when u click to expand, since, unlike for big arrays that allow u to see small ranges of the array, objects will expand and show *every* key-value pair (or, property value i think it's called in js)
-        return gameToPopularity;
-    }
-
-    static getGameToName(cleanedBasicInfo) {
+    static getAppIDToName(cleanedBasicInfo) {
         const gameToName = {};
         for (const game of cleanedBasicInfo) {
             gameToName[game["appID"]] = game["name"];
@@ -283,6 +199,248 @@ class BubblePlotChart {
         return gameToName;
     }
 
+    static getAppIDToPopularity(cleanedPopularity) {
+        // cleaned popularity is an array of objects like:
+        /**
+         *         return popularity.map(d => ({
+            "appID": d["AppID"],
+            "estimatedOwners": d["Estimated owners"],
+            "avgPlaytimeForever": d["Average playtime forever"],
+            "avgPlaytime2Weeks": d["Average playtime two weeks"],
+            "medPlaytimeForever": d["Median playtime forever"],
+            "medPlaytime2Weeks": d["Median playtime two weeks"]
+        }));
+         */
+        const appIDToPopularity = {};
+
+        for (const game of cleanedPopularity) {
+            appIDToPopularity[game["appID"]] = {
+                "estimatedOwners": game["estimatedOwners"],
+                "avgPlaytimeForever": game["avgPlaytimeForever"],
+                "avgPlaytime2Weeks": game["avgPlaytime2Weeks"],
+                "medPlaytimeForever": game["medPlaytimeForever"],
+                "medPlaytime2Weeks": game["medPlaytime2Weeks"]
+            }
+        }
+        // console.log(Object.entries(appIDToPopularity));
+        return appIDToPopularity;    
+    }
+
+    static getAppIDToIsMultiplayer(tags) {
+        // tags is a list of objects like this:
+        /**
+        {
+            "AppID": "60",
+            "Tags": "First-Person"
+        }
+        */
+        // console.log(tags);
+        // compile the tags, and then reduce to isMultiplayer
+
+        const appIDToTags = {};
+        for (const game of tags) {
+            if (game["AppID"] in appIDToTags) {
+                appIDToTags[game["AppID"]].push(game["Tags"]);
+            } else {
+                appIDToTags[game["AppID"]] = [game["Tags"]];
+            }
+        }
+
+        // console.log(Object.entries(appIDToTags));
+
+        const appIDToIsMultiplayer = {};
+        for (const appID of Object.keys(appIDToTags)) {
+            appIDToIsMultiplayer[appID] = appIDToTags[appID].includes("Multiplayer");  // in doesn't work lmfao, it only works for checking if a key is in an obj it seems
+            // "Singleplayer" and "Multiplayer"
+            // some don't have either :skull:
+        }
+
+        // console.log(Object.entries(appIDToIsMultiplayer)/*.map(d => d[1])*/);
+        return appIDToIsMultiplayer
+    }
+
+    static getGameToInfo(appIDToName, appIDToPopularity, appIDToIsMultiplayer) {
+        const gameToInfo = {};
+        for (const appID of Object.keys(appIDToName)) {
+            gameToInfo[appID] = {
+                "estimatedOwners": appIDToPopularity[appID]["estimatedOwners"].split(" - ").map(d => +d),
+                "avgPlaytimeForever": + appIDToPopularity[appID]["avgPlaytimeForever"],
+                "avgPlaytime2Weeks": + appIDToPopularity[appID]["avgPlaytime2Weeks"],
+                "medPlaytimeForever": + appIDToPopularity[appID]["medPlaytimeForever"],
+                "medPlaytime2Weeks": + appIDToPopularity[appID]["medPlaytime2Weeks"],
+                "isMultiplayer": appIDToIsMultiplayer[appID],
+                "name": appIDToName[appID],
+                "appID": appID
+            };
+        }
+
+        // returns a mapping from appIDs (strings) to the following:
+        /**
+            {
+                "estimatedOwners": [
+                    10000000,
+                    20000000
+                ],
+                "avgPlaytimeForever": 10524,
+                "avgPlaytime2Weeks": 1733,
+                "medPlaytimeForever": 228,
+                "medPlaytime2Weeks": 733,
+                "isMultiplayer": true,
+                "name": "Counter-Strike"
+            }
+         */
+
+        // console.log(Object.entries(gameToInfo));
+
+        return gameToInfo;
+    }
+
+    graphData() {
+        this.dropdown.selectAll("option")
+            .data(Object.keys(this.genreToAppIDs))
+            .enter()
+            .append("option")
+            .attr("value", d => d)
+            .text(d => d);
+
+        this.svg.style("background-color", "#5e6a75");
+        this.g = this.svg.append("g")
+            .attr("transform", `translate(${(this.svgWidth - this.vizWidth) / 2}, ${(this.svgHeight - this.vizHeight) / 2})`)
+        ;
+
+        this.updateBubbleChart(this.dropdown.property("value"));
+
+        // listener
+        this.dropdown.on("change", (event) => {
+            const selectedGenre = event.target.value;  // Get selected genre
+            console.log("Selected Genre:", selectedGenre);
+        
+            // Call a function to update the visualization based on selection
+            this.updateBubbleChart(selectedGenre);
+        });
+    }
+
+    updateBubbleChart(genre) {
+        console.log("Updating bubble chart for:", genre);
+    
+        let gameIDs = this.genreToAppIDs[genre];
+    
+        // Define scales
+        let xScale = d3.scalePow().exponent(0.4)
+            .domain([0, d3.max(Object.values(this.appIDToInfo), d => d.avgPlaytime2Weeks)])
+            .range([0, this.vizWidth]);
+    
+        let yScale = d3.scalePow().exponent(0.4)
+            .domain([0, d3.max(Object.values(this.appIDToInfo), d => d.avgPlaytimeForever)])
+            .range([this.vizHeight, 0]);
+    
+        let radiusScale = d3.scaleSqrt()
+            .domain([0, d3.max(Object.values(this.appIDToInfo), d => d3.mean(d.estimatedOwners))])
+            .range([5, 50]); // Adjust min/max bubble sizes
+    
+        let colorScale = d3.scaleOrdinal()
+            .domain([true, false])
+            .range(["blue", "orange"]);
+    
+
+
+        // Create axes
+        let xAxis = d3.axisBottom(xScale);
+        let yAxis = d3.axisLeft(yScale);
+
+        // Append axes (once)
+        if (!this.g.select(".x-axis").node()) {
+            this.g.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0, ${this.vizHeight})`)
+                .call(xAxis);
+
+            this.g.append("g")
+                .attr("class", "y-axis")
+                .call(yAxis);
+
+            // X-axis label
+            this.g.append("text")
+                .attr("class", "x-label")
+                .attr("x", this.vizWidth / 2)
+                .attr("y", this.vizHeight + 60)
+                .style("text-anchor", "middle")
+                .style("fill", "white")
+                .text("Average Playtime (2 Weeks)");
+
+            // Y-axis label
+            this.g.append("text")
+                .attr("class", "y-label")
+                .attr("x", -this.vizHeight / 2)
+                .attr("y", -60)
+                .attr("transform", "rotate(-90)")
+                .style("text-anchor", "middle")
+                .style("fill", "white")
+                .text("Average Playtime (Forever)");
+
+            // Title
+            this.g.append("text")
+                .attr("class", "chart-title")
+                .attr("x", this.vizWidth / 2)
+                .attr("y", -20)
+                .style("text-anchor", "middle")
+                .style("font-size", "35px")
+                .style("fill", "white")
+                .text("Do Specific Genres Have Higher Player Retention?");
+        } else {
+            this.g.select(".x-axis").transition().duration(500).call(xAxis);
+            this.g.select(".y-axis").transition().duration(500).call(yAxis);
+        }
+
+        // Bind data
+        let bubbles = this.g.selectAll("circle")
+            .data(Object.values(this.genreToAppIDs[genre]).sort(
+                (a, b) => d3.mean(this.appIDToInfo[b].estimatedOwners) - d3.mean(this.appIDToInfo[a].estimatedOwners)
+            ));
+    
+        // ENTER phase
+        bubbles.enter()
+            .append("circle")
+            .attr("cx", d => xScale(this.appIDToInfo[d].avgPlaytime2Weeks))
+            .attr("cy", d => yScale(this.appIDToInfo[d].avgPlaytimeForever))
+            .attr("r", d => radiusScale(d3.mean(this.appIDToInfo[d].estimatedOwners)))
+            .attr("fill", d => colorScale(this.appIDToInfo[d].isMultiplayer))
+            .attr("opacity", 0.7)
+            .merge(bubbles)
+            .transition().duration(500)
+            .attr("cx", d => xScale(this.appIDToInfo[d].avgPlaytime2Weeks))
+            .attr("cy", d => yScale(this.appIDToInfo[d].avgPlaytimeForever))
+            .attr("r", d => radiusScale(d3.mean(this.appIDToInfo[d].estimatedOwners)))
+        ;    
+        // EXIT phase
+        bubbles.exit()
+            .transition().duration(500)
+            .attr("r", 0)
+            .remove();
+
+        // ====== LEGEND ======
+        let legend = this.g.select(".legend");
+        if (!legend.node()) {
+            legend = this.g.append("g").attr("class", "legend")
+                .attr("transform", `translate(${this.vizWidth - 150}, 10)`);
+
+            // Multiplayer legend
+            legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).attr("fill", "blue");
+            legend.append("text").attr("x", 10).attr("y", 5).style("fill", "white").text("Multiplayer");
+
+            legend.append("circle").attr("cx", 0).attr("cy", 20).attr("r", 5).attr("fill", "orange");
+            legend.append("text").attr("x", 10).attr("y", 25).style("fill", "white").text("Singleplayer");
+
+            // Bubble size legend
+            legend.append("circle").attr("cx", 0).attr("cy", 50).attr("r", 10).attr("fill", "gray").attr("opacity", 0.5);
+            legend.append("text").attr("x", 15).attr("y", 55).style("fill", "white").text("Bigger = More Owners");
+        }
+
+
+
+
+    }
+    
 
 }
 

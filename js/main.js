@@ -37,7 +37,7 @@ Promise.all([
     // Create the genre filter dropdown
     setupGenreFilter(processedPopularity, trendsChart);
 
-    new distributionViz(popularity, genres, games); 
+    const sv = new sridharViz(popularity, genres, games, tags); 
 })
 
 // process data for review sentiment
@@ -241,7 +241,7 @@ function setupGenreFilter(data, chart) {
 
 }
 
-function distributionViz(popularity, genres, games) {
+function sridharViz(popularity, genres, games, tags) {
     console.log("Sridhar's Vizs");
     let ngd = new NicheGenresDistribution(
         "#distribution-plot",
@@ -249,6 +249,6 @@ function distributionViz(popularity, genres, games) {
     );
     let bpc = new BubblePlotChart(
         "#bubble-plot-engagement",
-        popularity, genres, games
+        popularity, genres, games, tags
     );
 }
