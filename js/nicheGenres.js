@@ -482,7 +482,7 @@ class NicheGenresDistribution {
 
         // console.log("kys");
 
-        this.svg.style("background-color", "#fffcb5");
+        this.svg.style("background-color", "#5e6a75");
         this.g = this.svg.append("g")
             .attr("transform", `translate(${(this.svgWidth - this.vizWidth) / 2}, ${(this.svgHeight - this.vizHeight) / 2})`)
         ;
