@@ -21,12 +21,24 @@ class NicheGenresDistribution {
         // this.basicInfo = basicInfo;
         this.parentDiv = d3.select("#distribution-plot");
         this.parentCont = this.parentDiv.append("div").attr("class", "container");
+        this.yap = this.parentCont.append("p")
+            .html("This graph uses a metric for each game:<br>\
+                    &nbsp;&nbsp;&nbsp;&nbsp; (Metric = 2 Week Average Playtime / Forever Average Playtime).<br><br>\
+                For each genre, the frequency of the metric is plotted, giving us some idea as to how long people stick to playing games in a certain genre.<br>\
+                From the metric, one can conclude that: <br>\
+                &nbsp;&nbsp;&nbsp;&nbsp; as the Forever Average Playtime (denominator) increases, the metric will decrease and<br>\
+                &nbsp;&nbsp;&nbsp;&nbsp; as the 2 Week Average Playtime (numerator) increases, the metric will increase<br>\
+                &nbsp;&nbsp;&nbsp;&nbsp; (and vice-versa).<br>\
+                Here, we try to look for games with a smaller metric, as that would imply the game is being played for a long duration of time, implying a more loyal fan-base.<br>\
+                This graph helps us see if there are any trends with player-base loyalty, and the game's genre.")
+            .style("text-align", "left")
         this.dropdown = this.parentCont.append("select")
             .attr("id", "genre-dropdown");
         this.svg = this.parentCont.append("svg")
             .attr("width", width)
             .attr("height", height)
         ;
+
         this.svgWidth = width;
         this.svgHeight = height;
         this.margins = margins;
@@ -475,6 +487,29 @@ class NicheGenresDistribution {
             .attr("transform", `translate(${(this.svgWidth - this.vizWidth) / 2}, ${(this.svgHeight - this.vizHeight) / 2})`)
         ;
 
+
+
+        // tq sam altman <3
+        this.g.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", "translate(0, " + this.vizHeight + ")"); // Translate to bottom of chart
+
+        this.g.append("g")
+            .attr("class", "y-axis");
+
+        this.g.append("text")
+            .attr("class", "x-axis-label")
+            .style("font-size", "14px")
+            .style("fill", "black");
+
+        this.g.append("text")
+            .attr("class", "y-axis-label")
+            .style("font-size", "14px")
+            .style("fill", "black");
+
+
+
+
         // make visualization within the group g
         this.updateVisualization(this.dropdown.property("value"));
 
@@ -495,8 +530,8 @@ class NicheGenresDistribution {
         // THE DATA WE NEED TO GRAPH: cf, this.dataRanges, and this.freqRanges
         this.cf = this.freq[genre];  // *c*urrent *f*requency
         // console.log(cf);
-        // this.dataRanges
-        // this.freqRanges
+        // console.log(this.dataRange);
+        // this.freqRange
 
         // TODO:
             // make x, y axes, 
@@ -510,7 +545,8 @@ class NicheGenresDistribution {
             .range([0, this.vizWidth])
         ;
         this.xScaleData = d3.scaleLinear()
-            .domain(this.dataRange)
+            .domain(this.dataRange.avgMetric)
+            .range([0, this.vizWidth])
         ;
         this.yScale = d3.scalePow().exponent(0.4)  // I SEEEEE, POWER SCALE SEEMS TO BE THE WAY TO GO? WITH A <1 BASE   // good enough for now
             .domain(this.freqRange)
@@ -519,12 +555,11 @@ class NicheGenresDistribution {
 
         this.bars = this.g.selectAll("rect")
             .data(this.cf.domain())
-        ;
-        console.log("cf updated", genre);
-        
-        console.log(this.cf.domain().map(
-            (d) => this.cf(d)
-        ))
+        ;        
+        // this the data
+        // console.log(this.cf.domain().map(
+        //     (d) => this.cf(d)
+        // ))
         
         this.bars.enter()
             .append("rect")
@@ -551,6 +586,42 @@ class NicheGenresDistribution {
             .attr("height", 0)
             .remove()
         ;
+
+        // tq sam altman <3
+        // Add the vertical axis for frequency (y-axis)
+        this.g.select(".y-axis")
+            .transition()
+            .duration(500)
+            .call(d3.axisLeft(this.yScale));
+
+        // Add the horizontal axis for avgmetric (x-axis)
+        this.g.select(".x-axis")
+            .transition()
+            .duration(500)
+            .call(d3.axisBottom(this.xScaleData));
+
+        // Add the label for the vertical axis (frequency)
+        this.g.select(".y-axis-label")
+            .text("Frequency")
+            .attr("x", -this.vizHeight / 2)  // Rotate label vertically
+            .attr("y", -40)
+            .attr("transform", "rotate(-90)")
+            .style("text-anchor", "middle");
+
+        // Add the label for the horizontal axis (avgmetric)
+        this.g.select(".x-axis-label")
+            .text("Metric (Lower ==> More Loyal Players)")
+            .attr("x", this.vizWidth / 2)  // Center horizontally
+            .attr("y", this.vizHeight + 40)
+            .style("text-anchor", "middle");
+
+            this.g.append("text")
+            .attr("x", this.vizWidth / 2)  // Center the text horizontally
+            .attr("y", 0)  // Position the title at the top
+            .attr("text-anchor", "middle")  // Center the text
+            .attr("font-size", "30px")
+            .attr("font-weight", "bold")
+            .text("Does Genre Imply Player-Base Loyalty?");
 
     }
 
