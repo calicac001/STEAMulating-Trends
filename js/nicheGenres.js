@@ -11,7 +11,7 @@
 // nvm: somehow work in the total number of players into the metric that i'm using? somehow normalize the metric
 //       need to play with the metric once i get the visualization working, so i can *see* which metric makes more sense
 
-    class NicheGenresDistribution {
+class NicheGenresDistribution {
     constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
         margins = {top: 75, bottom: 75, left: 75, right: 75}) {
         // this.popularity = popularity;

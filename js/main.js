@@ -247,4 +247,8 @@ function distributionViz(popularity, genres, games) {
         "#distribution-plot",
         popularity, genres, games
     );
+    let bpc = new BubblePlotChart(
+        "#bubble-plot-engagement",
+        popularity, genres, games
+    );
 }
