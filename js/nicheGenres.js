@@ -20,22 +20,30 @@ class NicheGenresDistribution {
         // this.genre = genres;
         // this.basicInfo = basicInfo;
         this.parentDiv = d3.select("#distribution-plot");
-        this.parentCont = parentDiv.append("div").attr("class", "container");
-        this.svg = parentCont.append("svg")
+        this.parentCont = this.parentDiv.append("div").attr("class", "container");
+        this.dropdown = this.parentCont.append("select")
+            .attr("id", "genre-dropdown");
+        this.svg = this.parentCont.append("svg")
             .attr("width", width)
-            .attr("length", height)
+            .attr("height", height)
         ;
-        this.width = width;
-        this.height = height;
+        this.svgWidth = width;
+        this.svgHeight = height;
         this.margins = margins;
+        this.visWidth = this.svgWidth - this.margins.left - this.margins.right;
+        this.visHeight = this.svgHeight - this.margins.top - this.margins.bottom;
         // console.log(popularity, genres, basicInfo);
-        this.freq = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
+        const graphingData = NicheGenresDistribution.getGraphingData(popularity, genres, basicInfo);
+        this.dataRanges = graphingData.dataRanges;
+        this.freqRanges = graphingData.freqRanges;
+        this.freq = graphingData.frequencies;
         this.graphFrequencies();
     }
 
     /////////////////////// making new shit, starting from scratch ////////////////////////
     static getGraphingData(popularity, genres, basicInfo) {
         return NicheGenresDistribution.bob(popularity, genres, basicInfo);
+        // idk, i just liked to keep bob (i was scared of breaking things by renaming, but honestly i don't think anythoing would have happened :3)
     }
 
     static bob(popularity, genres, basicInfo) {
@@ -72,7 +80,7 @@ class NicheGenresDistribution {
         // console.log(genreToMinMetric);
         // console.log(genreToMaxMetric);
 
-        const dataRanges = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics)
+        const dataRanges = NicheGenresDistribution.getDataEndpoints(genreToGameMetrics);
         // console.log(dataRanges);
         // {"avgMetric": [0, 17.8855421686747],
         //  "medMetric": [0, 618.0322580645161]}
@@ -97,8 +105,9 @@ class NicheGenresDistribution {
         // make make frequency distribution based on the buckets and the scales
         // make scale for the frequency (y-axis)
 
-        const frequencies = NicheGenresDistribution.getFrequencies(genreToGameMetrics, dataRanges)
-    
+        const frequencies = NicheGenresDistribution.getFrequencies(genreToGameMetrics, dataRanges);
+        const freqRanges = NicheGenresDistribution.getFreqEndpoints(frequencies);
+        // console.log(freqRanges);
         // console.log(bucketer(2));
 
         // the median data is kinda lame, it doesn't seem to give much insights, so ill just stick with the average
@@ -120,7 +129,7 @@ class NicheGenresDistribution {
         // filteredFrequencies is all we need to graph shit
         // now i need to go back into prior labs and whatnot to figure out how tf i do that LMFAO
 
-        return filteredFrequencies;
+        return {frequencies: filteredFrequencies, dataRanges: dataRanges, freqRanges: freqRanges};
     }
 
     static popularityCleaner(popularity) {
@@ -433,6 +442,17 @@ class NicheGenresDistribution {
         return frequencies;
     }
 
+    static getFreqEndpoints(frequencies) {
+        // Object.values(frequencies)  // an array of Ordinal Scales
+        const endpointGetter = (extrema) => extrema(
+            Object.values(frequencies), d => extrema(d.range())
+        )
+        
+        return [
+            endpointGetter(d3.min), endpointGetter(d3.max)
+        ];
+    }
+
     graphFrequencies() {
         // freq is a dict of genre names to ordinal scales ()
 
@@ -441,10 +461,49 @@ class NicheGenresDistribution {
         this.genres = Object.keys(this.freq);
         console.log(this.genres);
 
+        this.dropdown.selectAll("option")
+            .data(this.genres)
+            .enter()
+            .append("option")
+            .attr("value", d => d)
+            .text(d => d);
+
         // console.log("kys");
+
+        this.svg.style("background-color", "#fffcb5");
         const g = this.svg.append("g")
-            // .attr("transform", )
+            .attr("transform", `translate(${this.margins.left}, ${this.margins.top})`);
+
+        // make visualization within the group g
+        this.updateVisualization(this.dropdown.property("value"));
+
+        // listener
+        this.dropdown.on("change", (event) => {
+            const selectedGenre = event.target.value;  // Get selected genre
+            console.log("Selected Genre:", selectedGenre);
         
+            // Call a function to update the visualization based on selection
+            this.updateVisualization(selectedGenre);
+        });
+    }
+
+    updateVisualization(genre) {
+        // Modify the existing D3 visualization based on the selected genre
+        console.log("Updating visualization for:", genre);
+
+        const cf = this.freq[genre];  // *c*urrent *f*requency
+        // console.log(cf);
+
+        // TODO:
+            // make x, y axes, 
+            // draw bars
+            // (draw line chart as well?)
+            // label axes (need to figure out label for x-axis...)
+        console.log(cf.domain());
+
+        this.xScale = d3.scaleOrdinal()
+            .domain(cf.domain())
+            .range()
 
 
     }
