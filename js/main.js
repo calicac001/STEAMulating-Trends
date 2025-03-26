@@ -21,14 +21,14 @@ Promise.all([
 
     // Convert to array format
     let releaseData = Array.from(releasesByDay, ([date, count]) => ({
-        date: new Date(date), // Convert back to Date object
+        date: new Date(date), // Convert backs to Date object
         value: count
     }));
     
     console.log(releaseData);
     
     calendarPlot = new CalendarPlot("calendar-plot", releaseData);
-
+    
     createDivergingBarChart(genres, reviews);
     const processedPopularity = processPopularity(games, popularity, genres);
 
@@ -36,6 +36,8 @@ Promise.all([
 
     // Create the genre filter dropdown
     setupGenreFilter(processedPopularity, trendsChart);
+
+    new distributionViz(popularity, genres, games); 
 })
 
 // process data for review sentiment
@@ -235,6 +237,14 @@ function setupGenreFilter(data, chart) {
         .append("option")
         .attr("value", d => d)
         .text(d => d);
-        
-    console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
+      console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
+
+  function distributionViz(popularity, genres, games) {
+      console.log("Sridhar's Vizs");
+      let ngd = new NicheGenresDistribution(
+          "#distribution-plot",
+          popularity, genres, games
+      );
+  }
+
 }
