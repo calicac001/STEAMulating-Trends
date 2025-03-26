@@ -28,6 +28,15 @@ class BubblePlotChart {
         // this.basicInfo = basicInfo;
         this.parentDiv = d3.select(selector);
         this.parentCont = this.parentDiv.append("div").attr("class", "container");
+
+        this.yap = this.parentDiv.append("div").append("p")
+            .html("This graph plots videos games, based on their genre, to see whether or not the factor of\
+                being a multiplayer game or not impacts player retention<br>\
+                We identify player retention by looking at the Average Playtime for 2 weeks, as well as forever\
+                Additionally, we might notice that larger games might correlate with higher player retention.")
+            .style("text-align", "left")
+
+
         this.dropdown = this.parentCont.append("div").append("select")
             .attr("id", "genre-dropdown");
         this.svg = this.parentCont.append("svg")
@@ -386,7 +395,7 @@ class BubblePlotChart {
                 .style("text-anchor", "middle")
                 .style("font-size", "35px")
                 .style("fill", "white")
-                .text("Do Specific Genres Have Higher Player Retention?");
+                .text("Do Multiplayer Games Have Higher Player Retention?");
         } else {
             this.g.select(".x-axis").transition().duration(500).call(xAxis);
             this.g.select(".y-axis").transition().duration(500).call(yAxis);
