@@ -22,6 +22,7 @@ Promise.all([
 
     // Create the genre filter dropdown
     setupGenreFilter(processedPopularity, trendsChart);
+    const sv = new sridharViz(popularity, genres, games, tags);
 
     // Data for Hexbin Plot
     const hexbinData = processHexbinData(genres, reviews, popularity);
@@ -52,7 +53,7 @@ function processCalendarData(gamesData){
 
     // Convert to array format
     let releaseData = Array.from(releasesByDay, ([date, count]) => ({
-        date: new Date(date), // Convert back to Date object
+        date: new Date(date), // Convert backs to Date object
         value: count
     }));
 
@@ -284,6 +285,18 @@ function setupGenreFilter(data, chart) {
         .append("option")
         .attr("value", d => d)
         .text(d => d);
-        
-    console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
+      console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
+
+}
+
+function sridharViz(popularity, genres, games, tags) {
+    console.log("Sridhar's Vizs");
+    let ngd = new NicheGenresDistribution(
+        "#distribution-plot",
+        popularity, genres, games
+    );
+    let bpc = new BubblePlotChart(
+        "#bubble-plot-engagement",
+        popularity, genres, games, tags
+    );
 }
