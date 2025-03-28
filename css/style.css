@@ -67,7 +67,7 @@
 
 p {
     text-align: left;
-    font-size: 1.5em;
+    font-size: 1.8em;
 }
 
 .chart-container {
@@ -89,6 +89,87 @@ p {
     background: dimgray;
     padding: 5px;
     border-radius: 5px;
+}
+
+/**     Carousel Img        **/
+.content-time {
+    padding: 1vw 4vw;
+    align-self: center;
+    height: max-content;
+}
+
+.carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+.card {
+    background-color: white;
+    border-radius: 5px;
+    position: absolute;
+    width: 300px;
+    height: 150px;
+    padding: 20px;
+    text-align: center;
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: carousel 15s linear infinite; /* duration should be 3 multiplied by the total number of cards */
+}
+
+/* Increment animation delay by 3 for each card */
+.card:nth-child(1) {
+    animation-delay: -3s;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0s;
+}
+
+.card:nth-child(3) {
+    animation-delay: 3s;
+}
+
+.card:nth-child(4) {
+    animation-delay: 6s;
+}
+
+.card:last-child {
+    animation-delay: 9s;
+}
+
+@keyframes  carousel {
+    0% {
+        transform: translateY(100%) scale(0.5);
+        opacity: 0;
+        visibility: hidden;
+    }
+    3%, 20% { /* 3, 100/total number of cards */
+        transform: translateY(100%) scale(0.7);
+        opacity: 0.4;
+        visibility: visible;
+    }
+    23%, 40% { /* [(100/total number of cards) + 3], [(100/number of cards) * 2] */
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+    43%, 60% { /* [(100/total number of cards)*2 + 3], [(100/number of cards) * 3] */
+        transform: translateY(-100%) scale(0.7);
+        opacity: 0.4;
+        visibility: visible;
+    }
+    63% { /* [(100/total number of cards) * 3] + 3 */
+        transform: translateY(-100%) scale(0.5);
+        opacity: 0;
+        visibility: visible;
+    }
+    100% {
+        transform: translateY(-100%) scale(0.5);
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 
 /****************************/
