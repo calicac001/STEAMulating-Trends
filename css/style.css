@@ -403,19 +403,19 @@ label[for="genre-filter"] {
 
 /* Style for axis lines */
 .axis line, .axis path {
-    stroke: #5a4b00;
+    stroke: #ffffff;
     stroke-opacity: 0.3;
 }
 
 /* Style for axis text */
 .axis text {
-    fill: #5a4b00;
+    fill: #ffffff;
     font-size: 12px;
 }
 
 /* Style for axis labels */
 .x-axis-label, .y-axis-label, .chart-title {
-    fill: #5a4b00;
+    fill: #ffffff;
     font-weight: 500;
 }
 

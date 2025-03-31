@@ -45,7 +45,7 @@ class DivergingBarChart {
             .attr("text-anchor", "middle")
             .attr("font-size", 18)
             .attr("font-weight", "bold")
-            .attr("fill", "#ffffff")  
+            .attr("fill", "#ffffff")  // White text for dark background
             .text("Positive Review Ratio by Game Genre");
             
         
@@ -73,7 +73,7 @@ class DivergingBarChart {
             .attr("x", 18)
             .attr("y", 9)
             .attr("font-size", "11px")
-            .attr("fill", "#dddddd")  
+            .attr("fill", "#ffffff")  // White text for dark background
             .text(d => d.label);
             
         vis.thresholdLine = vis.svg.append("line")
@@ -111,15 +111,14 @@ class DivergingBarChart {
             .tickFormat(d => `${d}%`)
             .ticks(5))
             .selectAll("text")
-            .attr("fill", "#dddddd");  // Light gray text
+            .attr("fill", "#ffffff");  // White text
             
         vis.yAxis.call(d3.axisLeft(vis.y))
             .selectAll("text")
-            .attr("fill", "#dddddd");  // Light gray text
+            .attr("fill", "#ffffff");  // White text
             
-        // Style all axis lines
         vis.svg.selectAll(".axis line, .axis path")
-            .attr("stroke", "#555555");  // Mid-gray for axis lines
+            .attr("stroke", "#555555");  
         
         const thresholdX = vis.x(vis.threshold);
         
@@ -133,7 +132,7 @@ class DivergingBarChart {
             .attr("y", vis.height + 30)
             .attr("text-anchor", "middle")
             .attr("font-size", 11)
-            .attr("fill", "#bbbbbb")  // Light gray text
+            .attr("fill", "#ffffff")  // White text
             .text(`${vis.threshold}% Threshold`);
             
         const belowThresholdBars = vis.svg.selectAll(".below-threshold-bar")
@@ -147,7 +146,7 @@ class DivergingBarChart {
                 return vis.x(vis.threshold) - vis.x(start);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#ffb366")  // Brighter orange for dark background
+            .attr("fill", "#ffb366")  
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -178,7 +177,7 @@ class DivergingBarChart {
                 return vis.x(end) - vis.x(vis.threshold);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#4dabff")  // Brighter blue for dark background
+            .attr("fill", "#4dabff")  
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -198,33 +197,28 @@ class DivergingBarChart {
                     .style("opacity", 0);
             });
             
-        // Improved percentage label positioning with dark theme considerations
+        // Consistent percentage label positioning - always at the end of bars
         vis.svg.selectAll(".percentage-label")
             .data(vis.data)
             .join("text")
             .attr("class", "percentage-label")
             .attr("x", d => {
-                const midpoint = (vis.threshold + vis.minRange) / 2;
-                if (d.positivePercentage < midpoint) {
-                    return vis.x(d.positivePercentage) - 5;
-                } else if (d.positivePercentage > vis.threshold + 5) {
-                    return vis.x(d.positivePercentage) + 5;
+                // Always position at the end of the bar
+                if (d.positivePercentage < vis.threshold) {
+                    return vis.x(Math.min(vis.threshold, d.positivePercentage)) - 5;
                 } else {
-                    return vis.x(vis.threshold);
+                    return vis.x(d.positivePercentage) + 5;
                 }
             })
             .attr("y", d => vis.y(d.genre) + vis.y.bandwidth() / 2 + 5)
             .attr("text-anchor", d => {
-                const midpoint = (vis.threshold + vis.minRange) / 2;
-                if (d.positivePercentage < midpoint) {
+                if (d.positivePercentage < vis.threshold) {
                     return "end";
-                } else if (d.positivePercentage > vis.threshold + 5) {
-                    return "start";
                 } else {
-                    return "middle";
+                    return "start";
                 }
             })
-            .attr("fill", "#ffffff")  // Always white text on dark background
+            .attr("fill", "#ffffff")  
             .attr("font-size", "11px")
             .attr("font-weight", "bold")
             .text(d => `${d.positivePercentage.toFixed(1)}%`);
@@ -237,7 +231,7 @@ class DivergingBarChart {
             .attr("y", d => vis.y(d.genre) + vis.y.bandwidth() / 2 + 5)
             .attr("text-anchor", "start")
             .attr("font-size", "11px")
-            .attr("fill", "#bbbbbb")  // Light gray text for dark background
+            .attr("fill", "#bbbbbb")  
             .text(d => `(${d.gameCount.toLocaleString()} games)`);
     }
 }
