@@ -55,6 +55,7 @@ class CalendarPlot {
             d3.max(vis.allData, d => d.date.getFullYear())
         ];
 
+        vis.startYear = vis.yearRange[0];
         vis.endYear = vis.yearRange[1];
 
         vis.tooltip = d3.select("body").append("div")
@@ -91,12 +92,14 @@ class CalendarPlot {
 
                 // Ensure "to" year is not less than "from" year
                 if (toYear < fromYear) {
+                    vis.startYear = fromYear;
+                    vis.endYear = fromYear;
                     d3.select('#to-year-select').property('value', fromYear);
                     vis.filterByYearRange(fromYear, fromYear);
-                    vis.endYear = fromYear;
                 } else {
-                    vis.filterByYearRange(fromYear, toYear);
+                    vis.startYear = fromYear;
                     vis.endYear = toYear;
+                    vis.filterByYearRange(fromYear, toYear);
                 }
             });
 
@@ -112,12 +115,14 @@ class CalendarPlot {
 
                 // Ensure "from" year is not greater than "to" year
                 if (fromYear > toYear) {
+                    vis.startYear = toYear;
+                    vis.endYear = toYear;
                     d3.select('#from-year-select').property('value', toYear);
                     vis.filterByYearRange(toYear, toYear);
-                    vis.endYear = toYear;
                 } else {
-                    vis.filterByYearRange(fromYear, toYear);
+                    vis.startYear = fromYear;
                     vis.endYear = toYear;
+                    vis.filterByYearRange(fromYear, toYear);
                 }
             });
 
@@ -157,27 +162,27 @@ class CalendarPlot {
         radioContainer.append('input')
             .attr('type', 'radio')
             .attr('name', 'animationMode')
-            .attr('value', 'mode1')
-            .attr('id', 'mode1')
+            .attr('value', 'cumulative')
+            .attr('id', 'cumulative-radio')
             .attr('class', 'cyber-radio bg-white ac-blue')
             .property('checked', true); // Default selection
 
         radioContainer.append('label')
-            .attr('for', 'mode1')
-            .text('Mode 1')
+            .attr('for', 'cumulative-radio')
+            .text('Cumulative')
             .style('margin-right', '10px'); // Add spacing between options
 
         // Add second radio button
         radioContainer.append('input')
             .attr('type', 'radio')
             .attr('name', 'animationMode')
-            .attr('value', 'mode2')
-            .attr('id', 'mode2')
+            .attr('value', 'year-by-year')
+            .attr('id', 'year-by-year-radio')
             .attr('class', 'cyber-radio bg-white ac-blue');
 
         radioContainer.append('label')
-            .attr('for', 'mode2')
-            .text('Mode 2')
+            .attr('for', 'year-by-year-radio')
+            .text('Year by Year')
             .style('margin-right', '20px'); // Add spacing before the button
 
         buttonContainer.append('button')
@@ -198,8 +203,11 @@ class CalendarPlot {
 
         // Filter the data based on the selected year range
         vis.data = vis.allData.filter(d => {
-            const year = d.date.getFullYear();
+            vis.startYear = fromYear;
             vis.endYear = toYear;
+
+            const year = d.date.getFullYear();
+
             return year >= fromYear && year <= toYear;
         });
 
@@ -241,9 +249,13 @@ class CalendarPlot {
 
 
         // Color scale
+        // let max = d3.max(vis.displayData, d => d.value);
+        // vis.color = d3.scaleSequential(d3.interpolateYlGnBu)
+        //     .domain([0, max]);
         let max = d3.max(vis.displayData, d => d.value);
-        vis.color = d3.scaleSequential(d3.interpolateYlGnBu)
-            .domain([0, max]);
+        vis.color = d3.scaleLinear()
+            .domain([0, 1, max * 0.2, max * 0.4, max * 0.6, max * 0.8, max])
+            .range(["#F0F0F0", "#FFFFD9", "#EDF8B1", "#C7E9B4", "#7FCDBB", "#41B6C4", "#081D58"]);
 
 
         vis.updateVis();
@@ -337,7 +349,6 @@ class CalendarPlot {
             .attr('dy', '0.35em')
             .text(d => d);
     }
-
 
     // Function to ensure all days are represented in the dataset using only existing years
     preprocessData(inputData) {
@@ -470,7 +481,10 @@ class CalendarPlot {
             return d >= fromYear && d <= toYear;
         })
 
-        // Function to update the graph year by year
+        // Check which mode is selected
+        const animationMode = d3.select('input[name="animationMode"]:checked').property('value');
+
+        // Function to update the graph
         const interval = setInterval(() => {
             if (currentIndex >= filterUnique.length) {
                 clearInterval(interval);
@@ -478,11 +492,16 @@ class CalendarPlot {
                 return;
             } else {
                 const currentYear = filterUnique[currentIndex];
-                vis.endYear = currentYear;
-                // Filter the data for the current year and update the visualization
-                vis.filterByYearRange(currentYear, currentYear);
+
+                if (animationMode === 'cumulative') {
+                    vis.endYear = currentYear;
+                    vis.filterByYearRange(vis.startYear, currentYear);
+                } else if (animationMode === 'year-by-year') {
+                    vis.endYear = currentYear;
+                    vis.filterByYearRange(currentYear, currentYear);
+                }
                 currentIndex++;  // Move to the next year
             }
-        }, 1000);  // Adjust the interval for the speed of the animation (1000ms = 1 second per year)
+        }, 1000);  //Speed of animation
     }
 }
