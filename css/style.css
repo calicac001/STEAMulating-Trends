@@ -199,6 +199,11 @@ p {
     align-items: center;
 }
 
+.month-label-cal {
+    font-size: 15px;
+    fill: black;
+}
+
 #calendar-tooltip {
     width: max-content;
     max-height: max-content;

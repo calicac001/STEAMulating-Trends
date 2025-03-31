@@ -213,7 +213,7 @@ class CalendarPlot {
 
         // Remove existing elements
         vis.svg.selectAll("rect").remove();
-        vis.svg.selectAll(".month-label").remove();
+        vis.svg.selectAll(".month-label-cal").remove();
         vis.svg.selectAll("path").remove();
 
         // Create calendar heatmap cells
@@ -252,7 +252,7 @@ class CalendarPlot {
             d3.utcMonth(d3.max(vis.displayData, d => d.date)).setUTCMonth(d3.utcMonth(d3.max(vis.displayData, d => d.date)).getUTCMonth() + 1)
         );
 
-        let month = vis.svg.selectAll(".month-label")
+        let month = vis.svg.selectAll(".month-label-cal")
             .data(months)
             .enter();
 
@@ -263,7 +263,7 @@ class CalendarPlot {
             .attr("d", pathMonth);
 
         month.append("text")
-            .attr("class", "month-label")
+            .attr("class", "month-label-cal")
             .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
             .attr("y", -5)
             .text(vis.formatMonth);
