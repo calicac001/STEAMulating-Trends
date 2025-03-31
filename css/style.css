@@ -199,7 +199,7 @@ p {
     align-items: center;
 }
 
-.month-label-cal {
+.month-label-cal, .day-label-left, .day-label-right {
     font-size: 15px;
     fill: black;
 }

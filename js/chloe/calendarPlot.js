@@ -267,6 +267,30 @@ class CalendarPlot {
             .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
             .attr("y", -5)
             .text(vis.formatMonth);
+
+        // Add day labels to calendar plot
+        const dayLabels = ["S", "M", "T", "W", "Th", "F", "S"];
+
+        vis.svg.selectAll('.day-label-left')
+            .data(dayLabels)
+            .enter().append('text')
+            .attr('class', 'day-label-left')
+            .attr('x', -10) // Position slightly left of the calendar
+            .attr('y', (d, i) => i * vis.cellSize + vis.cellSize / 2) // Align with each row
+            .attr('text-anchor', 'end') // Right-align text
+            .attr('dy', '0.35em') // Adjust vertical alignment
+            .text(d => d);
+
+        // Add day labels on the right side
+        vis.svg.selectAll('.day-label-right')
+            .data(dayLabels)
+            .enter().append('text')
+            .attr('class', 'day-label-right')
+            .attr('x', 54 * vis.cellSize + 5) // Position slightly right of the calendar
+            .attr('y', (d, i) => i * vis.cellSize + vis.cellSize / 2)
+            .attr('text-anchor', 'start') // Left-align text
+            .attr('dy', '0.35em')
+            .text(d => d);
     }
 
 
