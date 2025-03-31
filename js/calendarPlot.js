@@ -5,9 +5,9 @@
  */
 
 class CalendarPlot {
-    constructor(parentElement, data) {
-        this.parentElement = parentElement;
-        this.data = data;
+    constructor(_parentElement, _data) {
+        this.parentElement = _parentElement;
+        this.data = _data;
         this.displayData = [];
 
         this.initVis();

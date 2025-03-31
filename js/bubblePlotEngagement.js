@@ -18,9 +18,9 @@
 
 class BubblePlotChart {
     constructor(selector, popularity, genres, basicInfo, tags, width = 1250, height = 1000,
-        margins = {top: 150, bottom: 150, left: 150, right: 150}) {
+                margins = {top: 150, bottom: 150, left: 150, right: 150}) {
         // this.popularity = popularity;
-    
+
         // console.log(tags);
 
         // this.popularity = popularity;
@@ -66,14 +66,14 @@ class BubblePlotChart {
         const cleanedPopularity = BubblePlotChart.popularityCleaner(popularity);
         const cleanedGenres = BubblePlotChart.genresCleaner(genres);
         const cleanedBasicInfo = BubblePlotChart.basicInfoCleaner(basicInfo);
-        
+
         const appIDToName = BubblePlotChart.getAppIDToName(cleanedBasicInfo);
         const appIDToPopularity = BubblePlotChart.getAppIDToPopularity(cleanedPopularity);
         const appIDToIsMultiplayer = BubblePlotChart.getAppIDToIsMultiplayer(tags);
 
         const genreToAppIDs = BubblePlotChart.getGenresToAppIDs(cleanedGenres);
         const gameToInfo = BubblePlotChart.getGameToInfo(appIDToName, appIDToPopularity, appIDToIsMultiplayer);
-        
+
         // console.log(Object.entries(gameToInfo));
 
         return {genreToAppIDs: genreToAppIDs, gameToInfo: gameToInfo};
@@ -82,17 +82,17 @@ class BubblePlotChart {
     static popularityCleaner(popularity) {
         /**
          * popularity is an array of objects like this:
-            {
-                "AppID": "10",
-                "Recommendations": "122770",
-                "Estimated owners": "10000000 - 20000000",
-                "Average playtime forever": "10524",
-                "Average playtime two weeks": "1733",
-                "Median playtime forever": "228",
-                "Median playtime two weeks": "733",
-                "Peak CCU": "13230"
-            }
-        */
+         {
+         "AppID": "10",
+         "Recommendations": "122770",
+         "Estimated owners": "10000000 - 20000000",
+         "Average playtime forever": "10524",
+         "Average playtime two weeks": "1733",
+         "Median playtime forever": "228",
+         "Median playtime two weeks": "733",
+         "Peak CCU": "13230"
+         }
+         */
         return popularity.map(d => ({
             "appID": d["AppID"],
             "estimatedOwners": d["Estimated owners"],
@@ -107,15 +107,15 @@ class BubblePlotChart {
     static genresCleaner(genres) {
         /**
          * genres is an array of objects like this:
-            {
-            "AppID": "10",
-            "Genres": "Action"
-            }
+         {
+         "AppID": "10",
+         "Genres": "Action"
+         }
 
-        Note: an AppID might have multiple genres, (so, there can be multiple objects with the same AppID but different Genres)
-        Note: although Genres is a plural word, only 1 genre will appear in the string
+         Note: an AppID might have multiple genres, (so, there can be multiple objects with the same AppID but different Genres)
+         Note: although Genres is a plural word, only 1 genre will appear in the string
          */
-    
+
         return genres.map(d => ({
             "appID": d["AppID"],
             "genre": d["Genres"]  // note change from plural to singular "Genres" to "genre"
@@ -126,16 +126,16 @@ class BubblePlotChart {
     static basicInfoCleaner(basicInfo) {
         /**
          * basicInfo is an array of objects like this:
-            {
-                "AppID": "10",
-                "Name": "Counter-Strike",
-                "Release date": "01-Nov-00",
-                "Required age": "0",
-                "Price": "9.99",
-                "DLC count": "0",
-                "Developers": "Valve",
-                "Publishers": "Valve"
-            }
+         {
+         "AppID": "10",
+         "Name": "Counter-Strike",
+         "Release date": "01-Nov-00",
+         "Required age": "0",
+         "Price": "9.99",
+         "DLC count": "0",
+         "Developers": "Valve",
+         "Publishers": "Valve"
+         }
          */
 
         return basicInfo.map(d => ({
@@ -174,10 +174,10 @@ class BubblePlotChart {
     static #noGenreGames(cleanedGenres) {
         /** @private */
         /** I just wanted to use keep this function for documentation purposes, as it's intersting */
-        // there are a bunch of games that don't have a genre -- their titles all (i haven't properly checked, but a quick skim suggests this)
-        // have the keyword "playtest" in them, so I'm guessing they're beta games or something
-        // i'll filter out these games that don't have a genre
-        // this is a silly little finding
+            // there are a bunch of games that don't have a genre -- their titles all (i haven't properly checked, but a quick skim suggests this)
+            // have the keyword "playtest" in them, so I'm guessing they're beta games or something
+            // i'll filter out these games that don't have a genre
+            // this is a silly little finding
 
         const noGenres = [];
         for (const game of cleanedGenres) {
@@ -212,13 +212,13 @@ class BubblePlotChart {
         // cleaned popularity is an array of objects like:
         /**
          *         return popularity.map(d => ({
-            "appID": d["AppID"],
-            "estimatedOwners": d["Estimated owners"],
-            "avgPlaytimeForever": d["Average playtime forever"],
-            "avgPlaytime2Weeks": d["Average playtime two weeks"],
-            "medPlaytimeForever": d["Median playtime forever"],
-            "medPlaytime2Weeks": d["Median playtime two weeks"]
-        }));
+         "appID": d["AppID"],
+         "estimatedOwners": d["Estimated owners"],
+         "avgPlaytimeForever": d["Average playtime forever"],
+         "avgPlaytime2Weeks": d["Average playtime two weeks"],
+         "medPlaytimeForever": d["Median playtime forever"],
+         "medPlaytime2Weeks": d["Median playtime two weeks"]
+         }));
          */
         const appIDToPopularity = {};
 
@@ -232,19 +232,19 @@ class BubblePlotChart {
             }
         }
         // console.log(Object.entries(appIDToPopularity));
-        return appIDToPopularity;    
+        return appIDToPopularity;
     }
 
     static getAppIDToIsMultiplayer(tags) {
         // tags is a list of objects like this:
         /**
-        {
-            "AppID": "60",
-            "Tags": "First-Person"
-        }
-        */
-        // console.log(tags);
-        // compile the tags, and then reduce to isMultiplayer
+         {
+         "AppID": "60",
+         "Tags": "First-Person"
+         }
+         */
+            // console.log(tags);
+            // compile the tags, and then reduce to isMultiplayer
 
         const appIDToTags = {};
         for (const game of tags) {
@@ -285,18 +285,18 @@ class BubblePlotChart {
 
         // returns a mapping from appIDs (strings) to the following:
         /**
-            {
-                "estimatedOwners": [
-                    10000000,
-                    20000000
-                ],
-                "avgPlaytimeForever": 10524,
-                "avgPlaytime2Weeks": 1733,
-                "medPlaytimeForever": 228,
-                "medPlaytime2Weeks": 733,
-                "isMultiplayer": true,
-                "name": "Counter-Strike"
-            }
+         {
+         "estimatedOwners": [
+         10000000,
+         20000000
+         ],
+         "avgPlaytimeForever": 10524,
+         "avgPlaytime2Weeks": 1733,
+         "medPlaytimeForever": 228,
+         "medPlaytime2Weeks": 733,
+         "isMultiplayer": true,
+         "name": "Counter-Strike"
+         }
          */
 
         // console.log(Object.entries(gameToInfo));
@@ -323,7 +323,7 @@ class BubblePlotChart {
         this.dropdown.on("change", (event) => {
             const selectedGenre = event.target.value;  // Get selected genre
             console.log("Selected Genre:", selectedGenre);
-        
+
             // Call a function to update the visualization based on selection
             this.updateBubbleChart(selectedGenre);
         });
@@ -331,26 +331,26 @@ class BubblePlotChart {
 
     updateBubbleChart(genre) {
         console.log("Updating bubble chart for:", genre);
-    
+
         let gameIDs = this.genreToAppIDs[genre];
-    
+
         // Define scales
         let xScale = d3.scalePow().exponent(0.4)
             .domain([0, d3.max(Object.values(this.appIDToInfo), d => d.avgPlaytime2Weeks)])
             .range([0, this.vizWidth]);
-    
+
         let yScale = d3.scalePow().exponent(0.4)
             .domain([0, d3.max(Object.values(this.appIDToInfo), d => d.avgPlaytimeForever)])
             .range([this.vizHeight, 0]);
-    
+
         let radiusScale = d3.scaleSqrt()
             .domain([0, d3.max(Object.values(this.appIDToInfo), d => d3.mean(d.estimatedOwners))])
             .range([5, 50]); // Adjust min/max bubble sizes
-    
+
         let colorScale = d3.scaleOrdinal()
             .domain([true, false])
             .range(["blue", "orange"]);
-    
+
 
 
         // Create axes
@@ -406,7 +406,7 @@ class BubblePlotChart {
             .data(Object.values(this.genreToAppIDs[genre]).sort(
                 (a, b) => d3.mean(this.appIDToInfo[b].estimatedOwners) - d3.mean(this.appIDToInfo[a].estimatedOwners)
             ));
-    
+
         // ENTER phase
         bubbles.enter()
             .append("circle")
@@ -420,7 +420,7 @@ class BubblePlotChart {
             .attr("cx", d => xScale(this.appIDToInfo[d].avgPlaytime2Weeks))
             .attr("cy", d => yScale(this.appIDToInfo[d].avgPlaytimeForever))
             .attr("r", d => radiusScale(d3.mean(this.appIDToInfo[d].estimatedOwners)))
-        ;    
+        ;
         // EXIT phase
         bubbles.exit()
             .transition().duration(500)
@@ -449,7 +449,7 @@ class BubblePlotChart {
 
 
     }
-    
+
 
 }
 
@@ -458,5 +458,4 @@ class BubblePlotChart {
 
 
 // console.log("hi");
-
 

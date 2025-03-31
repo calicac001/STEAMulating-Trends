@@ -13,9 +13,9 @@
 
 class NicheGenresDistribution {
     constructor(selector, popularity, genres, basicInfo, width = 750, height = 500,
-        margins = {top: 75, bottom: 75, left: 75, right: 75}) {
+                margins = {top: 75, bottom: 75, left: 75, right: 75}) {
         // this.popularity = popularity;
-    
+
         // this.popularity = popularity;
         // this.genre = genres;
         // this.basicInfo = basicInfo;
@@ -70,7 +70,7 @@ class NicheGenresDistribution {
         // const gameToMetric = NicheGenresDistribution.getGameToMetric(cleanedPopularity);
 
         const genreToGameMetrics = NicheGenresDistribution.getGenreToGameMetrics(cleanedGenres, cleanedPopularity, cleanedBasicInfo);
-        
+
         // DESIGN DECISION TO SCRAP THIS AND JUST DO A GLOBAL MIN/MAX
         // const genreToMinMetric = {};
         // const genreToMaxMetric = {};
@@ -85,7 +85,7 @@ class NicheGenresDistribution {
         //         }
         //         if (genreToMinMetric[genre] > game[metric]) {
         //             genreToMinMetric[genre] = game[metric];
-        //         } 
+        //         }
         //     }
         // }
         // console.log(genreToGameMetrics);
@@ -98,7 +98,7 @@ class NicheGenresDistribution {
         //  "medMetric": [0, 618.0322580645161]}
         // i wonder how much the further data filtering will impact this...
 
-        // there might be different benefits to showing the data 
+        // there might be different benefits to showing the data
 
         // there's some naming clarifications i could make with "game" vs "appID"
 
@@ -125,7 +125,7 @@ class NicheGenresDistribution {
         // the median data is kinda lame, it doesn't seem to give much insights, so ill just stick with the average
         // const medMetricData = {
         //     xScale: d3.scaleQuantile(dataRanges["medMetric"]),
-            
+
         // };
 
         const filteredFrequencies = NicheGenresDistribution.filterFrequencies(frequencies);
@@ -134,10 +134,10 @@ class NicheGenresDistribution {
 
         // ok perf..
         // now, we gotta:
-            // - pull out the code into another method (i forget the term)
-            // - make the damn visualization with all this data!!!
-            // and then do the bubble chart, ugh
-        
+        // - pull out the code into another method (i forget the term)
+        // - make the damn visualization with all this data!!!
+        // and then do the bubble chart, ugh
+
         // filteredFrequencies is all we need to graph shit
         // now i need to go back into prior labs and whatnot to figure out how tf i do that LMFAO
 
@@ -147,17 +147,17 @@ class NicheGenresDistribution {
     static popularityCleaner(popularity) {
         /**
          * popularity is an array of objects like this:
-            {
-                "AppID": "10",
-                "Recommendations": "122770",
-                "Estimated owners": "10000000 - 20000000",
-                "Average playtime forever": "10524",
-                "Average playtime two weeks": "1733",
-                "Median playtime forever": "228",
-                "Median playtime two weeks": "733",
-                "Peak CCU": "13230"
-            }
-        */
+         {
+         "AppID": "10",
+         "Recommendations": "122770",
+         "Estimated owners": "10000000 - 20000000",
+         "Average playtime forever": "10524",
+         "Average playtime two weeks": "1733",
+         "Median playtime forever": "228",
+         "Median playtime two weeks": "733",
+         "Peak CCU": "13230"
+         }
+         */
         return popularity.map(d => ({
             "appID": d["AppID"],
             "estimatedOwners": d["Estimated owners"],
@@ -172,15 +172,15 @@ class NicheGenresDistribution {
     static genresCleaner(genres) {
         /**
          * genres is an array of objects like this:
-            {
-            "AppID": "10",
-            "Genres": "Action"
-            }
+         {
+         "AppID": "10",
+         "Genres": "Action"
+         }
 
-        Note: an AppID might have multiple genres, (so, there can be multiple objects with the same AppID but different Genres)
-        Note: although Genres is a plural word, only 1 genre will appear in the string
+         Note: an AppID might have multiple genres, (so, there can be multiple objects with the same AppID but different Genres)
+         Note: although Genres is a plural word, only 1 genre will appear in the string
          */
-    
+
         return genres.map(d => ({
             "appID": d["AppID"],
             "genre": d["Genres"]  // note change from plural to singular "Genres" to "genre"
@@ -191,16 +191,16 @@ class NicheGenresDistribution {
     static basicInfoCleaner(basicInfo) {
         /**
          * basicInfo is an array of objects like this:
-            {
-                "AppID": "10",
-                "Name": "Counter-Strike",
-                "Release date": "01-Nov-00",
-                "Required age": "0",
-                "Price": "9.99",
-                "DLC count": "0",
-                "Developers": "Valve",
-                "Publishers": "Valve"
-            }
+         {
+         "AppID": "10",
+         "Name": "Counter-Strike",
+         "Release date": "01-Nov-00",
+         "Required age": "0",
+         "Price": "9.99",
+         "DLC count": "0",
+         "Developers": "Valve",
+         "Publishers": "Valve"
+         }
          */
 
         return basicInfo.map(d => ({
@@ -239,10 +239,10 @@ class NicheGenresDistribution {
     static #noGenreGames(cleanedGenres) {
         /** @private */
         /** I just wanted to use keep this function for documentation purposes, as it's intersting */
-        // there are a bunch of games that don't have a genre -- their titles all (i haven't properly checked, but a quick skim suggests this)
-        // have the keyword "playtest" in them, so I'm guessing they're beta games or something
-        // i'll filter out these games that don't have a genre
-        // this is a silly little finding
+            // there are a bunch of games that don't have a genre -- their titles all (i haven't properly checked, but a quick skim suggests this)
+            // have the keyword "playtest" in them, so I'm guessing they're beta games or something
+            // i'll filter out these games that don't have a genre
+            // this is a silly little finding
 
         const noGenres = [];
         for (const game of cleanedGenres) {
@@ -283,7 +283,7 @@ class NicheGenresDistribution {
 
     static getGameToMetrics(cleanedPopularity) {
         const gameToPopularity = NicheGenresDistribution.getGameToPopularity(cleanedPopularity);
-        
+
         const gameToMetrics = {};
         for (const game of cleanedPopularity) {
             gameToMetrics[game["appID"]] = {
@@ -301,7 +301,7 @@ class NicheGenresDistribution {
 
         /*
         const k = "20";
-        console.log(gameToPopularity[k]); 
+        console.log(gameToPopularity[k]);
         // gametoPopularity["20"]  // bruh. we have shit data. I'm guessing all the infinity metrics are coming from the denominator being 0 :\
         // {
         //     "estimatedOwners": "5000000 - 10000000",
@@ -345,7 +345,7 @@ class NicheGenresDistribution {
         const genreToGame = NicheGenresDistribution.getGenresToGames(cleanedGenres);
         const gameToMetrics = NicheGenresDistribution.getGameToMetrics(cleanedPopularity);
         const gameToName = NicheGenresDistribution.getGameToName(cleanedBasicInfo);
-        
+
         const genreToGameMetrics = {};
         for (const genre of Object.keys(genreToGame)) {
             // console.log(genre);
@@ -357,7 +357,7 @@ class NicheGenresDistribution {
                 genreToGameMetrics[genre].push({
                     "appID": appID,
                     "name": gameToName[appID],
-                    "avgMetric": gameToMetrics[appID]["avgMetric"], 
+                    "avgMetric": gameToMetrics[appID]["avgMetric"],
                     "medMetric": gameToMetrics[appID]["medMetric"],
                     "genre": genre  // cuz why not, i guess we add another layer :shrug:
                 })
@@ -392,7 +392,7 @@ class NicheGenresDistribution {
         // metricData.frequency is the ordinal scale, going from range(n) to the frequencies
         // (we don't modify frequency here, we return what we want the range to be)
         // return an array of the same size as metricData.frequency.domain()
-        
+
         const numBuckets = bucketer.range().length;
         const bucketFrequency = Array(numBuckets).fill(0);
         // console.log(numBuckets, bucketFrequency);
@@ -400,7 +400,7 @@ class NicheGenresDistribution {
             // console.log(datum);
             const i = datum[metric];  // AHHH, putting gameMetrics here was causing the freezing...
             bucketFrequency[bucketer(i)]++;
-            // console.log(i); 
+            // console.log(i);
             // ohhhh, metrics that are NaN are outputting undefined for the bucketer
         }
 
@@ -413,7 +413,7 @@ class NicheGenresDistribution {
     static filterFrequencies(frequencies, threshold = 5) {
         // return the object of frequencies, but don't include the objects who's frequency array is just all 0s
         const newFrequencies = {};
-        
+
         for (const key of Object.keys(frequencies)) {
             // console.log(frequencies);
             // console.log(key);
@@ -425,7 +425,7 @@ class NicheGenresDistribution {
                     numNon0s++;
                 }
             }
-            if (numNon0s >= threshold) {  // without this threshold we have a lotta genres that just don't have enough data 
+            if (numNon0s >= threshold) {  // without this threshold we have a lotta genres that just don't have enough data
                 // ok, so i'm filtering out all the data here, which is basically the end
                 newFrequencies[key] = frequencies[key];
                 // console.log(frequencies[key].range())
@@ -438,8 +438,8 @@ class NicheGenresDistribution {
     static getFrequencies(genreToGameMetrics, dataRanges, numBuckets = 25) {
         // const avgMetricData = {}
         const bucketer = d3.scaleQuantile()
-                .domain(dataRanges["avgMetric"])
-                .range(d3.range(numBuckets));
+            .domain(dataRanges["avgMetric"])
+            .range(d3.range(numBuckets));
         const frequencies = {};
 
         // console.log(Object.keys(genreToGameMetrics));
@@ -448,7 +448,7 @@ class NicheGenresDistribution {
                 .domain(bucketer.range())
                 .range(
                     NicheGenresDistribution.getBucketFrequencies(bucketer, genreToGameMetrics[genre], "avgMetric")
-            );
+                );
             // console.log(genreToGameMetrics[genre]);
         }
         return frequencies;
@@ -459,7 +459,7 @@ class NicheGenresDistribution {
         const endpointGetter = (extrema) => extrema(
             Object.values(frequencies), d => extrema(d.range())
         )
-        
+
         return [
             endpointGetter(d3.min), endpointGetter(d3.max)
         ];
@@ -515,7 +515,7 @@ class NicheGenresDistribution {
         this.dropdown.on("change", (event) => {
             const selectedGenre = event.target.value;  // Get selected genre
             console.log("Selected Genre:", selectedGenre);
-        
+
             // Call a function to update the visualization based on selection
             this.updateVisualization(selectedGenre);
         });
@@ -532,10 +532,10 @@ class NicheGenresDistribution {
         // this.freqRange
 
         // TODO:
-            // make x, y axes, 
-            // draw bars
-            // (draw line chart as well?)
-            // label axes (need to figure out label for x-axis...)
+        // make x, y axes,
+        // draw bars
+        // (draw line chart as well?)
+        // label axes (need to figure out label for x-axis...)
         // console.log(cf.domain());  it's \mathbb{Z}[0, 100)
 
         this.xScaleBars = d3.scaleLinear()
@@ -553,12 +553,12 @@ class NicheGenresDistribution {
 
         this.bars = this.g.selectAll("rect")
             .data(this.cf.domain())
-        ;        
+        ;
         // this the data
         // console.log(this.cf.domain().map(
         //     (d) => this.cf(d)
         // ))
-        
+
         this.bars.enter()
             .append("rect")
             .attr("class", "bar").attr("class", "sridhar-viz")
@@ -576,7 +576,7 @@ class NicheGenresDistribution {
             .attr("y", (d) => this.yScale(this.cf(d)))
             .attr("height", (d) => this.vizHeight - this.yScale(this.cf(d)))
         ;
-        
+
         this.bars.exit()
             .transition()
             .duration(500)
@@ -613,7 +613,7 @@ class NicheGenresDistribution {
             .attr("y", this.vizHeight + 40)
             .style("text-anchor", "middle");
 
-            this.g.append("text")
+        this.g.append("text")
             .attr("x", this.vizWidth / 2)  // Center the text horizontally
             .attr("y", 0)  // Position the title at the top
             .attr("text-anchor", "middle")  // Center the text
@@ -627,7 +627,7 @@ class NicheGenresDistribution {
         // make the metric changeable? maybe even use changeable...? (kinda overkill, but maybe alternating beteween med and avg is a start)
         // be able to change the y-axis scale?
         // i should also see if i can change the x-axis scale... that might make the insights more useful...
-            // the linear scale is kinda whack... i should see if that can be changed ngl
+        // the linear scale is kinda whack... i should see if that can be changed ngl
         // add tooltips
 
     }

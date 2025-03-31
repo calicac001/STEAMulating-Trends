@@ -7,37 +7,40 @@ Promise.all([
     d3.csv("data/review_scores.csv"),
     d3.csv("data/tags.csv")
 ]).then(([games, categories, genres, popularity, reviews, tags]) => {
+    // Add tooltips for carousel game images
+    addTooltipForCarousel(games);
+
     // Data for calendar heatmap
+    const releaseData = processCalendarData(games);
 
-    // Parse dates: e.g. "01-Nov-09" → Date object
-    let parseDate = d3.timeParse("%d-%b-%y");
-
-    // Convert and store as full YYYY-MM-DD
-    let releasesByDay = d3.rollup(
-        games,
-        v => v.length, // Count games per date
-        d => d3.timeFormat("%Y-%m-%d")(parseDate(d["Release date"]))
-    );
-
-    // Convert to array format
-    let releaseData = Array.from(releasesByDay, ([date, count]) => ({
-        date: new Date(date), // Convert backs to Date object
-        value: count
-    }));
-    
-    console.log(releaseData);
-    
+    // Create Calendar Plot
     calendarPlot = new CalendarPlot("calendar-plot", releaseData);
-    
-    createDivergingBarChart(genres, reviews);
-    const processedPopularity = processPopularity(games, popularity, genres);
 
+    // Diverging bar Chart
+    createDivergingBarChart(genres, reviews);
+
+    // Playtime Trends Chart
+    const processedPopularity = processPopularity(games, popularity, genres);
     const trendsChart = new PlaytimeTrendsChart("playtime-trends-chart", processedPopularity);
 
     // Create the genre filter dropdown
     setupGenreFilter(processedPopularity, trendsChart);
+    const sv = new sridharViz(popularity, genres, games, tags);
 
-    const sv = new sridharViz(popularity, genres, games, tags); 
+    // Data for Hexbin Plot
+    const hexbinData = processHexbinData(genres, reviews, popularity);
+
+    // Create hexbin plot
+    hexbinPlot = new HexbinPlot("hexbin-plot", hexbinData);
+
+    // Attach event listener to radio buttons after creating hexbinPlot
+    document.querySelectorAll('input[name="hexbin-radio"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+            console.log("Selected:", radio.value);
+            hexbinPlot.colorBy = radio.value;
+            hexbinPlot.wrangleData();
+        });
+    });
 })
 
 // process data for review sentiment
@@ -237,8 +240,8 @@ function setupGenreFilter(data, chart) {
         .append("option")
         .attr("value", d => d)
         .text(d => d);
-      console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
-
+        
+    console.log("Genre filter dropdown created with", uniqueGenres.length, "options");
 }
 
 function sridharViz(popularity, genres, games, tags) {
