@@ -296,11 +296,14 @@ class CalendarPlot {
 
         // A function that draws a thin white line to the left of each month.
         function pathMonth(t) {
-            const d = Math.max(0, Math.min(7, t.getUTCDay()));
-            const w = d3.timeWeek.count(d3.utcYear(t), t);
+            const startOfYear = d3.utcYear(t); // Get January 1st of the year
+            const startDay = startOfYear.getUTCDay(); // Get the weekday of Jan 1st (0 = Sunday, 6 = Saturday)
+            const w = d3.timeWeek.count(startOfYear, t) + (startDay ? 1 : 0); // Adjust for offset
+
+            const d = Math.max(0, Math.min(7, t.getUTCDay())); // Ensure it's in range
 
             let pathData;
-            if (d === 0 | d === 7) {
+            if (d === 0 || d === 7) {
                 pathData = `M${(w + 1) * vis.cellSize},0`;
             } else {
                 pathData = `M${(w + 1) * vis.cellSize},0V${d * vis.cellSize}H${w * vis.cellSize}`;
@@ -308,6 +311,7 @@ class CalendarPlot {
 
             return `${pathData}V${7 * vis.cellSize}`;
         }
+
 
         // Add month labels
         const months = d3.utcMonths(
