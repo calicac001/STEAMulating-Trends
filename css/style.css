@@ -193,7 +193,7 @@ p {
 #calendar-plot {
     width: 1180px;
     height: 40vh;
-    margin: 0 auto;
+    margin: 35px auto;
     color: white;
     padding: 10px;
     align-items: center;
@@ -204,8 +204,8 @@ p {
     fill: black;
 }
 
-#calendar-controls {
-    padding-top: 50px;
+.controls-container {
+    align-items: center;
 }
 
 #calendar-tooltip {
@@ -220,6 +220,46 @@ p {
     /*pointer-events: none;*/
     text-align: left;
     visibility: hidden;
+}
+
+.calendar-comment-tooltip {
+    position: relative;
+    display: inline-block;
+    color: #00ffd2;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.calendar-comment-tooltip:hover {
+    color: #f2e905;
+}
+
+.calendar-comment-tooltip .calendar-comment-tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: black;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #f2e905;
+
+    /* Positioning */
+    position: absolute;
+    z-index: 1;
+    top: 125%; /* Positions the tooltip above */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#midweek {
+    width: 500px;
+}
+
+.calendar-comment-tooltip:hover .calendar-comment-tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 #calendar-modal {

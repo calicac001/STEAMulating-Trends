@@ -191,10 +191,18 @@ class CalendarPlot {
             .style('margin-right', '20px'); // Add spacing before the button
 
         buttonContainer.append('button')
-            .attr('class', 'start-button cyber-button-small bg-yellow fg-white')
+            .attr('class', 'start-button cyber-button-small bg-yellow fg-black')
             .text('START')
+            .style('margin-right', '20px')
             .on('click', function() {
                 vis.startAnimation();
+            });
+
+        buttonContainer.append('button')
+            .attr('class', 'reset-button cyber-button-small bg-red fg-white')
+            .text('RESET')
+            .on('click', function() {
+                vis.filterByYearRange(1969, 2025);
             });
 
         vis.wrangleData()
@@ -331,7 +339,7 @@ class CalendarPlot {
 
         month.append("text")
             .attr("class", "month-label-cal")
-            .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 2)
+            .attr("x", d => d3.timeWeek.count(d3.utcYear(d), d) * vis.cellSize + 30)
             .attr("y", -5)
             .text(vis.formatMonth);
 
