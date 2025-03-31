@@ -204,6 +204,10 @@ p {
     fill: black;
 }
 
+#calendar-controls {
+    padding-top: 50px;
+}
+
 #calendar-tooltip {
     width: max-content;
     max-height: max-content;

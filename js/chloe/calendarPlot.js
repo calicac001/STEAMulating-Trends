@@ -67,23 +67,23 @@ class CalendarPlot {
     addHtmlElements() {
         let vis = this;
 
-        const filterContainer = d3.select('#calendar-controls')
+        const filterContainer = d3.select('#calendar-filter-title')
             .append('div')
             .attr('class', 'year-filter-container');
 
         // Add a heading
-        filterContainer.append('h4')
-            .text('Filter by Year');
+        filterContainer.append('span')
+            .style('font-weight', 'bold') // Make it look like a heading
+            .style('font-size', '20px')
+            .style('color', '#00ffd2')
+            .style('margin-right', '20px')
+            .text('FILTER BY YEAR');
 
         // Create range filter
-        const rangeContainer = filterContainer.append('div')
-            .attr('class', 'range-container');
-
-        // Add "From" year selector
-        rangeContainer.append('span')
+        filterContainer.append('span')
             .text('From: ');
 
-        const fromYearSelect = rangeContainer.append('select')
+        const fromYearSelect = filterContainer.append('select')
             .attr('id', 'from-year-select')
             .on('change', function() {
                 const fromYear = +this.value;
@@ -101,10 +101,10 @@ class CalendarPlot {
             });
 
         // Add "To" year selector
-        rangeContainer.append('span')
+        filterContainer.append('span')
             .text(' To: ');
 
-        const toYearSelect = rangeContainer.append('select')
+        const toYearSelect = filterContainer.append('select')
             .attr('id', 'to-year-select')
             .on('change', function() {
                 const toYear = +this.value;
@@ -136,13 +136,53 @@ class CalendarPlot {
         fromYearSelect.property('value', vis.yearRange[0]);
         toYearSelect.property('value', vis.yearRange[1]);
 
-        const buttonContainer = d3.select('#calendar-controls')
+
+        const buttonContainer = d3.select('#calendar-button')
             .append('div')
-            .attr('class', 'button-container');
+            .attr('class', 'animation-container');
+
+        // Add a heading
+        buttonContainer.append('span')
+            .style('font-weight', 'bold') // Make it look like a heading
+            .style('font-size', '20px')
+            .style('color', '#00ffd2')
+            .style('margin-right', '20px')
+            .text('ANIMATION');
+
+        // Create a container for radio buttons
+        let radioContainer = buttonContainer.append('span')
+            .style('margin-right', '20px'); // Add spacing before the button
+
+        // Add first radio button
+        radioContainer.append('input')
+            .attr('type', 'radio')
+            .attr('name', 'animationMode')
+            .attr('value', 'mode1')
+            .attr('id', 'mode1')
+            .attr('class', 'cyber-radio bg-white ac-blue')
+            .property('checked', true); // Default selection
+
+        radioContainer.append('label')
+            .attr('for', 'mode1')
+            .text('Mode 1')
+            .style('margin-right', '10px'); // Add spacing between options
+
+        // Add second radio button
+        radioContainer.append('input')
+            .attr('type', 'radio')
+            .attr('name', 'animationMode')
+            .attr('value', 'mode2')
+            .attr('id', 'mode2')
+            .attr('class', 'cyber-radio bg-white ac-blue');
+
+        radioContainer.append('label')
+            .attr('for', 'mode2')
+            .text('Mode 2')
+            .style('margin-right', '20px'); // Add spacing before the button
 
         buttonContainer.append('button')
-            .attr('class', 'start-button cyber-button bg-yellow fg-white')
-            .text('Start Animation')
+            .attr('class', 'start-button cyber-button-small bg-yellow fg-white')
+            .text('START')
             .on('click', function() {
                 vis.startAnimation();
             });
