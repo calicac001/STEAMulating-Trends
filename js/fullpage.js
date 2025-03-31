@@ -1,6 +1,6 @@
 // Initialize the fullpage object
 var myFullpage = new fullpage('#fullpage', {
-    anchors: ["STEAMulating-Trends", "Overview", "A Look Through Time &#8987", "Seasonal Trends",
+    anchors: ["STEAMulating-Trends", "Overview &#x1F30D", "A Look Through Time &#8987", "Seasonal Trends",
         "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
         "Solution", "Our Team", "Sources"],
 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sections.forEach((section, index) => {
         const anchor = section.getAttribute("data-anchor") || `section${index + 1}`;
-        const sectionName = ["STEAMulating-Trends", "Overview", "A Look Through Time &#8987", "Seasonal Trends",
+        const sectionName = ["STEAMulating-Trends", "Overview &#x1F30D", "A Look Through Time &#8987", "Seasonal Trends",
             "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
             "Solution", "Our Team", "Sources"];
 
