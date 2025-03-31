@@ -56,7 +56,7 @@ class DivergingBarChart {
         
         const legend = vis.svg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(${vis.width + 20}, 0)`);
+            .attr("transform", `translate(${vis.width + 40}, -40)`);
             
         const legendItems = legend.selectAll(".legend-item")
             .data(legendData)
@@ -118,7 +118,7 @@ class DivergingBarChart {
             .attr("fill", "#ffffff");  // White text
             
         vis.svg.selectAll(".axis line, .axis path")
-            .attr("stroke", "#555555");  
+            .attr("stroke", "#555555");
         
         const thresholdX = vis.x(vis.threshold);
         
@@ -132,7 +132,7 @@ class DivergingBarChart {
             .attr("y", vis.height + 30)
             .attr("text-anchor", "middle")
             .attr("font-size", 11)
-            .attr("fill", "#ffffff")  // White text
+            .attr("fill", "#ffffff")
             .text(`${vis.threshold}% Threshold`);
             
         const belowThresholdBars = vis.svg.selectAll(".below-threshold-bar")
@@ -146,7 +146,7 @@ class DivergingBarChart {
                 return vis.x(vis.threshold) - vis.x(start);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#ffb366")  
+            .attr("fill", "#ffb366")
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -177,7 +177,7 @@ class DivergingBarChart {
                 return vis.x(end) - vis.x(vis.threshold);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#4dabff")  
+            .attr("fill", "#4dabff")
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -218,7 +218,7 @@ class DivergingBarChart {
                     return "start";
                 }
             })
-            .attr("fill", "#ffffff")  
+            .attr("fill", "#ffffff")
             .attr("font-size", "11px")
             .attr("font-weight", "bold")
             .text(d => `${d.positivePercentage.toFixed(1)}%`);
