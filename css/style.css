@@ -228,14 +228,6 @@ p {
 
 /* Styles for Diverging barchart*/
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #000000;
-    color: #ffffff;
-}
-
 h1 {
     text-align: center;
     margin-bottom: 30px;
@@ -287,7 +279,7 @@ h1 {
 
 .game-count-label {
     font-size: 12px;
-    fill: #bbbbbb;
+    fill: #fff;
 }
 
 .chart-container {
@@ -330,13 +322,6 @@ h1 {
     font-family: sans-serif;
     font-size: 12px;
     fill: #dddddd;
-}
-
-.section {
-    margin-bottom: 50px;
-    padding: 20px;
-    background-color: #111111;
-    border-radius: 8px;
 }
 
 /* formatting for line chart */
@@ -430,4 +415,15 @@ label[for="genre-filter"] {
 .trend-line {
     stroke: #4dabff;
     stroke-width: 2.5;
+}
+
+/* Style for visualization comments */
+.viz-comment {
+    font-size: 18px;  
+    line-height: 1.4; 
+    color: #fff;   
+    margin-top: 10px;
+    max-width: 90%;   
+    margin-left: auto;
+    margin-right: auto;
 }
