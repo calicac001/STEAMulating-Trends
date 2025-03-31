@@ -45,12 +45,13 @@ class DivergingBarChart {
             .attr("text-anchor", "middle")
             .attr("font-size", 18)
             .attr("font-weight", "bold")
+            .attr("fill", "#ffffff")  
             .text("Positive Review Ratio by Game Genre");
             
         
         const legendData = [
-            { label: "Above Threshold", color: "#3182bd" }, // Blue
-            { label: "Below Threshold", color: "#e6550d" }  // Orange
+            { label: "Above Threshold", color: "#4dabff" }, // Brighter blue for dark background
+            { label: "Below Threshold", color: "#ffb366" }  // Brighter orange for dark background
         ];
         
         const legend = vis.svg.append("g")
@@ -71,25 +72,27 @@ class DivergingBarChart {
         legendItems.append("text")
             .attr("x", 18)
             .attr("y", 9)
-            .attr("font-size", "11px") 
+            .attr("font-size", "11px")
+            .attr("fill", "#dddddd")  
             .text(d => d.label);
             
         vis.thresholdLine = vis.svg.append("line")
             .attr("class", "threshold-line")
             .attr("y1", 0)
             .attr("y2", vis.height)
-            .attr("stroke", "#333")
+            .attr("stroke", "#999999")  // Lighter gray for visibility
             .attr("stroke-width", 1.5)
             .attr("stroke-dasharray", "5,5");
             
         vis.tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
             .style("position", "absolute")
-            .style("background", "rgba(255, 255, 255, 0.9)")
-            .style("border", "1px solid #ddd")
+            .style("background", "rgba(40, 40, 40, 0.95)")  // Dark background
+            .style("color", "#ffffff")  // White text
+            .style("border", "1px solid #555")  // Darker border
             .style("border-radius", "5px")
             .style("padding", "10px")
-            .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.2)")
+            .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.5)")  // Darker shadow
             .style("opacity", 0);
             
         this.updateVis();
@@ -103,11 +106,20 @@ class DivergingBarChart {
         vis.x.domain([vis.minRange, vis.maxRange]);
         vis.y.domain(vis.data.map(d => d.genre));
         
+        // Update axes with appropriate styling for dark theme
         vis.xAxis.call(d3.axisBottom(vis.x)
             .tickFormat(d => `${d}%`)
-            .ticks(5)); 
+            .ticks(5))
+            .selectAll("text")
+            .attr("fill", "#dddddd");  // Light gray text
             
-        vis.yAxis.call(d3.axisLeft(vis.y));
+        vis.yAxis.call(d3.axisLeft(vis.y))
+            .selectAll("text")
+            .attr("fill", "#dddddd");  // Light gray text
+            
+        // Style all axis lines
+        vis.svg.selectAll(".axis line, .axis path")
+            .attr("stroke", "#555555");  // Mid-gray for axis lines
         
         const thresholdX = vis.x(vis.threshold);
         
@@ -121,6 +133,7 @@ class DivergingBarChart {
             .attr("y", vis.height + 30)
             .attr("text-anchor", "middle")
             .attr("font-size", 11)
+            .attr("fill", "#bbbbbb")  // Light gray text
             .text(`${vis.threshold}% Threshold`);
             
         const belowThresholdBars = vis.svg.selectAll(".below-threshold-bar")
@@ -134,7 +147,7 @@ class DivergingBarChart {
                 return vis.x(vis.threshold) - vis.x(start);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#e6550d") 
+            .attr("fill", "#ffb366")  // Brighter orange for dark background
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -165,7 +178,7 @@ class DivergingBarChart {
                 return vis.x(end) - vis.x(vis.threshold);
             })
             .attr("height", vis.y.bandwidth())
-            .attr("fill", "#3182bd") 
+            .attr("fill", "#4dabff")  // Brighter blue for dark background
             .on("mouseover", function(event, d) {
                 vis.tooltip.transition()
                     .duration(200)
@@ -185,7 +198,7 @@ class DivergingBarChart {
                     .style("opacity", 0);
             });
             
-        // improved positioning logic
+        // Improved percentage label positioning with dark theme considerations
         vis.svg.selectAll(".percentage-label")
             .data(vis.data)
             .join("text")
@@ -211,15 +224,9 @@ class DivergingBarChart {
                     return "middle";
                 }
             })
-            .attr("fill", d => {
-                const midpoint = (vis.threshold + vis.minRange) / 2;
-                if (d.positivePercentage < midpoint || d.positivePercentage > vis.threshold + 5) {
-                    return "white";
-                } else {
-                    return "black";
-                }
-            })
+            .attr("fill", "#ffffff")  // Always white text on dark background
             .attr("font-size", "11px")
+            .attr("font-weight", "bold")
             .text(d => `${d.positivePercentage.toFixed(1)}%`);
             
         vis.svg.selectAll(".game-count-label")
@@ -230,6 +237,7 @@ class DivergingBarChart {
             .attr("y", d => vis.y(d.genre) + vis.y.bandwidth() / 2 + 5)
             .attr("text-anchor", "start")
             .attr("font-size", "11px")
+            .attr("fill", "#bbbbbb")  // Light gray text for dark background
             .text(d => `(${d.gameCount.toLocaleString()} games)`);
     }
 }
