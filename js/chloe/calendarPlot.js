@@ -49,9 +49,6 @@ class CalendarPlot {
         // For year filtering
         vis.allData = vis.preprocessData(vis.data); // Store the complete dataset
 
-        // Make a copy for filtering
-        vis.data = vis.allData.slice();
-
         // Initialize year range
         vis.yearRange = [
             d3.min(vis.allData, d => d.date.getFullYear()),
@@ -156,9 +153,13 @@ class CalendarPlot {
     filterByYearRange(fromYear, toYear) {
         let vis = this;
 
+        // Make a copy for filtering
+        vis.data = vis.allData.slice();
+
         // Filter the data based on the selected year range
         vis.data = vis.allData.filter(d => {
             const year = d.date.getFullYear();
+            vis.endYear = toYear;
             return year >= fromYear && year <= toYear;
         });
 
@@ -222,7 +223,11 @@ class CalendarPlot {
             .enter().append("rect")
             .attr("width", vis.cellSize - 1)
             .attr("height", vis.cellSize - 1)
-            .attr("x", d => d3.timeWeek.count(d3.utcYear(d.date), d.date) * vis.cellSize)
+            .attr("x", d => {
+                let startOfYear = d3.utcYear(d.date); // Get Jan 1st of the year
+                let offset = startOfYear.getUTCDay(); // Get the weekday of Jan 1st
+                return (d3.timeWeek.count(startOfYear, d.date) + (offset ? 1 : 0)) * vis.cellSize;
+            })
             .attr("y", d => (d.date.getUTCDay()) * vis.cellSize)
             .attr("fill", d => vis.color(d.value))
             .attr("stroke", "#e9ecef")  // Add a subtle border
