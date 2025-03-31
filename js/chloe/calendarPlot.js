@@ -16,7 +16,7 @@ class CalendarPlot {
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 30, right: 10, bottom: 10, left: 50};
+        vis.margin = {top: 100, right: 10, bottom: 10, left: 50};
 
         // Dimensions
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
@@ -60,6 +60,11 @@ class CalendarPlot {
 
         vis.tooltip = d3.select("body").append("div")
             .attr("id", "calendar-tooltip");
+
+        // Create a group for the legend
+        vis.legend = vis.svg.append("g")
+            .attr("class", "legend")
+            .attr("transform", `translate(${vis.width / 2 - 75}, ${vis.height + 40})`);
 
         // Create year filter controls
         vis.addHtmlElements();
@@ -286,7 +291,8 @@ class CalendarPlot {
             .attr("stroke-width", 0.5);  // Thin border
 
         vis.updateTooltip(cells);
-
+        vis.updateColorLegend();
+        vis.updateYearDisplay();
 
         // A function that draws a thin white line to the left of each month.
         function pathMonth(t) {
@@ -463,6 +469,98 @@ class CalendarPlot {
             .on("mouseout", function() {
                 vis.tooltip.style("visibility", "hidden");
             });
+    }
+
+    updateColorLegend() {
+        let vis = this;
+
+        // Clear existing legend items and title
+        vis.legend.selectAll(".legend-item").remove();
+        if (vis.legendTitle) {
+            vis.legendTitle.remove();
+            vis.legendTitle = null;
+        }
+
+        // Dimensions for the legend
+        const legendWidth = 250;  // Total width of the legend
+        const legendItemWidth = legendWidth / 8;  // Each color block size
+        const legendHeight = 10; // Height of color rectangles
+        const titleOffset = -20; // How far to the left of the legend the title should be
+
+        // Reposition the legend group to the top of the visualization
+        // Center the whole legend (title + color scale) horizontally
+        vis.legend.attr("transform", `translate(${vis.width - 200 - legendWidth - Math.abs(titleOffset)}, ${-70})`);
+
+        // Legend scale values
+        const legendScale = vis.color.ticks(8);
+
+        // Append color scale rectangles in a group that's offset to allow space for the title
+        const colorGroup = vis.legend.append("g")
+            .attr("transform", `translate(${Math.abs(titleOffset)}, 0)`)
+            .attr("class", "legend-item");
+
+        colorGroup.selectAll("rect")
+            .data(legendScale)
+            .enter().append("rect")
+            .attr("x", (d, i) => i * legendItemWidth)  // Horizontally spaced
+            .attr("y", 0) // Align to the top
+            .attr("width", legendItemWidth)
+            .attr("height", legendHeight)
+            .attr("fill", d => vis.color(d));
+
+        // Add labels below the legend
+        colorGroup.selectAll("text")
+            .data(legendScale)
+            .enter().append("text")
+            .attr("x", (d, i) => i * legendItemWidth + legendItemWidth / 2) // Center text
+            .attr("y", legendHeight + 15) // Below rectangles
+            .attr("dy", ".35em")
+            .style("text-anchor", "middle")
+            .style("font-size", "12px")
+            .text(d => Math.round(d));
+
+        // Add legend title to the left of the legend
+        vis.legendTitle = vis.legend.append("text")
+            .attr("x", 0)  // Left-aligned in the legend group
+            .attr("y", legendHeight / 2)  // Vertically center with the color blocks
+            .attr("dy", ".35em")  // Fine-tune vertical alignment
+            .attr("font-weight", "bold")
+            .style("text-anchor", "end")  // Right-align the text
+            .text("Number of Games");
+    }
+
+    // function to display the year range
+    updateYearDisplay() {
+        let vis = this;
+
+        // Remove existing year display elements individually
+        vis.svg.selectAll(".year-label").remove();
+        vis.svg.selectAll(".year-value").remove();
+
+        // Determine if single year or range
+        let isSingleYear = vis.startYear === vis.endYear;
+
+        // Add the bold label part with debugging border
+        vis.svg.append("text")
+            .attr("class", "year-label")
+            .attr("x", 0)
+            .attr("y", -60)
+            .attr("font-weight", "bold")
+            .style("text-anchor", "start")
+            .style("fill", "black")
+            .text(isSingleYear ? "Year:" : "Years:");
+
+        // Add the normal font value part
+        vis.svg.append("text")
+            .attr("class", "year-value")
+            .attr("x", isSingleYear ? 55 : 60)
+            .attr("y", -60)
+            .attr("font-weight", "normal")
+            .style("text-anchor", "start")
+            .text(isSingleYear ? `${vis.startYear}` : `${vis.startYear} - ${vis.endYear}`);
+
+        console.log("Year label created:", vis.svg.select(".year-label").node());
+        console.log("Year value created:", vis.svg.select(".year-value").node());
     }
 
     startAnimation(){

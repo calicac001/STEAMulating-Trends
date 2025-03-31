@@ -297,7 +297,7 @@ class HexbinPlot {
 
         // Create the vertical legend
         const legendRect = vis.legend.selectAll("rect")
-            .data(vis.genreColorScale.ticks(5))  // Divide the domain into 10 intervals
+            .data(vis.genreColorScale.ticks(5))
             .enter().append("rect")
             .attr("class", "legend-item")
             .attr("x", 0)
@@ -316,7 +316,7 @@ class HexbinPlot {
             .attr("class", "legend-item")
             .attr("fill", "white")
             .style("text-anchor", "start")
-            .text((d, i) => (i % 4 === 0 | i === 1) ? d : ""); // Format the tick labels (you can adjust the formatting)
+            .text((d, i) => (i % 4 === 0 | i === 1) ? d : ""); // Format the tick labels
 
         vis.legendTitle.text("Number of Games")
     }
