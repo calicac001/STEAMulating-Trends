@@ -228,6 +228,20 @@ p {
 
 /* Styles for Diverging barchart*/
 
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
 #diverging-bar-plot {
     width: 100%;
     max-width: 1200px;
@@ -237,50 +251,43 @@ p {
 
 .tooltip {
     position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
+    background: rgba(40, 40, 40, 0.95);
+    border: 1px solid #444;
     border-radius: 4px;
     padding: 10px;
     pointer-events: none;
     font-size: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 100;
+    color: #ffffff;
 }
 
 .axis text {
     font-family: sans-serif;
     font-size: 12px;
+    fill: #dddddd;
 }
 
 .axis .domain,
 .axis .tick line {
-    stroke: #ccc;
+    stroke: #555555;
 }
 
 .threshold-line {
     stroke-dasharray: 5,5;
+    stroke: #777777;
 }
 
 .percentage-label {
     font-size: 12px;
     font-weight: bold;
     pointer-events: none;
+    fill: #ffffff;
 }
 
 .game-count-label {
     font-size: 12px;
-    fill: #666;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
+    fill: #bbbbbb;
 }
 
 .chart-container {
@@ -291,14 +298,15 @@ h1 {
 
 #tooltip {
     position: absolute;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ddd;
+    background: rgba(40, 40, 40, 0.9);
+    border: 1px solid #444;
     border-radius: 4px;
     padding: 10px;
     pointer-events: none;
     font-size: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 100;
+    color: #ffffff;
 }
 
 .toggle-button rect {
@@ -306,70 +314,29 @@ h1 {
 }
 
 .toggle-button.active rect {
-    fill: #9ecae1;
+    fill: #4295d1;
 }
 
 .toggle-button:hover rect {
-    fill: #c6dbef;
+    fill: #3a7ca8;
 }
 
 .year-label {
     font-family: sans-serif;
+    fill: #ffffff;
 }
 
 .month-label {
     font-family: sans-serif;
     font-size: 12px;
-}
-
-/* Diverging Bar Chart Styles */
-#diverging-bar-plot {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    height: 600px;
-}
-
-.tooltip {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    pointer-events: none;
-    font-size: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-}
-
-.axis text {
-    font-family: sans-serif;
-    font-size: 12px;
-}
-
-.axis .domain,
-.axis .tick line {
-    stroke: #ccc;
-}
-
-.threshold-line {
-    stroke-dasharray: 5,5;
-}
-
-.percentage-label {
-    font-size: 12px;
-    font-weight: bold;
-    pointer-events: none;
-}
-
-.game-count-label {
-    font-size: 12px;
-    fill: #666;
+    fill: #dddddd;
 }
 
 .section {
     margin-bottom: 50px;
     padding: 20px;
+    background-color: #111111;
+    border-radius: 8px;
 }
 
 /* formatting for line chart */
@@ -381,25 +348,25 @@ h1 {
     justify-content: center;
     gap: 10px;
     max-width: 80%;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(40, 40, 40, 0.7);
     padding: 12px 16px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #genre-filter select {
     padding: 10px 16px;
     border-radius: 6px;
-    border: 1px solid #e0c080;
-    background-color: #fffaeb;
+    border: 1px solid #555;
+    background-color: #222;
     font-size: 15px;
     font-weight: 500;
     min-width: 180px;
-    color: #5a4b00;
+    color: #ffffff;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='6'><path d='M0 0l6 6 6-6z' fill='%235a4b00'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='6'><path d='M0 0l6 6 6-6z' fill='%23ffffff'/></svg>");
     background-repeat: no-repeat;
     background-position: right 12px center;
     cursor: pointer;
@@ -407,48 +374,49 @@ h1 {
 }
 
 #genre-filter select:hover {
-    border-color: #d4a72c;
-    background-color: #fff8e0;
+    border-color: #777;
+    background-color: #333;
 }
 
 #genre-filter select:focus {
     outline: none;
-    border-color: #c49000;
-    box-shadow: 0 0 0 3px rgba(196, 144, 0, 0.2);
-    background-color: #fff;
+    border-color: #4dabff;
+    box-shadow: 0 0 0 3px rgba(77, 171, 255, 0.3);
+    background-color: #333;
 }
 
 label[for="genre-filter"] {
     font-weight: bold;
-    color: #5a4b00;
+    color: #ffffff;
     font-size: 16px;
 }
 
-/* Styling for the chart container with yellow background */
+/* Styling for the chart container with dark background */
 #playtime-trends-chart {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(30, 30, 30, 0.7);
     border-radius: 8px;
     padding: 20px;
     margin: 0 auto;
     max-width: 90%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
+
 
 /* Style for axis lines */
 .axis line, .axis path {
-    stroke: #5a4b00;
+    stroke: #ffffff;
     stroke-opacity: 0.3;
 }
 
 /* Style for axis text */
 .axis text {
-    fill: #5a4b00;
+    fill: #ffffff;
     font-size: 12px;
 }
 
 /* Style for axis labels */
 .x-axis-label, .y-axis-label, .chart-title {
-    fill: #5a4b00;
+    fill: #ffffff;
     font-weight: 500;
 }
 
@@ -460,6 +428,6 @@ label[for="genre-filter"] {
 
 /* Style for trend lines */
 .trend-line {
-    stroke: #9e5f00;
+    stroke: #4dabff;
     stroke-width: 2.5;
 }
