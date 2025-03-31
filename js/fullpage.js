@@ -1,8 +1,9 @@
 // Initialize the fullpage object
 var myFullpage = new fullpage('#fullpage', {
-    //anchors: ['firstPage', 'secondPage', '3rdPage', '4thPage'],
-    // you can also use the HTML attribute data-tooltip on each section instead
-    //navigationTooltips: ['First Section', 'Second Section', 'Third Section'],
+    anchors: ["STEAMulating-Trends", "Overview", "A Look Through Time &#8987", "Seasonal Trends",
+        "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
+        "Solution", "Our Team", "Sources"],
+
     navigation: true,
 
     // Navigation for horizontal slides
@@ -23,15 +24,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sections.forEach((section, index) => {
         const anchor = section.getAttribute("data-anchor") || `section${index + 1}`;
-        const sectionName = section.querySelector("h1")?.innerText || `Section ${index + 1}`;
+        const sectionName = ["STEAMulating-Trends", "Overview", "A Look Through Time &#8987", "Seasonal Trends",
+            "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
+            "Solution", "Our Team", "Sources"];
 
         const listItem = document.createElement("li");
         listItem.innerHTML = `
             <a href="#${anchor}">
-                <span class="fp-sr-only">${encodeURIComponent(sectionName)}</span>
+                <span class="fp-sr-only">${encodeURIComponent(sectionName[index])}</span>
                 <span></span>
             </a>
-            <div class="fp-tooltip fp-right">${sectionName}</div>
+            <div class="fp-tooltip fp-right">${sectionName[index]}</div>
         `;
         navList.appendChild(listItem);
     });
