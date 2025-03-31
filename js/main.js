@@ -7,6 +7,9 @@ Promise.all([
     d3.csv("data/review_scores.csv"),
     d3.csv("data/tags.csv")
 ]).then(([games, categories, genres, popularity, reviews, tags]) => {
+    // Add tooltips for carousel game images
+    addTooltipForCarousel(games);
+
     // Data for calendar heatmap
     const releaseData = processCalendarData(games);
 
@@ -38,54 +41,6 @@ Promise.all([
         });
     });
 })
-
-function processCalendarData(gamesData){
-    // Parse dates: e.g. "01-Nov-09" → Date object
-    let parseDate = d3.timeParse("%d-%b-%y");
-
-    // Convert and store as full YYYY-MM-DD
-    let releasesByDay = d3.rollup(
-        gamesData,
-        v => v.length, // Count games per date
-        d => d3.timeFormat("%Y-%m-%d")(parseDate(d["Release date"]))
-    );
-
-    // Convert to array format
-    let releaseData = Array.from(releasesByDay, ([date, count]) => ({
-        date: new Date(date), // Convert back to Date object
-        value: count
-    }));
-
-    return releaseData;
-}
-
-function processHexbinData(genresData, reviewsData, popularityData) {
-    //Convert to Numbers
-    reviewsData.forEach(d => d.Positive = +d.Positive);
-    popularityData.forEach(d => d.Popularity = +d.Popularity);
-
-    // Create a lookup map for reviewsData (AppID → Positive Reviews)
-    let reviewMap = new Map(reviewsData.map(r => [r.AppID, r.Positive]));
-    let popularityMap = new Map(popularityData.map(p => [p.AppID, p.Recommendations]));
-
-    // Merge dataset using the lookup map and exclude games with zero reviews
-    let mergedData = genresData.map(g => {
-        let numReviews = reviewMap.get(g.AppID) || 0; // Get number of reviews or default to 0
-        let numRecommendations = popularityMap.get(g.AppID)
-
-        if (numReviews > 0 & numRecommendations > 0) {
-            return {
-                AppID: g.AppID,
-                genre: g.Genres,
-                numReviews: numReviews,
-                numRecommendations: numRecommendations
-            };
-        }
-        return null; // Exclude games with zero reviews
-    }).filter(d => d !== null); // Remove null values (games with zero reviews)
-
-    return mergedData;
-}
 
 // process data for review sentiment
 function createDivergingBarChart(genresData, reviewsData) {

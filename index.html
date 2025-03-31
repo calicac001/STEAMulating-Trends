@@ -40,14 +40,40 @@
 		</div>
 
 		<div class="section fp-section fp-table fp-is-overflow" data-anchor="2.5Page">
-			<div class="content-mid fp-overflow oxanium-font neon-border" tabindex="-1">
-				<h1 class="cyber-h fg-white ac-white">
-					A Look Through Time<span class="cyber-glitch-1">&#8987</span>
-				</h1>
-				<p>With nearly 19,000 games released in 2024 (~32.5% &#9650 2023),
-					Steam’s marketplace is expanding faster than ever.</p>
+			<div class="row fp-overflow">
+				<div class="col-1"></div>
+				<div class="col-7 content-time oxanium-font neon-border" tabindex="-1">
+					<h1 class="cyber-h fg-white ac-white">
+						<span class="cyber-glitch-1">A Look Through Time &#8987</span>
+					</h1>
+					<p>With nearly <span>19,000</span> games released in 2024 (~32.5% &#9650 2023),
+						Steam’s marketplace is expanding faster than ever.</p>
+					<p id="release-note"> (Look on the left for some of the top-selling releases of 2024.
+						Based on <a href="https://store.steampowered.com/sale/bestof2024?tab=1"> Best of Steam 2024</a>
+						and availability on the dataset used. Hover on the image for more details) </p>
+					<p>To identify peak release schedules, let’s take a closer look at how game releases have evolved
+						over time and see if any pattern emerges.</p>
+				</div>
 
-				<p>To identify peak release schedules, let’s take a closer look at how game releases have evolved over time.</p>
+				<div class="col-4 carousel">
+					<div class="card">
+						<img src="img/bm_wukong.jpg"  alt="Black Myth: Wukong" height="150" width="300">
+					</div>
+					<div class="card">
+						<img src="img/dragons_dogma2.jpg"  alt="Dragon's Dogma II" height="150" width="300">
+					</div>
+					<div class="card">
+						<img src="img/helldivers2.jpg"  alt="Helldivers II" height="150" width="300">
+					</div>
+					<div class="card">
+						<img src="img/manor_lords.jpg"  alt="Manor Lords" height="150" width="300">
+					</div>
+					<div class="card">
+						<img src="img/palworld.jpg"  alt="Palworld" height="150" width="300">
+					</div>
+				</div>
+
+				<div id="carousel-tooltip"></div>
 			</div>
 		</div>
 
@@ -225,11 +251,16 @@
 
 	<!-- Your implementation -->
 	<script src="js/fullpage.js"></script>
+
 	<script src="js/divergingBar.js"></script>
 	<script src="js/lineChart.js"></script>
+
 	<script src="js/calendarPlot.js"></script>
 	<script src="js/hexbinPlot.js"></script>
+	<script src="js/chloeHelpers.js"></script>
+
 	<script src="js/sridharViz.js"></script>
+
 	<script src="js/main.js"></script>
 
 </body>
