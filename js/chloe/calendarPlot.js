@@ -16,7 +16,7 @@ class CalendarPlot {
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 30, right: 10, bottom: 10, left: 10};
+        vis.margin = {top: 30, right: 10, bottom: 10, left: 50};
 
         // Dimensions
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
@@ -33,9 +33,7 @@ class CalendarPlot {
         // Code derived from https://observablehq.com/@d3/calendar/2
 
         // Define constants for cells
-        vis.cellSize = vis.width / 55; // Height of a day
-        vis.cellHeight = vis.cellSize * 7; // Height of a week (5 days + padding)
-        vis.cellWidth = (vis.cellSize + 1.5) * 53; // Width of the chart
+        vis.cellSize = vis.width / 57; // width/height of a day
 
         // Define formatting functions
         vis.formatDate = d3.timeFormat("%b %d");
@@ -61,6 +59,9 @@ class CalendarPlot {
         ];
 
         vis.endYear = vis.yearRange[1];
+
+        vis.tooltip = d3.select("body").append("div")
+            .attr("id", "calendar-tooltip");
 
         // Create year filter controls
         vis.addHtmlElements();
@@ -143,7 +144,7 @@ class CalendarPlot {
             .attr('class', 'button-container');
 
         buttonContainer.append('button')
-            .attr('class', 'start-button cyber-button bg-red fg-white')
+            .attr('class', 'start-button cyber-button bg-yellow fg-white')
             .text('Start Animation')
             .on('click', function() {
                 vis.startAnimation();
@@ -176,7 +177,6 @@ class CalendarPlot {
         );
 
         // Transform data into the required format for the heatmap
-        // TODO: needed to add year here but maybe omit year on the tooltip
         vis.displayData = counts.map(d => {
             const [month, day] = d[0].split('-').map(Number);
             return {
@@ -228,28 +228,8 @@ class CalendarPlot {
             .attr("stroke", "#e9ecef")  // Add a subtle border
             .attr("stroke-width", 0.5);  // Thin border
 
+        vis.updateTooltip(cells);
 
-        cells.append("title")
-            .text(d => {
-                // Enhanced tooltip that shows year breakdown if available
-                let tooltip = `${vis.formatDate(d.date)}: ${d.value} games`;
-
-                // If no games, simplify tooltip
-                if (d.value === 0) {
-                    return `${vis.formatDate(d.date)}: No games`;
-                }
-
-                // Add year breakdown if available
-                if (d.yearData && d.yearData.length > 0) {
-                    tooltip += '\n\nBreakdown by year:';
-                    d.yearData.forEach(y => {
-                        if (y.count > 0) {
-                            tooltip += `\n${y.year}: ${y.count} games`;
-                        }
-                    });
-                }
-                return tooltip;
-            });
 
         // A function that draws a thin white line to the left of each month.
         function pathMonth(t) {
@@ -337,6 +317,72 @@ class CalendarPlot {
         }
 
         return completeData;
+    }
+
+    updateTooltip(cells){
+        let vis = this;
+
+        cells.on("mouseover", function(event, d) {
+            let tooltipText = `${vis.formatDate(d.date)}: ${d.value} games`;
+
+            if (d.value === 0) {
+                tooltipText = `${vis.formatDate(d.date)}: No games`;
+            } else if (d.yearData && d.yearData.length > 0) {
+                tooltipText += '<br><br><strong>Breakdown by year:</strong>';
+
+                // Sort by year in descending order (most recent first)
+                d.yearData.sort((a, b) => b.year - a.year);
+
+                // Limit to the first 6 entries
+                for (let i = 0; i < Math.min(6, d.yearData.length); i++) {
+                    let y = d.yearData[i];
+                    if (y.count > 0) {
+                        tooltipText += `<br>${y.year}: ${y.count} games`;
+                    }
+                }
+
+                if (d.yearData.length > 5) {
+                    tooltipText += `<br><br><em>Click for full list...</em>`;
+                }
+            }
+
+            vis.tooltip.html(tooltipText)
+                .style("visibility", "visible")
+                .style("display", "block")
+                .style("left", `${event.pageX + 20}px`)
+                .style("top", `${event.pageY + 20}px`);
+        })
+
+            .on("click", function(event, d) {
+                const activeSection = document.querySelector(".fp-section.active"); // Get the current Fullpage.js section
+                const modalContainer = d3.select(activeSection).append("div") // Append modal to the section
+                    .attr("id", "calendar-modal")
+
+                modalContainer.html(`
+                    <div id="modal-content">
+                        <span id="close-modal" class="close">&#x2716;</span>
+                        <div id="modal-title"> <br> <strong> ${vis.formatDate(d.date)} Full Breakdown </strong> </div>
+                        <div id="modal-body">
+                            ${d.yearData
+                    .filter(y => y.count > 0) // Only include years where count > 0
+                    .map(y => `${y.year}: ${y.count}`)
+                    .join("<br>")
+                }
+                        </div>
+                    </div>
+                `);
+
+                // Close modal when clicking the "X"
+                modalContainer.select("#close-modal").on("click", () => modalContainer.remove());
+            })
+
+            .       on("mousemove", function(event) {
+                vis.tooltip.style("left", `${event.pageX + 10}px`)
+                    .style("top", `${event.pageY + 10}px`);
+            })
+            .on("mouseout", function() {
+                vis.tooltip.style("visibility", "hidden");
+            });
     }
 
     startAnimation(){
