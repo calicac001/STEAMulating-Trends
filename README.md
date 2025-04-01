@@ -12,7 +12,7 @@ This project aims to explore game popularity through data-driven visualizations,
 Our goal is to present clear, insightful visuals that not only inform but also engage viewers in understanding the key drivers of success in the gaming industry. Through this project, we seek to provide both casual gamers and game developers with actionable insights, demonstrating how data visualization can STEAMulate a deeper understanding of what makes a game thrive in this competitive marketplace
 
 ## Project Links
-* [Website]()
+* [Website](https://calicac001.github.io/STEAMulating-Trends/)
 * [Screencast Videos]()
 * [Process Book](https://docs.google.com/document/d/11ZYcT3DPbJzVECYaHlDDjPvSZZJ4TiAuDt8LC67UKsw/edit?tab=t.0)
 
@@ -37,6 +37,9 @@ All data visualizations used the **D3.js** library.
 * Additional features of the plot such as the data wrangling, filtering, and animation were done by Chloe
 
 **2. Diverging Bar Chart**
+* Adapted code from Mike Bostock's [Diverging Bar Chart](https://observablehq.com/@d3/diverging-bar-chart/2) built in the D3 implementation of the Observable platform. 
+* It was modified to follow the `init()` and `updateVis()` pattern used in class. The data processing is done in the main js file.
+* Additional features such as hover tooltip and data wrangling were done by Runce.
 
 **3. Hexbin Plot**
 * Adapted code from Mike Bostock's [Hexbin Plot](https://observablehq.com/@d3/hexbin) built in the D3 implementation of the Observable platform
@@ -47,6 +50,9 @@ All data visualizations used the **D3.js** library.
 **4. Bubble Chart**
 
 **5. Line Chart**
+* Adapted code from Mike Bostock's [Line Chart](https://observablehq.com/@d3/line-chart/2) built in the D3 implementation of the Observable platform.
+* Also adapted code from W5 and W6's labs, following the `init()` and `updateVis()` pattern used in class.
+* Additional features such as data filtering and hover tooltip were done by Runce.
 
 **6. Distribution Plot**
 
