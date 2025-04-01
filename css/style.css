@@ -211,7 +211,7 @@ p {
     font-size: 15px;
 }
 
-#calendar-tooltip {
+#calendar-tooltip, #hexbin-tooltip {
     width: max-content;
     max-height: max-content;
     position: absolute;
@@ -220,8 +220,8 @@ p {
     padding: 10px;
     border-radius: 4px;
     z-index: 1000;
-    /*pointer-events: none;*/
     text-align: left;
+    font-size: 12px;
     visibility: hidden;
 }
 

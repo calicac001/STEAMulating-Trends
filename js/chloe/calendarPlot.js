@@ -432,14 +432,14 @@ class CalendarPlot {
                 d.yearData.sort((a, b) => b.year - a.year);
 
                 // Limit to the first 6 entries
-                for (let i = 0; i < Math.min(6, d.yearData.length); i++) {
+                for (let i = 0; i < Math.min(3, d.yearData.length); i++) {
                     let y = d.yearData[i];
                     if (y.count > 0) {
                         tooltipText += `<br>${y.year}: ${y.count} games`;
                     }
                 }
 
-                if (d.yearData.length > 5) {
+                if (d.yearData.length > 3) {
                     tooltipText += `<br><br><em>Click for full list...</em>`;
                 }
             }
@@ -474,7 +474,7 @@ class CalendarPlot {
                 modalContainer.select("#close-modal").on("click", () => modalContainer.remove());
             })
 
-            .       on("mousemove", function(event) {
+            .on("mousemove", function(event) {
                 vis.tooltip.style("left", `${event.pageX + 10}px`)
                     .style("top", `${event.pageY + 10}px`);
             })
