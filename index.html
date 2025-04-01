@@ -84,8 +84,65 @@
 				</h1>  <!--Chloe-->
 				<!-- Calendar Plot: Are there seasonal patterns in game releases? -->
 
-				<div class="chart-container cyber-tile-big bg-white" id="calendar-plot"></div>
-				<div id="calendar-controls" class="controls-container"></div>
+				<p class="viz-comment">
+					Looking at the cumulative game releases from 1969 to 2025, an interesting trend emerges—most games
+					tend to launch at the end of the month, with
+					<span class="calendar-comment-tooltip">May
+						<span class="calendar-comment-tooltip-text">
+							<strong>Early Summer &#9925</strong> <br> <br>
+							May is often a key release window for games looking
+							to capture summer break audiences with emphasis on the start of school breaks.</span>
+					</span>,
+					<span class="calendar-comment-tooltip">July
+						<span class="calendar-comment-tooltip-text">
+							<strong>Peak Summer Vacation &#127754</strong> <br> <br>
+							July marks the peak of summer where many individuals have increased leisure time,
+							making it a strategic time for new releases.</span>
+					</span>, and
+					<span class="calendar-comment-tooltip">November
+						<span class="calendar-comment-tooltip-text">
+							<strong>Holiday Sales Boost &#9924</strong> <br> <br>
+							November is a prime time for game launches due to Black Friday, holiday shopping,
+							and pre-holiday marketing pushes.</span>
+					</span>
+					standing out as the top release months.
+				</p>
+
+
+				<p class="viz-comment">
+					A major shift in release frequency happened in 2015, marking a surge in year-round releases, likely
+					influenced by Steam’s growing role as a dominant distribution platform. Additionally, a consistent
+					weekly pattern appears in the yearly trends:
+					<span class="calendar-comment-tooltip"> Wednesdays and Thursdays
+						<span class="calendar-comment-tooltip-text" id="midweek">
+							<strong> &#x1F4C5; Midweek Release </strong> <br> <br>
+							<u>Marketing Strategy</u>: Early-week launches allow for media coverage and hype before the weekend. <br> <br>
+							<u>Behavior</u>: Players plan purchases midweek to enjoy new games over the weekend. <br> <br>
+							<u>Avoiding Competition</u>: Fridays/Saturdays are crowded with movie and music releases. <br> <br>
+							<u>Industry Tradition</u>: Some regions, like Japan, have long favored Thursdays for game launches.
+
+						</span>
+					</span>
+					see the highest number of releases, while Fridays and Saturdays have the fewest.
+				</p>
+
+				<p class="viz-comment">
+					<span class="calendar-comment-tooltip">
+						<i>&#x1F6C8 Hover here for animation info.</i>
+						<span class="calendar-comment-tooltip-text"> Select a year range and animation mode then press the
+							start button to see these trends in action. Cumulative shows all the games released from the
+							indicated start year and end year while Year by year only includes games for that year. Click
+							the reset button to reset the plot.
+						</span>
+					</span>
+				</p>
+
+				<div class="bg-white cyber-tile-big" id="calendar-plot"></div>
+				<div class="row controls-container" id="calendar-controls" >
+					<div class="col-4" id="calendar-filter-title"></div>
+					<div class="col-8" id="calendar-button"></div>
+				</div>
+
 			</div>
 		</div>
 
@@ -267,7 +324,7 @@
 
 	<script src="js/chloe/calendarPlot.js"></script>
 	<script src="js/chloe/hexbinPlot.js"></script>
-	<script src="js/chloe/chloeHelpers.js"></script>
+	<script src="js/chloe/helpers.js"></script>
 
 	<script src="js/nicheGenres.js"></script>
 	<script src="js/bubblePlotEngagement.js"></script>
