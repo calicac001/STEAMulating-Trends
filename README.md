@@ -12,7 +12,7 @@ This project aims to explore game popularity through data-driven visualizations,
 Our goal is to present clear, insightful visuals that not only inform but also engage viewers in understanding the key drivers of success in the gaming industry. Through this project, we seek to provide both casual gamers and game developers with actionable insights, demonstrating how data visualization can STEAMulate a deeper understanding of what makes a game thrive in this competitive marketplace
 
 ## Project Links
-* [Website]()
+* [Website](https://calicac001.github.io/STEAMulating-Trends/)
 * [Screencast Videos]()
 * [Process Book](https://docs.google.com/document/d/11ZYcT3DPbJzVECYaHlDDjPvSZZJ4TiAuDt8LC67UKsw/edit?tab=t.0)
 
