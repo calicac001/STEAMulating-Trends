@@ -38,13 +38,15 @@ All data visualizations used the **D3.js** library.
 
 **2. Diverging Bar Chart**
 
-**3. Hexbin Plot**8
+**3. Hexbin Plot**
 * Adapted code from Mike Bostock's [Hexbin Plot](https://observablehq.com/@d3/hexbin) built in the D3 implementation of the Observable platform
   * Bostock's code was based on the [d3-hexbin.js](https://github.com/d3/d3-hexbin) library which was also consulted to create the base plot
 * It was modified to follow the `init()`, `wrangleData()`, and `updateVis()` pattern that we have used in class
 * Additional features such as data wrangling, and overlyaing with different colors (genre vs number of games) were done by Chloe
   
 **4. Bubble Chart**
+
 **5. Line Chart**
+
 **6. Distribution Plot**
 
