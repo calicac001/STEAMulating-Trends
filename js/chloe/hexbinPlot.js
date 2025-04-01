@@ -73,8 +73,13 @@ class HexbinPlot {
             .attr("class", "legend")
             .attr("transform", `translate(${vis.width - vis.legendWidth}, 0)`);
 
+        // Create hexbins
         vis.hexbinGroup = vis.svg.append("g")
             .attr("class", "hexbin-group");
+
+        // create tooltips
+        vis.tooltip = d3.select("body").append("div")
+            .attr("id", "hexbin-tooltip");
 
         // Load & process data
         vis.wrangleData();
@@ -121,8 +126,10 @@ class HexbinPlot {
         let hexbins = vis.hexbinGroup.selectAll("path")
             .data(vis.bins);
 
-        // Merge enter and update selections
-        hexbins.enter().append("path")
+        hexbins.exit().remove();
+
+        // Create enter selection separately from merge to be able to add tooltips
+        const enterHexbins = hexbins.enter().append("path")
             .attr("transform", d => `translate(${d.x},${d.y})`)
             .attr("d", vis.hexbin.hexagon())
             .attr("stroke", "black")
@@ -133,9 +140,10 @@ class HexbinPlot {
                 } else if (vis.colorBy === "num-games") {
                     return vis.genreColorScale(d.length);
                 }
-            })
+            });
 
-            .merge(hexbins)
+        // Merge enter and update
+        hexbins = enterHexbins.merge(hexbins)
             .transition()
             .duration(150)
             .attr("fill", () => vis.genreColorScale(
@@ -167,7 +175,8 @@ class HexbinPlot {
                 }
             });
 
-        hexbins.exit().remove();
+        const hexbinsForTooltip = enterHexbins.merge(vis.hexbinGroup.selectAll("path"));
+        vis.updateTooltip(hexbinsForTooltip);
 
         if (vis.colorBy === "genre") {
             vis.updateGenreLegend();
@@ -319,5 +328,63 @@ class HexbinPlot {
             .text((d, i) => (i % 4 === 0 | i === 1) ? d : ""); // Format the tick labels
 
         vis.legendTitle.text("Number of Games")
+    }
+
+    updateTooltip(hexbins){
+        let vis = this;
+
+        hexbins.on("mouseover", function(event, d) {
+            console.log(d);
+            // Create a Map to store unique games by AppID
+            const uniqueGamesMap = new Map();
+
+            // For each item in the hexbin, store only the latest occurrence of each AppID
+            d.forEach(item => {
+                uniqueGamesMap.set(item.AppID, item);
+            });
+
+            // Get only the unique game objects
+            const uniqueGames = Array.from(uniqueGamesMap.values());
+
+            // Calculate the average of Reviews for unique games
+            const sumReviews = uniqueGames.reduce((total, item) => {
+                return total + parseInt(item.numReviews, 10);
+            }, 0);
+
+            const avgReviews = sumReviews / uniqueGames.length;
+
+            // Calculate the average of Recommendations for unique games
+            const sumRecommendations = uniqueGames.reduce((total, item) => {
+                return total + parseInt(item.numRecommendations);
+            }, 0);
+
+            const avgRecommendations = sumRecommendations / uniqueGames.length;
+
+            // Format with commas since a bit hard to see
+            const numberFormatter = new Intl.NumberFormat('en-US', {
+                maximumFractionDigits: 0 // No decimal places
+            });
+
+            vis.tooltip.html(`<h5>Hexbin Summary</h5> <br>
+                    <strong>No. of Games:</strong> ${numberFormatter.format(uniqueGames.length)} <br>
+                    <strong>Avg. No. of Positive Reviews:</strong> ${numberFormatter.format(avgReviews)} <br>
+                    <strong>Avg. No. of Recommendations:</strong> ${numberFormatter.format(avgRecommendations)} <br>
+                `)
+                .style("visibility", "visible")
+                .style("display", "block")
+                .style("left", `${event.pageX + 20}px`)
+                .style("top", `${event.pageY + 20}px`);
+        })
+
+            .on("click", function(event, d) {
+
+            })
+            .on("mousemove", function(event) {
+                vis.tooltip.style("left", `${event.pageX + 10}px`)
+                    .style("top", `${event.pageY + 10}px`);
+            })
+            .on("mouseout", function() {
+                vis.tooltip.style("visibility", "hidden");
+            });
     }
 }
