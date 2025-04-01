@@ -80,9 +80,9 @@ class CalendarPlot {
         // Add a heading
         filterContainer.append('span')
             .style('font-weight', 'bold') // Make it look like a heading
-            .style('font-size', '20px')
+            .style('font-size', '15px')
             .style('color', '#00ffd2')
-            .style('margin-right', '20px')
+            .style('margin-right', '15px')
             .text('FILTER BY YEAR');
 
         // Create range filter
@@ -154,14 +154,14 @@ class CalendarPlot {
         // Add a heading
         buttonContainer.append('span')
             .style('font-weight', 'bold') // Make it look like a heading
-            .style('font-size', '20px')
+            .style('font-size', '15px')
             .style('color', '#00ffd2')
-            .style('margin-right', '20px')
+            .style('margin-right', '15px')
             .text('ANIMATION');
 
         // Create a container for radio buttons
         let radioContainer = buttonContainer.append('span')
-            .style('margin-right', '20px'); // Add spacing before the button
+            .style('margin-right', '15px'); // Add spacing before the button
 
         // Add first radio button
         radioContainer.append('input')
