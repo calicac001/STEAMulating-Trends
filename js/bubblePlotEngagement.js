@@ -35,6 +35,8 @@ class BubblePlotChart {
                 We identify player retention by looking at the Average Playtime for 2 weeks, as well as forever\
                 Additionally, we might notice that larger games might correlate with higher player retention.")
             .style("text-align", "left")
+            .attr("class", "viz-comment")
+        ;
 
 
         this.dropdown = this.parentCont.append("div").append("select")
