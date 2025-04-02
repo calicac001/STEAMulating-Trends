@@ -1,8 +1,8 @@
 // Initialize the fullpage object
 var myFullpage = new fullpage('#fullpage', {
     anchors: ["STEAMulating-Trends", "Overview &#x1F30D", "A Look Through Time &#8987", "Seasonal Trends", "Switching to Genres",
-        "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
-        "Solution", "Developers"],
+        "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "The Complexity of Game Success",
+        "Key Takeaways", "Developers"],
 
     navigation: true,
 
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
     sections.forEach((section, index) => {
         const anchor = section.getAttribute("data-anchor") || `section${index + 1}`;
         const sectionName = ["STEAMulating-Trends", "Overview &#x1F30D", "A Look Through Time &#8987", "Seasonal Trends", "Switching to Genres",
-            "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "Main Message",
-            "Solution", "Developers"];
+            "Review Sentiment", "Reviews by Genres", "Player Engagement", "Genre Growth", "Niche Genres", "The Complexity of Game Success",
+            "Key Takeaways", "Developers"];
 
         const listItem = document.createElement("li");
         listItem.innerHTML = `
