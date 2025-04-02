@@ -211,7 +211,7 @@ p {
     font-size: 15px;
 }
 
-#calendar-tooltip, #hexbin-tooltip {
+#calendar-tooltip, #hexbin-tooltip, #barchart-tooltip {
     width: max-content;
     max-height: max-content;
     position: absolute;
@@ -309,7 +309,7 @@ p {
 /**     Hexbin Plot        **/
 /****************************/
 #hexbin-plot {
-    width: 70vw;
+    width: 100%;
     height: 50vh;
     color: white;
 }
@@ -323,10 +323,26 @@ p {
     fill: white;
 }
 
-#hexbin-colo-ctrl {
+#hexbin-color-ctrl {
+    border-top: 3px dashed white;
+    padding-top: 20px;
     width: 100%;
-    height: 20vh;
-    text-align: left;
+    height: auto;
+    text-align: center;
+}
+
+#hexbin-bar-chart-reviews, #hexbin-bar-chart-recommendations {
+    width: 50%;
+    height: 50vh;
+    border-top: 3px dashed white;
+    margin-top: 20px;
+}
+
+#colorby {
+    font-size: 15px;
+    color:#00ffd2;
+    margin-right: 15px;
+    font-weight: bold;
 }
 
 /* Styles for Diverging barchart*/

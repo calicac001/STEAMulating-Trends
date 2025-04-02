@@ -1,3 +1,11 @@
+// Initialize plot variables
+let hexbinPlot, barChartReviews, barChartRecommendations;
+
+// For hexbin linked view
+let isHexbinSelected = false;
+let selectedHexbinData = null;
+let hexbinData = null;
+
 // Load csv data
 Promise.all([
     d3.csv("data/basic_info.csv"),
@@ -28,10 +36,14 @@ Promise.all([
     const sv = new sridharViz(popularity, genres, games, tags);
 
     // Data for Hexbin Plot
-    const hexbinData = processHexbinData(genres, reviews, popularity);
+    hexbinData = processHexbinData(games, genres, reviews, popularity);
 
     // Create hexbin plot
     hexbinPlot = new HexbinPlot("hexbin-plot", hexbinData);
+    
+    // Create linked bar chart
+    barChartReviews = new BarVis("hexbin-bar-chart-reviews", hexbinData, "reviews");
+    barChartRecommendations = new BarVis("hexbin-bar-chart-recommendations", hexbinData, "recommendations");
 
     // Attach event listener to radio buttons after creating hexbinPlot
     document.querySelectorAll('input[name="hexbin-radio"]').forEach(radio => {

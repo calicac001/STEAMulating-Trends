@@ -175,8 +175,9 @@ class HexbinPlot {
                 }
             });
 
-        const hexbinsForTooltip = enterHexbins.merge(vis.hexbinGroup.selectAll("path"));
-        vis.updateTooltip(hexbinsForTooltip);
+        const hexbinsForEvents = enterHexbins.merge(vis.hexbinGroup.selectAll("path"));
+        vis.updateTooltip(hexbinsForEvents);
+        vis.updateBarChart(hexbinsForEvents);
 
         if (vis.colorBy === "genre") {
             vis.updateGenreLegend();
@@ -334,7 +335,9 @@ class HexbinPlot {
         let vis = this;
 
         hexbins.on("mouseover", function(event, d) {
-            console.log(d);
+            d3.select(this)
+                .attr('fill', "white");
+
             // Create a Map to store unique games by AppID
             const uniqueGamesMap = new Map();
 
@@ -365,7 +368,7 @@ class HexbinPlot {
                 maximumFractionDigits: 0 // No decimal places
             });
 
-            vis.tooltip.html(`<h5>Hexbin Summary</h5> <br>
+            vis.tooltip.html(`<strong><u>Hexbin Summary</u><br></strong><br>
                     <strong>No. of Games:</strong> ${numberFormatter.format(uniqueGames.length)} <br>
                     <strong>Avg. No. of Positive Reviews:</strong> ${numberFormatter.format(avgReviews)} <br>
                     <strong>Avg. No. of Recommendations:</strong> ${numberFormatter.format(avgRecommendations)} <br>
@@ -386,5 +389,29 @@ class HexbinPlot {
             .on("mouseout", function() {
                 vis.tooltip.style("visibility", "hidden");
             });
+    }
+
+    updateBarChart(hexbins){
+        let vis = this;
+
+        hexbins.on("click", function(event, d) {
+            isHexbinSelected = true;
+            selectedHexbinData = d;
+
+            barChartReviews.wrangleData();
+            barChartRecommendations.wrangleData();
+        })
+            .on("mouseout", function(event) {
+                vis.tooltip.style("visibility", "hidden");
+
+                d3.select(this)
+                    .attr("fill", d => {
+                        if (vis.colorBy === "genre") {
+                            const dominantGenre = vis.findDominantGenre(d);
+                            return vis.genreColorScale(dominantGenre);
+                        } else if (vis.colorBy === "num-games") {
+                            return vis.genreColorScale(d.length);
+                        }});
+            })
     }
 }

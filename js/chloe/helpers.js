@@ -18,23 +18,27 @@ function processCalendarData(gamesData){
     return releaseData;
 }
 
-function processHexbinData(genresData, reviewsData, popularityData) {
+// Hexbin Processing
+function processHexbinData(gamesData, genresData, reviewsData, popularityData) {
     //Convert to Numbers
     reviewsData.forEach(d => d.Positive = +d.Positive);
-    popularityData.forEach(d => d.Popularity = +d.Popularity);
+    popularityData.forEach(d => d.Recommendations = +d.Recommendations);
 
-    // Create a lookup map for reviewsData (AppID → Positive Reviews)
+    // Create a lookup map for data
+    let gamesMap = new Map(gamesData.map(d => [d.AppID, d.Name]));
     let reviewMap = new Map(reviewsData.map(r => [r.AppID, r.Positive]));
     let popularityMap = new Map(popularityData.map(p => [p.AppID, p.Recommendations]));
 
     // Merge dataset using the lookup map and exclude games with zero reviews
     let mergedData = genresData.map(g => {
+        let name = gamesMap.get(g.AppID);
         let numReviews = reviewMap.get(g.AppID) || 0; // Get number of reviews or default to 0
         let numRecommendations = popularityMap.get(g.AppID)
 
         if (numReviews > 0 & numRecommendations > 0) {
             return {
                 AppID: g.AppID,
+                name: name,
                 genre: g.Genres,
                 numReviews: numReviews,
                 numRecommendations: numRecommendations
@@ -46,6 +50,7 @@ function processHexbinData(genresData, reviewsData, popularityData) {
     return mergedData;
 }
 
+// Carousel Image Code
 let activeCardElement = null;
 let isTooltipActive = false;
 let rafId = null;

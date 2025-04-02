@@ -189,25 +189,42 @@
 					Reviews by Genres<span class="cyber-glitch-3">...</span>
 				</h1>
 
+				<div>
+					<p class="viz-comment">The hexbin plot reveals a logarithmic relationship between the number of recommendations and reviews
+					for the games, showing a clear linear trend on the log scale. Most games cluster in the middle of the
+					plot, with a few outliers representing games with exceptionally high recommendations and reviews.</p>
+
+					<p class="viz-comment">When colored by the number of games in each hexbin, it becomes evident that fewer games occupy the
+					higher recommendation and review ranges, indicating a decreasing number of games as engagement levels rise.
+					Coloring by genre further highlights that certain genres, like action, dominate the higher recommendation
+						and review bins, showcasing genre-specific engagement patterns in the data. </p>
+				</div>
+
 				<div class="row controls-container">
-					<div class="col-sm-6" id="hexbin-color-ctrl">
-						<span>Color by:</span>
-						<div class="mb-1 mt-1">
+					<span id="hexbin-color-ctrl">
+						<span id="colorby">COLOR BY</span>
+						<span>
 							<input type="radio" id="genre-hexbin" name="hexbin-radio"
 								   class="cyber-radio bg-white ac-blue" value="genre" checked>
 							<label for="genre-hexbin" class="ml-1">Dominating Genre</label>
-						</div>
-						<div class="mb-1 mt-1">
+						</span>
+						<span>
 							<input type="radio" id="num-games-hexbin" name="hexbin-radio"
 								   class="cyber-radio bg-white ac-blue" value="num-games">
 							<label for="num-games-hexbin" class="ml-1">Number of Games</label>
-						</div>
+						</span>
 
-					</div>
-					<div class="col-sm-6" id="hexbin-filter-ctrl"></div>
+					</span>
 				</div>
 
-				<div id="hexbin-plot"></div>
+				<div class="row">
+					<div id="hexbin-plot"></div>
+				</div>
+
+				<div class="row">
+					<div class="col-6" id="hexbin-bar-chart-reviews"></div>
+					<div class="col-6" id="hexbin-bar-chart-recommendations"></div>
+				</div>
 			</div>
 		</div>
 
@@ -371,6 +388,7 @@
 	<script src="js/lineChart.js"></script>
 
 	<script src="js/chloe/calendarPlot.js"></script>
+	<script src="js/chloe/barVis.js"></script>
 	<script src="js/chloe/hexbinPlot.js"></script>
 	<script src="js/chloe/helpers.js"></script>
 
