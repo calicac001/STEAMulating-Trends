@@ -45,14 +45,19 @@ All data visualizations used the **D3.js** library.
 * Adapted code from Mike Bostock's [Hexbin Plot](https://observablehq.com/@d3/hexbin) built in the D3 implementation of the Observable platform
   * Bostock's code was based on the [d3-hexbin.js](https://github.com/d3/d3-hexbin) library which was also consulted to create the base plot
 * It was modified to follow the `init()`, `wrangleData()`, and `updateVis()` pattern that we have used in class
-* Additional features such as data wrangling, and overlyaing with different colors (genre vs number of games) were done by Chloe
+* Additional features such as data wrangling, and overlaying with different colors (genre vs number of games) were done by Chloe
   
 **4. Bubble Chart**
+* Implemented principles and patterns learned in classing using the `enter()`, `update()`, and `exit()` pattern to create
+a scatter-plot with circles of area proportional to the player base size, that changed on selection of the genre
+* Additional features of data wrangling, filtering, and transitioning were done by Sridhar
 
 **5. Line Chart**
 * Adapted code from Mike Bostock's [Line Chart](https://observablehq.com/@d3/line-chart/2) built in the D3 implementation of the Observable platform.
 * Also adapted code from W5 and W6's labs, following the `init()` and `updateVis()` pattern used in class.
 * Additional features such as data filtering and hover tooltip were done by Runce.
 
-**6. Distribution Plot**
-
+**6. Distribution Graph**
+* Implemented principles and patterns learned in classing using the `enter()`, `update()`, and `exit()` pattern to create
+a bar-graph distribution chart that changed on selection of the genre
+* Additional features such as data wrangling (including computing a custom metric, creating buckets for the distribution, and counting frequencies for the buckets) and adjusting the axis scales to gain more meaning from the data were done by Sridhar

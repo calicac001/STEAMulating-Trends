@@ -32,6 +32,8 @@ class NicheGenresDistribution {
                 Here, we try to look for games with a smaller metric, as that would imply the game is being played for a long duration of time, implying a more loyal fan-base.<br>\
                 This graph helps us see if there are any trends with player-base loyalty, and the game's genre.")
             .style("text-align", "left")
+            .attr("class", "viz-comment")
+            ;
         this.dropdown = this.parentCont.append("div").append("select")
             .attr("id", "genre-dropdown");
         this.svg = this.parentCont.append("svg")
