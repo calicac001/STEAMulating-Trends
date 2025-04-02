@@ -409,23 +409,26 @@ class BubblePlotChart {
                 (a, b) => d3.mean(this.appIDToInfo[b].estimatedOwners) - d3.mean(this.appIDToInfo[a].estimatedOwners)
             ));
 
+        const transTime = 1750;
+
         // ENTER phase
         bubbles.enter()
             .append("circle")
+            // .attr("class", "bubbleData")
             .attr("cx", d => xScale(this.appIDToInfo[d].avgPlaytime2Weeks))
             .attr("cy", d => yScale(this.appIDToInfo[d].avgPlaytimeForever))
             .attr("r", d => radiusScale(d3.mean(this.appIDToInfo[d].estimatedOwners)))
             .attr("fill", d => colorScale(this.appIDToInfo[d].isMultiplayer))
             .attr("opacity", 0.7)
             .merge(bubbles)
-            .transition().duration(500)
+            .transition().duration(transTime)
             .attr("cx", d => xScale(this.appIDToInfo[d].avgPlaytime2Weeks))
             .attr("cy", d => yScale(this.appIDToInfo[d].avgPlaytimeForever))
             .attr("r", d => radiusScale(d3.mean(this.appIDToInfo[d].estimatedOwners)))
         ;
         // EXIT phase
         bubbles.exit()
-            .transition().duration(500)
+            .transition().duration(transTime)
             .attr("r", 0)
             .remove();
 
@@ -436,14 +439,14 @@ class BubblePlotChart {
                 .attr("transform", `translate(${this.vizWidth - 150}, 10)`);
 
             // Multiplayer legend
-            legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 5).attr("fill", "blue");
+            legend.append("ellipse").attr("cx", 0).attr("cy", 0).attr("rx", 5).attr("ry", 5).attr("fill", "blue");
             legend.append("text").attr("x", 10).attr("y", 5).style("fill", "white").text("Multiplayer");
 
-            legend.append("circle").attr("cx", 0).attr("cy", 20).attr("r", 5).attr("fill", "orange");
+            legend.append("ellipse").attr("cx", 0).attr("cy", 20).attr("rx", 5).attr("ry", 5).attr("fill", "orange");
             legend.append("text").attr("x", 10).attr("y", 25).style("fill", "white").text("Singleplayer");
 
             // Bubble size legend
-            legend.append("circle").attr("cx", 0).attr("cy", 50).attr("r", 10).attr("fill", "gray").attr("opacity", 0.5);
+            legend.append("ellipse").attr("cx", 0).attr("cy", 50).attr("rx", 5).attr("ry", 5).attr("fill", "gray").attr("opacity", 0.5);
             legend.append("text").attr("x", 15).attr("y", 55).style("fill", "white").text("Bigger = More Owners");
         }
 
